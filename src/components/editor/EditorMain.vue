@@ -1,74 +1,181 @@
 <template>
-  <div id="canvas"></div>
+  <div id="canvas">
+    <div id="baseLayer"></div>
+    <div id="notesLayer"></div>
+    <div id="currentPositionLayer"></div>
+  </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
 import Konva from "konva";
-export default {
+import * as Editor from "./EditorConstant";
+import { DefaultKeyConfig } from "../../model/KeyConfig";
+import { KeyKind } from "../../model/KeyKind";
+
+type DataType = {
+  currentPosition: number;
+  divisor: number;
+  keyKind: KeyKind;
+  keyNum: number;
+  editorWidth: number;
+  stage?: Konva.Stage;
+  baseLayer?: Konva.Layer;
+  notesLayer?: Konva.Layer;
+  currentPositionLayer?: Konva.Layer;
+};
+
+export default Vue.extend({
   name: "EditorMain",
-  mounted: function() {
-    const keyNum = 17;
-    const noteWidth = 30;
-    const verticalSizeNum = 768;
-    const editorWidth = noteWidth * keyNum;
-    const editorHeight = verticalSizeNum / 2;
-    const divisor = 24;
+  props: {
+    initialCurrentPosition: Number,
+  },
+  data(): DataType {
+    return {
+      currentPosition: this.initialCurrentPosition,
+      divisor: 12,
+      keyKind: "7",
+      keyNum: DefaultKeyConfig["7"].num,
+      editorWidth: Editor.noteWidth * DefaultKeyConfig["7"].num,
+    };
+  },
+  methods: {
+    // 初期描画
+    initialDraw(): void {
+      const divisor = this.divisor;
+      const keyNum = this.keyNum;
+
+      const noteWidth = Editor.noteWidth;
+      const verticalSizeNum = Editor.verticalSizeNum;
+      const editorWidth = this.editorWidth;
+      const editorHeight = Editor.editorHeight;
+
+      const stage = this.stage as Konva.Stage;
+      const baseLayer = this.baseLayer as Konva.Layer;
+
+      // 縦罫線の描画
+      for (let i = 0; i < keyNum; i++) {
+        const xPos = (i + 1) * noteWidth;
+        const line = new Konva.Line({
+          points: [xPos, 0, xPos, editorHeight],
+          stroke: "#969696",
+          strokeWidth: 0.5,
+        });
+        baseLayer.add(line);
+
+        if (i % 2 == 1) {
+          const filler = new Konva.Rect({
+            x: xPos - noteWidth,
+            width: noteWidth,
+            height: editorHeight,
+            fill: "#c3f3ff",
+            strokeWidth: 0,
+          });
+          baseLayer.add(filler);
+        }
+      }
+
+      // 横罫線の描画
+      for (let i = 0; i < verticalSizeNum / divisor; i++) {
+        const yPos = (i + 1) * divisor;
+        const line = new Konva.Line({
+          points: [0, yPos, editorWidth, yPos],
+          stroke: "#969696",
+          strokeWidth: (divisor * (i + 1)) % Editor.quarterInterval == 0 ? 1 : 0.5,
+        });
+        baseLayer.add(line);
+      }
+
+      // 枠線の描画
+      const rect = new Konva.Rect({
+        width: editorWidth,
+        height: editorHeight,
+        stroke: "black",
+        strokeWidth: 1,
+      });
+      baseLayer.add(rect);
+
+      stage.add(baseLayer);
+    },
+
+    // 現在位置の描画
+    currentPositionDraw(): void {
+      const stage = this.stage as Konva.Stage;
+      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
+
+      const currentPositionLine = new Konva.Line({
+        y: Editor.editorHeight - this.currentPosition,
+        points: [0, 0, this.editorWidth, 0],
+        stroke: "#ff0000",
+        strokeWidth: 2,
+      });
+      currentPositionLayer.add(currentPositionLine);
+      stage.add(currentPositionLayer);
+    },
+
+    // ノーツの描画
+    noteDraw(lane: number, position: number): void {
+      const stage = this.stage as Konva.Stage;
+      const notesLayer = this.notesLayer as Konva.Layer;
+
+      const note = new Konva.Rect({
+        x: lane * Editor.noteWidth,
+        y: Editor.editorHeight - position - Editor.noteHeight / 2,
+        width: Editor.noteWidth,
+        height: Editor.noteHeight,
+        fill: lane % 2 == 0 ? "red" : "blue",
+        id: `note-${lane}-${position}`,
+      });
+      notesLayer.add(note);
+      stage.add(notesLayer);
+    },
+
+    // キーを押したときの挙動
+    // keydownAction(key: string) {},
+  },
+  mounted(): void {
+    const editorHeight = Editor.editorHeight;
+    const canvasMargin = Editor.canvasMargin;
 
     const stage = new Konva.Stage({
+      x: canvasMargin,
+      y: canvasMargin,
       container: "canvas",
-      width: editorWidth + 40,
-      height: editorHeight + 40,
+      width: this.editorWidth + canvasMargin * 2,
+      height: editorHeight + canvasMargin * 2,
+    });
+    const baseLayer = new Konva.Layer({
+      container: "baseLayer",
+    });
+    const currentPositionLayer = new Konva.Layer({
+      container: "currentPositionLayer",
+    });
+    const notesLayer = new Konva.Layer({
+      container: "notesLayer",
     });
 
-    const layer = new Konva.Layer();
+    this.stage = stage;
+    this.baseLayer = baseLayer;
+    this.currentPositionLayer = currentPositionLayer;
+    this.notesLayer = notesLayer;
 
-    for (let i = 0; i < keyNum; i++) {
-      const xPos = (i + 1) * noteWidth;
-      const line = new Konva.Line({
-        x: 20,
-        y: 20,
-        points: [xPos, 0, xPos, editorHeight],
-        stroke: "#969696",
-        strokeWidth: 0.5,
-      });
-      layer.add(line);
+    this.initialDraw();
+    this.currentPositionDraw();
 
-      if (i % 2 == 1) {
-        const filler = new Konva.Rect({
-          x: 20 + xPos - noteWidth,
-          y: 20,
-          width: noteWidth,
-          height: editorHeight,
-          fill: "lightblue",
-          strokeWidth: 0,
-        });
-        layer.add(filler)
-      }
-    }
-
-    for (let i = 0; i < verticalSizeNum / divisor; i++) {
-      const yPos = ((i + 1) * divisor) / 2;
-      const line = new Konva.Line({
-        x: 20,
-        y: 20,
-        points: [0, yPos, editorWidth, yPos],
-        stroke: "#969696",
-        strokeWidth: (divisor * (i + 1)) % 96 == 0 ? 1 : 0.5,
-      });
-      layer.add(line);
-    }
-
-    const rect = new Konva.Rect({
-      x: 20,
-      y: 20,
-      width: editorWidth,
-      height: editorHeight,
-      stroke: "black",
-      strokeWidth: 1,
-    });
-    layer.add(rect);
-
-    stage.add(layer);
+    // サンプル出力
+    this.noteDraw(0, 0);
+    this.noteDraw(6, 0);
+    this.noteDraw(1, 12);
+    this.noteDraw(5, 12);
+    this.noteDraw(2, 24);
+    this.noteDraw(4, 24);
+    this.noteDraw(3, 36);
+    this.noteDraw(2, 48);
+    this.noteDraw(4, 48);
+    this.noteDraw(1, 60);
+    this.noteDraw(5, 60);
+    this.noteDraw(0, 72);
+    this.noteDraw(6, 72);
   },
-};
+});
 </script>

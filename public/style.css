@@ -1,4 +1,33 @@
 #editor {
   display: flex;
   border-width: 1px;
+  font-size: 16px;
+}
+#editor-menu {
+  margin-top: 20px;
+  padding: 0 10px;
+  border: 1px solid;
+  height: 384px;
+}
+
+#editor-menu > div {
+  margin-top: 5px;
+}
+
+#menu-page {
+  display: flex;
+}
+
+.menu-page-btn, .menu-page-txt {
+  margin: auto 3px;
+}
+
+.menu-page-btn:hover {
+  color: orange;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.menu-input {
+  width: 100px;
 }
