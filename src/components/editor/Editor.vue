@@ -31,7 +31,7 @@ export default Vue.extend({
         firstNum: 200,
         bpm: 140
       },
-      currentPosition: 84
+      currentPosition: 0
     };
   }
 });

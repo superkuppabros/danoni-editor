@@ -14,10 +14,10 @@ export const DefaultKeyConfig: KeyConfig = {
   },
   "7": {
     num: 7,
-    keys: ["s", "d", "f", " ", "j", "k", "l"]
+    keys: ["s", "d", "f", "g", "j", "k", "l"]
   },
   "11": {
     num: 11,
-    keys: ["s", "d", "f", " ", "j", "k", "l", "u", "i", "8", "o"]
+    keys: ["s", "d", "f", "g", "j", "k", "l", "u", "i", "8", "o"]
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div id="canvas">
+  <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction">
     <div id="baseLayer"></div>
     <div id="notesLayer"></div>
     <div id="currentPositionLayer"></div>
@@ -33,7 +33,7 @@ export default Vue.extend({
   data(): DataType {
     return {
       currentPosition: this.initialCurrentPosition,
-      divisor: 12,
+      divisor: 24,
       keyKind: "7",
       keyNum: DefaultKeyConfig["7"].num,
       editorWidth: Editor.noteWidth * DefaultKeyConfig["7"].num,
@@ -102,6 +102,7 @@ export default Vue.extend({
     currentPositionDraw(): void {
       const stage = this.stage as Konva.Stage;
       const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
+      currentPositionLayer.destroyChildren();
 
       const currentPositionLine = new Konva.Line({
         y: Editor.editorHeight - this.currentPosition,
@@ -131,7 +132,28 @@ export default Vue.extend({
     },
 
     // キーを押したときの挙動
-    // keydownAction(key: string) {},
+    keydownAction(e: KeyboardEvent): void {
+      console.log(e.key);
+      switch (e.key) {
+        case "ArrowUp":
+          this.currentPosition += this.divisor;
+          this.currentPositionDraw();
+          break;
+        case "ArrowDown":
+          this.currentPosition -= this.divisor;
+          this.currentPositionDraw();
+          break;
+        default: {
+          const possiblyIndex = DefaultKeyConfig[this.keyKind].keys.indexOf(e.key);
+          if (possiblyIndex >= 0) {
+            this.noteDraw(possiblyIndex, this.currentPosition);
+            this.currentPosition += this.divisor;
+            this.currentPositionDraw();
+          }
+          break;
+        }
+      }
+    },
   },
   mounted(): void {
     const editorHeight = Editor.editorHeight;
@@ -161,21 +183,6 @@ export default Vue.extend({
 
     this.initialDraw();
     this.currentPositionDraw();
-
-    // サンプル出力
-    this.noteDraw(0, 0);
-    this.noteDraw(6, 0);
-    this.noteDraw(1, 12);
-    this.noteDraw(5, 12);
-    this.noteDraw(2, 24);
-    this.noteDraw(4, 24);
-    this.noteDraw(3, 36);
-    this.noteDraw(2, 48);
-    this.noteDraw(4, 48);
-    this.noteDraw(1, 60);
-    this.noteDraw(5, 60);
-    this.noteDraw(0, 72);
-    this.noteDraw(6, 72);
   },
 });
 </script>
