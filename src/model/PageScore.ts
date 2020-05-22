@@ -1,4 +1,4 @@
 export interface PageScore {
-  notes: number[];
-  freezes: number[];
+  notes: number[][];
+  freezes: number[][];
 }

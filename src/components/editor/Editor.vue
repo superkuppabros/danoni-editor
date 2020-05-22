@@ -1,38 +1,17 @@
 <template>
   <div id="editor">
-    <editor-main :initial-current-position="currentPosition"></editor-main>
-    <editor-menu :initial-timing="timing" :initial-page-num="pageNum"></editor-menu>
+    <editor-controller></editor-controller>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import EditorMain from "./EditorMain.vue";
-import EditorMenu from "./EditorMenu.vue";
-import { Timing } from "../../model/Timing";
-
-type DataType = {
-  pageNum: number;
-  timing: Timing;
-  currentPosition: number;
-};
+import EditorController from "./EditorController.vue";
 
 export default Vue.extend({
   name: "Editor",
   components: {
-    EditorMain,
-    EditorMenu
+    EditorController,
   },
-  data(): DataType {
-    return {
-      pageNum: 1,
-      timing: {
-        label: 1,
-        firstNum: 200,
-        bpm: 140
-      },
-      currentPosition: 0
-    };
-  }
 });
 </script>

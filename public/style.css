@@ -1,4 +1,4 @@
-#editor {
+#editor-controller {
   display: flex;
   border-width: 1px;
   font-size: 16px;
@@ -25,7 +25,8 @@
   display: flex;
 }
 
-.menu-page-btn, .menu-page-txt {
+.menu-page-btn,
+.menu-page-txt {
   margin: auto 3px;
 }
 

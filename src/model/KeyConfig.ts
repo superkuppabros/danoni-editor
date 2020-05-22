@@ -10,14 +10,14 @@ export type KeyConfig = {
 export const DefaultKeyConfig: KeyConfig = {
   "5": {
     num: 5,
-    keys: ["j", "k", "i", "l", " "]
+    keys: ["KeyJ", "KeyK", "KeyI", "KeyL", "KeyF"]
   },
   "7": {
     num: 7,
-    keys: ["s", "d", "f", "g", "j", "k", "l"]
+    keys: ["KeyS", "KeyD", "KeyF", "KeyG", "KeyJ", "KeyK", "KeyL"]
   },
   "11": {
     num: 11,
-    keys: ["s", "d", "f", "g", "j", "k", "l", "u", "i", "8", "o"]
+    keys: ["KeyS", "KeyD", "KeyF", "KeyG", "KeyJ", "KeyK", "KeyL", "KeyU", "KeyI", "Digit8", "KeyO"]
   }
 }
