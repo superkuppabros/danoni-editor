@@ -1,6 +1,7 @@
 <template>
   <div id="editor-controller">
     <editor-main
+      :page-num="pageNum" 
       :load-score-data="{
         timings: [
           {
@@ -22,7 +23,7 @@
       <div id="menu-page">
         <div class="menu-page-btn" @click="pageMinus(5)">◁</div>
         <div class="menu-page-btn" @click="pageMinus(1)">◁</div>
-        <div class="menu-page-txt">{{ page }}</div>
+        <div class="menu-page-txt">{{ pageNum }}</div>
         <div class="menu-page-btn" @click="pagePlus(1)">▷</div>
         <div class="menu-page-btn" @click="pagePlus(5)">▷</div>
       </div>
@@ -44,7 +45,7 @@ import EditorMain from "./EditorMain.vue";
 import { Timing } from "../../model/Timing";
 
 type DataType = {
-  page: number;
+  pageNum: number;
   timing: Timing;
 };
 
@@ -55,7 +56,7 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      page: 1,
+      pageNum: 1,
       timing: {
         label: 1,
         firstNum: 200,
@@ -65,14 +66,14 @@ export default Vue.extend({
   },
   methods: {
     pageMinus(n: number): void {
-      this.page < 1 + n ? (this.page = 1) : (this.page -= n);
+      this.pageNum < 1 + n ? (this.pageNum = 1) : (this.pageNum -= n);
     },
     pagePlus(n: number): void {
-      this.page += n;
+      this.pageNum += n;
     },
     pageMove(page:number){
-      this.page = page;
-    }
+      this.pageNum = page;
+    },
   },
 });
 </script>

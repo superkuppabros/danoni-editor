@@ -1,9 +1,5 @@
 <template>
-  <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction">
-    <div id="baseLayer"></div>
-    <div id="notesLayer"></div>
-    <div id="currentPositionLayer"></div>
-  </div>
+  <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
 </template>
 
 <script lang="ts">
@@ -32,6 +28,7 @@ type DataType = {
 export default Vue.extend({
   name: "EditorMain",
   props: {
+    pageNum: Number,
     loadScoreData: { type: Object as PropType<ScoreData> }
   },
   data(): DataType {
@@ -40,8 +37,8 @@ export default Vue.extend({
       scoreData: this.loadScoreData,
       divisor: 24,
       keyKind: "7",
-      keyNum: DefaultKeyConfig["7"].num,
       page: 1,
+      keyNum: DefaultKeyConfig["7"].num,
       editorWidth: Editor.noteWidth * DefaultKeyConfig["7"].num
     };
   },
@@ -58,6 +55,10 @@ export default Vue.extend({
 
       const stage = this.stage as Konva.Stage;
       const baseLayer = this.baseLayer as Konva.Layer;
+      const notesLayer = this.notesLayer as Konva.Layer;
+      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
+
+      baseLayer.destroyChildren();
 
       // 縦罫線の描画
       for (let i = 0; i < keyNum; i++) {
@@ -103,6 +104,8 @@ export default Vue.extend({
       baseLayer.add(rect);
 
       stage.add(baseLayer);
+      stage.add(notesLayer);
+      stage.add(currentPositionLayer);
     },
 
     // 現在位置の描画
@@ -115,7 +118,7 @@ export default Vue.extend({
         y: Editor.editorHeight - this.currentPosition,
         points: [0, 0, this.editorWidth, 0],
         stroke: "#ffff00",
-        strokeWidth: 2
+        strokeWidth: 1.5
       });
       currentPositionLayer.add(currentPositionLine);
       stage.add(currentPositionLayer);
@@ -242,61 +245,101 @@ export default Vue.extend({
       this.pageMove(this.page);
     },
 
+    // 移動間隔変更
+    changeDivisor(divisor: number) {
+      this.divisor = divisor;
+      if (this.currentPosition % divisor !== 0) {
+        this.currentPositionMove(
+          Math.floor(this.currentPosition / divisor) * divisor
+        );
+      }
+      this.baseLayerDraw();
+    },
+
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       console.log(e.code);
-      switch (e.code) {
-        case "ArrowUp":
-          this.currentPosition += this.divisor;
-          if (this.currentPosition >= Editor.verticalSizeNum) this.pagePlus(1);
-          else this.currentPositionMove(this.currentPosition);
-          break;
-        case "ArrowDown":
-          this.currentPosition -= this.divisor;
-          if (this.currentPosition < 0) {
-            if (this.page === 1) this.currentPosition = 0;
-            else this.pageMinus(1);
-          } else this.currentPositionMove(this.currentPosition);
-          break;
-        case "ArrowLeft":
-          if (e.shiftKey) this.pageMinus(5);
-          else this.pageMinus(1);
-          break;
-        case "ArrowRight":
-          if (e.shiftKey) this.pagePlus(5);
-          else this.pagePlus(1);
-          break;
-        default: {
-          const possiblyLane = DefaultKeyConfig[this.keyKind].keys.indexOf(
-            e.code
-          );
-          const isFreeze = e.shiftKey;
 
-          if (possiblyLane >= 0) {
-            if (this.hasNote(this.page, possiblyLane, this.currentPosition)) {
-              this.noteRemove(this.page, possiblyLane, this.currentPosition);
-              this.noteClear(possiblyLane, this.currentPosition);
-            } else {
-              this.noteAdd(
-                this.page,
-                possiblyLane,
-                this.currentPosition,
-                isFreeze
-              );
-              this.noteDraw(possiblyLane, this.currentPosition, isFreeze);
-            }
-
+      if (e.ctrlKey) {
+        switch (e.code) {
+          case "Digit1":
+            this.changeDivisor(Editor.quarterInterval);
+            break;
+          case "Digit2":
+            this.changeDivisor(Editor.quarterInterval / 2);
+            break;
+          case "Digit3":
+            this.changeDivisor(Editor.quarterInterval / 4);
+            break;
+          case "Digit4":
+            this.changeDivisor(Editor.quarterInterval / 3);
+            break;
+          case "Digit5":
+            this.changeDivisor(Editor.quarterInterval / 6);
+            break;
+          case "Digit6":
+            this.changeDivisor(Editor.quarterInterval / 12);
+            break;
+          case "Digit7":
+            this.changeDivisor(Editor.quarterInterval / 8);
+            break;
+        }
+      } else {
+        switch (e.code) {
+          case "ArrowUp":
             this.currentPosition += this.divisor;
             if (this.currentPosition >= Editor.verticalSizeNum)
               this.pagePlus(1);
             else this.currentPositionMove(this.currentPosition);
-            console.log(this.scoreData);
+            break;
+          case "ArrowDown":
+            this.currentPosition -= this.divisor;
+            if (this.currentPosition < 0) {
+              if (this.page === 1) this.currentPosition = 0;
+              else this.pageMinus(1);
+            } else this.currentPositionMove(this.currentPosition);
+            break;
+          case "ArrowLeft":
+            if (e.shiftKey) this.pageMinus(5);
+            else this.pageMinus(1);
+            break;
+          case "ArrowRight":
+            if (e.shiftKey) this.pagePlus(5);
+            else this.pagePlus(1);
+            break;
+          default: {
+            const possiblyLane = DefaultKeyConfig[this.keyKind].keys.indexOf(
+              e.code
+            );
+            const isFreeze = e.shiftKey;
+
+            if (possiblyLane >= 0) {
+              if (this.hasNote(this.page, possiblyLane, this.currentPosition)) {
+                this.noteRemove(this.page, possiblyLane, this.currentPosition);
+                this.noteClear(possiblyLane, this.currentPosition);
+              } else {
+                this.noteAdd(
+                  this.page,
+                  possiblyLane,
+                  this.currentPosition,
+                  isFreeze
+                );
+                this.noteDraw(possiblyLane, this.currentPosition, isFreeze);
+              }
+
+              this.currentPosition += this.divisor;
+              if (this.currentPosition >= Editor.verticalSizeNum)
+                this.pagePlus(1);
+              else this.currentPositionMove(this.currentPosition);
+              console.log(this.scoreData);
+            }
+            break;
           }
-          break;
         }
       }
     }
   },
+
   mounted(): void {
     const editorHeight = Editor.editorHeight;
     const canvasMargin = Editor.canvasMargin;
@@ -325,6 +368,13 @@ export default Vue.extend({
 
     this.baseLayerDraw();
     this.currentPositionDraw();
+  },
+
+  watch: {
+    pageNum(newPage: number): void {
+      this.pageMove(newPage)
+    },
+
   }
 });
 </script>
