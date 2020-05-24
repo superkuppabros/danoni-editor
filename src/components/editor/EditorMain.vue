@@ -1,15 +1,20 @@
 <template>
-  <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
+  <div
+    id="canvas"
+    ref="canvas"
+    tabindex="-1"
+    @keydown.prevent="keydownAction"
+  ></div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
 import * as Editor from "./EditorConstant";
-import { DefaultKeyConfig } from "../../model/KeyConfig";
-import { ScoreData } from "../../model/ScoreData";
-import { KeyKind } from "../../model/KeyKind";
-import { PageScore } from "../../model/PageScore";
+import { DefaultKeyConfig } from "@/model/KeyConfig";
+import { ScoreData } from "@/model/ScoreData";
+import { KeyKind } from "@/model/KeyKind";
+import { PageScore } from "@/model/PageScore";
 
 type DataType = {
   currentPosition: number;
@@ -224,7 +229,7 @@ export default Vue.extend({
       this.page = page;
       this.currentPositionMove(0);
 
-      const pageScore: PageScore | undefined = this.scoreData.scores[page - 1];
+      const pageScore: PageScore = this.scoreData.scores[page - 1];
       if (pageScore === undefined) {
         console.log(this.scoreData);
         this.scoreData.scores[page - 1] = {
@@ -372,9 +377,12 @@ export default Vue.extend({
 
   watch: {
     pageNum(newPage: number): void {
-      this.pageMove(newPage)
+      this.pageMove(newPage);
     },
 
+    scoreData(scoreData: ScoreData): void {
+      this.$emit("changeScoreData", scoreData)
+    }
   }
 });
 </script>

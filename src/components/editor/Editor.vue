@@ -11,7 +11,7 @@ import EditorController from "./EditorController.vue";
 export default Vue.extend({
   name: "Editor",
   components: {
-    EditorController,
-  },
+    EditorController
+  }
 });
 </script>

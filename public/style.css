@@ -1,15 +1,18 @@
-#editor-controller {
-  display: flex;
-  border-width: 1px;
-  font-size: 16px;
-}
-
 /* エディタ本体 */
+
 #canvas:focus {
   outline: none;
 }
 
 /* エディタメニュー関連 */
+
+#editor-controller {
+  display: flex;
+  border-width: 1px;
+  font-size: 16px;
+  font-family: "Yu Gothic", sans-serif;
+}
+
 #editor-menu {
   margin-top: 20px;
   padding: 0 10px;
@@ -17,12 +20,17 @@
   height: 384px;
 }
 
-#editor-menu > div {
+#menu-page,
+#menu-fn,
+#menu-bpm,
+#menu-output {
   margin-top: 5px;
+  width: 106px;
 }
 
-#menu-page {
+#menu-page-display {
   display: flex;
+  margin-top: 5px;
 }
 
 .menu-page-btn,
@@ -38,4 +46,44 @@
 
 .menu-input {
   width: 100px;
+}
+
+#menu-output {
+  display: flex;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.menu-output-btn {
+  width: 50px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  margin-right: 2px;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: 0.4s;
+}
+
+.btn-blue {
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+}
+
+.btn-red {
+  color: #ff67de;
+  border: solid 2px #ff67de;
+}
+
+.btn-blue:hover {
+  background: #67c5ff;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-red:hover {
+  background: #ff67de;
+  color: white;
+  cursor: pointer;
 }
