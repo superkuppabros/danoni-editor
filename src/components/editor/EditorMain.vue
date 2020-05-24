@@ -10,11 +10,11 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
-import * as Editor from "./EditorConstant";
 import { DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore } from "@/model/PageScore";
+import { noteWidth, editorHeight, verticalSizeNum, quarterInterval, noteHeight, canvasMargin } from './EditorConstant';
 
 type DataType = {
   currentPosition: number;
@@ -44,7 +44,7 @@ export default Vue.extend({
       keyKind: "7",
       page: 1,
       keyNum: DefaultKeyConfig["7"].num,
-      editorWidth: Editor.noteWidth * DefaultKeyConfig["7"].num
+      editorWidth: noteWidth * DefaultKeyConfig["7"].num
     };
   },
   methods: {
@@ -52,11 +52,7 @@ export default Vue.extend({
     baseLayerDraw(): void {
       const divisor = this.divisor;
       const keyNum = this.keyNum;
-
-      const noteWidth = Editor.noteWidth;
-      const verticalSizeNum = Editor.verticalSizeNum;
       const editorWidth = this.editorWidth;
-      const editorHeight = Editor.editorHeight;
 
       const stage = this.stage as Konva.Stage;
       const baseLayer = this.baseLayer as Konva.Layer;
@@ -94,7 +90,7 @@ export default Vue.extend({
           points: [0, yPos, editorWidth, yPos],
           stroke: "#969696",
           strokeWidth:
-            (divisor * (i + 1)) % Editor.quarterInterval == 0 ? 1 : 0.5
+            (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5
         });
         baseLayer.add(line);
       }
@@ -120,7 +116,7 @@ export default Vue.extend({
       currentPositionLayer.destroyChildren();
 
       const currentPositionLine = new Konva.Line({
-        y: Editor.editorHeight - this.currentPosition,
+        y: editorHeight - this.currentPosition,
         points: [0, 0, this.editorWidth, 0],
         stroke: "#ffff00",
         strokeWidth: 1.5
@@ -175,10 +171,10 @@ export default Vue.extend({
       })(lane, isFreeze);
 
       const note = new Konva.Rect({
-        x: lane * Editor.noteWidth,
-        y: Editor.editorHeight - position - Editor.noteHeight / 2,
-        width: Editor.noteWidth,
-        height: Editor.noteHeight,
+        x: lane * noteWidth,
+        y: editorHeight - position - noteHeight / 2,
+        width: noteWidth,
+        height: noteHeight,
         fill: color,
         id: `note-${lane}-${position}`
       });
@@ -231,7 +227,6 @@ export default Vue.extend({
 
       const pageScore: PageScore = this.scoreData.scores[page - 1];
       if (pageScore === undefined) {
-        console.log(this.scoreData);
         this.scoreData.scores[page - 1] = {
           notes: new Array(this.keyNum).fill([]).map(() => []),
           freezes: new Array(this.keyNum).fill([]).map(() => [])
@@ -241,7 +236,7 @@ export default Vue.extend({
     },
     pageMinus(n: number): void {
       this.$emit("page-minus", n);
-      this.page < 1 + n ? (this.page = 1) : (this.page -= n);
+      Math.max(1, this.page - n);
       this.pageMove(this.page);
     },
     pagePlus(n: number): void {
@@ -268,32 +263,32 @@ export default Vue.extend({
       if (e.ctrlKey) {
         switch (e.code) {
           case "Digit1":
-            this.changeDivisor(Editor.quarterInterval);
+            this.changeDivisor(quarterInterval);
             break;
           case "Digit2":
-            this.changeDivisor(Editor.quarterInterval / 2);
+            this.changeDivisor(quarterInterval / 2);
             break;
           case "Digit3":
-            this.changeDivisor(Editor.quarterInterval / 4);
+            this.changeDivisor(quarterInterval / 4);
             break;
           case "Digit4":
-            this.changeDivisor(Editor.quarterInterval / 3);
+            this.changeDivisor(quarterInterval / 3);
             break;
           case "Digit5":
-            this.changeDivisor(Editor.quarterInterval / 6);
+            this.changeDivisor(quarterInterval / 6);
             break;
           case "Digit6":
-            this.changeDivisor(Editor.quarterInterval / 12);
+            this.changeDivisor(quarterInterval / 12);
             break;
           case "Digit7":
-            this.changeDivisor(Editor.quarterInterval / 8);
+            this.changeDivisor(quarterInterval / 8);
             break;
         }
       } else {
         switch (e.code) {
           case "ArrowUp":
             this.currentPosition += this.divisor;
-            if (this.currentPosition >= Editor.verticalSizeNum)
+            if (this.currentPosition >= verticalSizeNum)
               this.pagePlus(1);
             else this.currentPositionMove(this.currentPosition);
             break;
@@ -333,7 +328,7 @@ export default Vue.extend({
               }
 
               this.currentPosition += this.divisor;
-              if (this.currentPosition >= Editor.verticalSizeNum)
+              if (this.currentPosition >= verticalSizeNum)
                 this.pagePlus(1);
               else this.currentPositionMove(this.currentPosition);
               console.log(this.scoreData);
@@ -346,9 +341,6 @@ export default Vue.extend({
   },
 
   mounted(): void {
-    const editorHeight = Editor.editorHeight;
-    const canvasMargin = Editor.canvasMargin;
-
     const stage = new Konva.Stage({
       x: canvasMargin,
       y: canvasMargin,
@@ -381,7 +373,7 @@ export default Vue.extend({
     },
 
     scoreData(scoreData: ScoreData): void {
-      this.$emit("changeScoreData", scoreData)
+      this.$emit("changeScoreData", scoreData);
     }
   }
 });

@@ -2,7 +2,7 @@ import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore } from "@/model/PageScore";
-import { quarterInterval, verticalSizeNum } from "./EditorConstant";
+import { quarterInterval, verticalSizeNum, fps } from "./EditorConstant";
 
 export type FrameData = {
   notes: number[][];
@@ -33,7 +33,6 @@ export class ScoreConverter {
         if (timings[labelCounter] && pageNum === timings[labelCounter].label)
           labelCounter++;
         const timing = timings[labelCounter - 1];
-        const fps = 60;
         const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
         const startFrame =
           timing.firstNum +
@@ -99,5 +98,9 @@ export class ScoreConverter {
     //Todo: 速度変化なんとかする
     console.log(dataStr);
     return dataStr;
+  }
+
+  save(scoreData: ScoreData): string {
+    return JSON.stringify(scoreData);
   }
 }

@@ -20,28 +20,38 @@
   height: 384px;
 }
 
-#menu-page,
-#menu-fn,
-#menu-bpm,
-#menu-output {
+.menu-item-container {
   margin-top: 5px;
   width: 106px;
 }
 
-#menu-page-display {
+.menu-move-display {
   display: flex;
   margin-top: 5px;
 }
 
-.menu-page-btn,
-.menu-page-txt {
+.menu-move-btn,
+.menu-move-txt {
   margin: auto 3px;
 }
 
-.menu-page-btn:hover {
+.menu-move-btn:hover {
   color: orange;
   font-weight: bold;
   cursor: pointer;
+}
+
+#menu-move-header {
+  display: flex;
+  height: 30px;
+  line-height: 30px;
+}
+
+#menu-label-checkbox {
+  margin: auto 10px;
+  width: 15px;
+  height: 15px;
+  transition: 0.1s;
 }
 
 .menu-input {
