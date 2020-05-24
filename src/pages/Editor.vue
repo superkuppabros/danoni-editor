@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import EditorController from "./EditorController.vue";
+import EditorController from "@/components/editor/EditorController.vue";
 
 export default Vue.extend({
   name: "Editor",

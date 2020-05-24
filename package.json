@@ -11,7 +11,8 @@
   "dependencies": {
     "konva": "^6.0.0",
     "uikit": "^3.4.6",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",

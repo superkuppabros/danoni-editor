@@ -1,15 +1,15 @@
 <template>
-  <div id="app">
-    <editor></editor>
+  <div>
+    <!-- <router-link to="/start">tostart</router-link>
+    <router-link to="/editor">toeditor</router-link> -->
+    <router-view></router-view>
   </div>
 </template>
 
-<script>
-import Editor from "./components/editor/Editor.vue";
-export default {
-  name: "App",
-  components: {
-    Editor
-  }
-};
+<script lang="ts">
+import Vue from "vue";
+
+export default Vue.extend({
+  name: "App"
+});
 </script>
