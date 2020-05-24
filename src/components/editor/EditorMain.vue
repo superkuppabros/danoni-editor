@@ -1,10 +1,5 @@
 <template>
-  <div
-    id="canvas"
-    ref="canvas"
-    tabindex="-1"
-    @keydown.prevent="keydownAction"
-  ></div>
+  <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
 </template>
 
 <script lang="ts">
@@ -14,7 +9,14 @@ import { DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore } from "@/model/PageScore";
-import { noteWidth, editorHeight, verticalSizeNum, quarterInterval, noteHeight, canvasMargin } from './EditorConstant';
+import {
+  noteWidth,
+  editorHeight,
+  verticalSizeNum,
+  quarterInterval,
+  noteHeight,
+  canvasMargin,
+} from "./EditorConstant";
 
 type DataType = {
   currentPosition: number;
@@ -34,7 +36,7 @@ export default Vue.extend({
   name: "EditorMain",
   props: {
     pageNum: Number,
-    loadScoreData: { type: Object as PropType<ScoreData> }
+    loadScoreData: { type: Object as PropType<ScoreData> },
   },
   data(): DataType {
     return {
@@ -44,7 +46,7 @@ export default Vue.extend({
       keyKind: "7",
       page: 1,
       keyNum: DefaultKeyConfig["7"].num,
-      editorWidth: noteWidth * DefaultKeyConfig["7"].num
+      editorWidth: noteWidth * DefaultKeyConfig["7"].num,
     };
   },
   methods: {
@@ -67,7 +69,7 @@ export default Vue.extend({
         const line = new Konva.Line({
           points: [xPos, 0, xPos, editorHeight],
           stroke: "#969696",
-          strokeWidth: 0.5
+          strokeWidth: 0.5,
         });
         baseLayer.add(line);
 
@@ -77,7 +79,7 @@ export default Vue.extend({
             width: noteWidth,
             height: editorHeight,
             fill: "#c3f3ff",
-            strokeWidth: 0
+            strokeWidth: 0,
           });
           baseLayer.add(filler);
         }
@@ -89,8 +91,7 @@ export default Vue.extend({
         const line = new Konva.Line({
           points: [0, yPos, editorWidth, yPos],
           stroke: "#969696",
-          strokeWidth:
-            (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5
+          strokeWidth: (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5,
         });
         baseLayer.add(line);
       }
@@ -100,7 +101,7 @@ export default Vue.extend({
         width: editorWidth,
         height: editorHeight,
         stroke: "black",
-        strokeWidth: 1
+        strokeWidth: 1,
       });
       baseLayer.add(rect);
 
@@ -119,7 +120,7 @@ export default Vue.extend({
         y: editorHeight - this.currentPosition,
         points: [0, 0, this.editorWidth, 0],
         stroke: "#ffff00",
-        strokeWidth: 1.5
+        strokeWidth: 1.5,
       });
       currentPositionLayer.add(currentPositionLine);
       stage.add(currentPositionLayer);
@@ -128,32 +129,23 @@ export default Vue.extend({
     // ノーツの有無の判定
     hasNote(page: number, lane: number, position: number): boolean {
       const pageScore = this.scoreData.scores[this.page - 1];
-      return (
-        pageScore.notes[lane].includes(position) ||
-        pageScore.freezes[lane].includes(position)
-      );
+      return pageScore.notes[lane].includes(position) || pageScore.freezes[lane].includes(position);
     },
 
     // ノーツの追加
-    noteAdd(
-      page: number,
-      lane: number,
-      position: number,
-      isFreeze: boolean
-    ): void {
-      if (isFreeze)
-        this.scoreData.scores[page - 1].freezes[lane].push(position);
+    noteAdd(page: number, lane: number, position: number, isFreeze: boolean): void {
+      if (isFreeze) this.scoreData.scores[page - 1].freezes[lane].push(position);
       else this.scoreData.scores[page - 1].notes[lane].push(position);
     },
 
     // ノーツの削除
     noteRemove(page: number, lane: number, position: number): void {
-      this.scoreData.scores[page - 1].freezes[lane] = this.scoreData.scores[
-        page - 1
-      ].freezes[lane].filter(pos => pos !== position);
-      this.scoreData.scores[page - 1].notes[lane] = this.scoreData.scores[
-        page - 1
-      ].notes[lane].filter(pos => pos !== position);
+      this.scoreData.scores[page - 1].freezes[lane] = this.scoreData.scores[page - 1].freezes[
+        lane
+      ].filter((pos) => pos !== position);
+      this.scoreData.scores[page - 1].notes[lane] = this.scoreData.scores[page - 1].notes[
+        lane
+      ].filter((pos) => pos !== position);
     },
 
     // ノーツの描画
@@ -176,7 +168,7 @@ export default Vue.extend({
         width: noteWidth,
         height: noteHeight,
         fill: color,
-        id: `note-${lane}-${position}`
+        id: `note-${lane}-${position}`,
       });
       notesLayer.add(note);
       stage.add(notesLayer);
@@ -203,12 +195,12 @@ export default Vue.extend({
       stage.add(notesLayer);
 
       pageScore.notes.forEach((laneArr, lane) => {
-        laneArr.forEach(position => {
+        laneArr.forEach((position) => {
           this.noteDraw(lane, position, false);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
-        laneArr.forEach(position => {
+        laneArr.forEach((position) => {
           this.noteDraw(lane, position, true);
         });
       });
@@ -229,7 +221,7 @@ export default Vue.extend({
       if (pageScore === undefined) {
         this.scoreData.scores[page - 1] = {
           notes: new Array(this.keyNum).fill([]).map(() => []),
-          freezes: new Array(this.keyNum).fill([]).map(() => [])
+          freezes: new Array(this.keyNum).fill([]).map(() => []),
         };
       }
       this.displayPageScore(page);
@@ -249,9 +241,7 @@ export default Vue.extend({
     changeDivisor(divisor: number) {
       this.divisor = divisor;
       if (this.currentPosition % divisor !== 0) {
-        this.currentPositionMove(
-          Math.floor(this.currentPosition / divisor) * divisor
-        );
+        this.currentPositionMove(Math.floor(this.currentPosition / divisor) * divisor);
       }
       this.baseLayerDraw();
     },
@@ -286,10 +276,14 @@ export default Vue.extend({
         }
       } else {
         switch (e.code) {
+          case "Space":
+            this.currentPosition += this.divisor;
+            if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
+            else this.currentPositionMove(this.currentPosition);
+            break;
           case "ArrowUp":
             this.currentPosition += this.divisor;
-            if (this.currentPosition >= verticalSizeNum)
-              this.pagePlus(1);
+            if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
             else this.currentPositionMove(this.currentPosition);
             break;
           case "ArrowDown":
@@ -308,9 +302,7 @@ export default Vue.extend({
             else this.pagePlus(1);
             break;
           default: {
-            const possiblyLane = DefaultKeyConfig[this.keyKind].keys.indexOf(
-              e.code
-            );
+            const possiblyLane = DefaultKeyConfig[this.keyKind].keys.indexOf(e.code);
             const isFreeze = e.shiftKey;
 
             if (possiblyLane >= 0) {
@@ -318,18 +310,12 @@ export default Vue.extend({
                 this.noteRemove(this.page, possiblyLane, this.currentPosition);
                 this.noteClear(possiblyLane, this.currentPosition);
               } else {
-                this.noteAdd(
-                  this.page,
-                  possiblyLane,
-                  this.currentPosition,
-                  isFreeze
-                );
+                this.noteAdd(this.page, possiblyLane, this.currentPosition, isFreeze);
                 this.noteDraw(possiblyLane, this.currentPosition, isFreeze);
               }
 
               this.currentPosition += this.divisor;
-              if (this.currentPosition >= verticalSizeNum)
-                this.pagePlus(1);
+              if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
               else this.currentPositionMove(this.currentPosition);
               console.log(this.scoreData);
             }
@@ -337,7 +323,7 @@ export default Vue.extend({
           }
         }
       }
-    }
+    },
   },
 
   mounted(): void {
@@ -346,16 +332,16 @@ export default Vue.extend({
       y: canvasMargin,
       container: "canvas",
       width: this.editorWidth + canvasMargin * 2,
-      height: editorHeight + canvasMargin * 2
+      height: editorHeight + canvasMargin * 2,
     });
     const baseLayer = new Konva.Layer({
-      container: "baseLayer"
+      container: "baseLayer",
     });
     const currentPositionLayer = new Konva.Layer({
-      container: "currentPositionLayer"
+      container: "currentPositionLayer",
     });
     const notesLayer = new Konva.Layer({
-      container: "notesLayer"
+      container: "notesLayer",
     });
 
     this.stage = stage;
@@ -374,7 +360,7 @@ export default Vue.extend({
 
     scoreData(scoreData: ScoreData): void {
       this.$emit("changeScoreData", scoreData);
-    }
-  }
+    },
+  },
 });
 </script>
