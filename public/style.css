@@ -1,3 +1,9 @@
+/* 汎用 */
+body {
+  background-color: #ffffff;
+  text-align: center;
+}
+
 /* エディタ本体 */
 
 #canvas:focus {
@@ -18,6 +24,7 @@
   padding: 0 10px;
   border: 1px solid;
   height: 384px;
+  text-align: left;
 }
 
 .menu-item-container {
@@ -93,3 +100,52 @@
   color: white;
   cursor: pointer;
 }
+
+/* スタート画面 */
+#start-container {
+  width: 500px;
+  height: 400px;
+  background-color: aquamarine;
+  font-family: "Segoe UI", "Yu Gothic", sans-serif;
+}
+
+#start-title {
+  color: lightyellow;
+  font: 40px "Segoe UI";
+  text-align: center;
+  border-bottom: solid 1px linen;
+}
+
+#start-music-select,
+#start-score-select {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#start-go-next {
+  display: flex;
+  height: 80px;
+  justify-content: space-evenly;
+  margin-top: 15px;
+  border-top: solid 1px linen;
+}
+
+.start-go-btn {
+  width: 100px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 22px;
+  text-align: center;
+  border-radius: 3px;
+  transition: 0.4s;
+  margin: auto;
+}
+
+#start-key-selector {
+  margin: auto;
+}
+
+#start-version {
+  color: gray;
+}
+
