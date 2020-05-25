@@ -40,11 +40,11 @@
       </div>
       <div id="menu-fn" class="menu-item-container">
         <div class="menu-txt">First Number</div>
-        <input type="number" class="menu-input" v-model="timing.firstNum" />
+        <input type="number" class="uk-input uk-form-small" v-model="timing.firstNum" />
       </div>
       <div id="menu-bpm" class="menu-item-container">
         <div class="menu-txt">BPM</div>
-        <input type="number" class="menu-input" v-model="timing.bpm" />
+        <input type="number" class="uk-input uk-form-small" v-model="timing.bpm" />
       </div>
       <div id="menu-output" class="menu-item-container">
         <div class="menu-output-btn btn-red" @click="convert">GO</div>

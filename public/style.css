@@ -54,10 +54,6 @@
   transition: 0.1s;
 }
 
-.menu-input {
-  width: 100px;
-}
-
 #menu-output {
   display: flex;
   margin-top: 20px;
