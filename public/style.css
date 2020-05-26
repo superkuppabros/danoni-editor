@@ -126,8 +126,8 @@ body {
   display: flex;
   height: 80px;
   justify-content: space-evenly;
-  margin-top: 15px;
-  border-top: solid 1px linen;
+  border: solid linen;
+  border-width: 1px 0 ;
 }
 
 .start-go-btn {

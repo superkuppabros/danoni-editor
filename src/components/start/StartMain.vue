@@ -2,24 +2,8 @@
   <div id="start-container">
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
-      <div id="start-music-select" class="uk-placeholder uk-text-center">
-        <span uk-icon="icon: upload"></span>
-        <span class="uk-text-middle"> 楽曲ファイルをドロップ </span>
-        <div uk-form-custom>
-          <input type="file" multiple />
-          <span class="uk-link">参照</span>
-        </div>
-      </div>
-
-      <div id="start-score-select" class="uk-placeholder uk-text-center">
-        <span uk-icon="icon: upload"></span>
-        <span class="uk-text-middle"> 譜面ファイルをドロップ </span>
-        <div uk-form-custom>
-          <input type="file" multiple />
-          <span class="uk-link">参照</span>
-        </div>
-      </div>
-
+      <start-uploader msg="楽曲ファイルをドロップ"></start-uploader>
+      <start-uploader msg="譜面ファイルをドロップ"></start-uploader>
       <div id="start-go-next">
         <select id="start-key-selector" class="uk-select uk-form-width-medium">
           <option>5</option>
@@ -36,6 +20,7 @@
 
 <script lang="ts">
 import Vue from "vue";
+import StartUploader from "./StartUploader.vue";
 
 type DataType = {
   msg: string;
@@ -43,10 +28,13 @@ type DataType = {
 
 export default Vue.extend({
   name: "StartMain",
+  components: {
+    StartUploader,
+  },
   data(): DataType {
     return {
-      msg: "hello"
+      msg: "hello",
     };
-  }
+  },
 });
 </script>
