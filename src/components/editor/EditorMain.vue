@@ -41,17 +41,19 @@ export default Vue.extend({
   name: "EditorMain",
   props: {
     pageNum: Number,
+    selectedKey: String,
     loadScoreData: { type: Object as PropType<ScoreData> }
   },
   data(): DataType {
+    const keyKind = this.selectedKey as KeyKind;
     return {
       currentPosition: 0,
       scoreData: this.loadScoreData,
       divisor: 24,
-      keyKind: "7",
+      keyKind: keyKind,
       page: 1,
-      keyNum: DefaultKeyConfig["7"].num,
-      editorWidth: noteWidth * DefaultKeyConfig["7"].num
+      keyNum: DefaultKeyConfig[keyKind].num,
+      editorWidth: noteWidth * DefaultKeyConfig[keyKind].num
     };
   },
   methods: {

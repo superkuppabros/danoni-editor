@@ -3,6 +3,7 @@
     <editor-main
       :page-num="pageNum"
       :load-score-data="scoreData"
+      :selected-key="keyKind"
       @page-minus="pageMinus"
       @page-plus="pagePlus"
     ></editor-main>
@@ -86,7 +87,12 @@ export default Vue.extend({
   components: {
     EditorMain
   },
+  props: {
+    selectedKey: String
+  },
   data(): DataType {
+    const keyKind = this.selectedKey as KeyKind;
+    const keyNum = DefaultKeyConfig[keyKind].num;
     return {
       pageNum: 1,
       labelNum: 1,
@@ -110,12 +116,12 @@ export default Vue.extend({
         ],
         scores: [
           {
-            notes: [[], [], [], [], [], [], []],
-            freezes: [[], [], [], [], [], [], []]
+            notes: new Array(keyNum).fill([]).map(() => []),
+            freezes: new Array(keyNum).fill([]).map(() => [])
           }
         ]
       },
-      keyKind: "7",
+      keyKind: this.selectedKey as KeyKind,
       keyConfig: DefaultKeyConfig
     };
   },

@@ -1,6 +1,9 @@
 <template>
   <div id="start-music-select" @drop.prevent="dropped">
-    <div uk-form-custom class="uk-placeholder uk-text-center uk-margin-remove-bottom">
+    <div
+      uk-form-custom
+      class="uk-placeholder uk-text-center uk-margin-remove-bottom"
+    >
       <input type="file" multiple />
       <span uk-icon="icon: upload"></span>
       <span class="uk-text-middle"> {{ msg }} </span>
@@ -20,20 +23,20 @@ type DataType = {
 export default Vue.extend({
   name: "StartUploader",
   props: {
-    msg: String,
+    msg: String
   },
   data(): DataType {
     return {
-      vue: this,
+      vue: this
     };
   },
   methods: {
     dropped(): void {
       console.log("hello");
-    },
+    }
   },
   mounted(): void {
     UIkit;
-  },
+  }
 });
 </script>
