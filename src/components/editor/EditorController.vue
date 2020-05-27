@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import EditorMain from "./EditorMain.vue";
 import { Timing } from "../../model/Timing";
 import { ScoreData } from "../../model/ScoreData";
@@ -88,7 +88,8 @@ export default Vue.extend({
     EditorMain
   },
   props: {
-    selectedKey: String
+    selectedKey: String,
+    loadScoreData: Object as PropType<ScoreData>
   },
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
@@ -101,26 +102,7 @@ export default Vue.extend({
         firstNum: 200,
         bpm: 140
       },
-      scoreData: {
-        timings: [
-          {
-            label: 1,
-            firstNum: 200,
-            bpm: 140
-          },
-          {
-            label: 3,
-            firstNum: 2000,
-            bpm: 1800
-          }
-        ],
-        scores: [
-          {
-            notes: new Array(keyNum).fill([]).map(() => []),
-            freezes: new Array(keyNum).fill([]).map(() => [])
-          }
-        ]
-      },
+      scoreData: this.loadScoreData,
       keyKind: this.selectedKey as KeyKind,
       keyConfig: DefaultKeyConfig
     };

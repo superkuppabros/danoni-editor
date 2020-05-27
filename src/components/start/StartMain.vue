@@ -15,7 +15,33 @@
           <option>11</option>
         </select>
         <router-link
-          :to="{ path: 'editor', query: { key: selectedKey } }"
+          :to="{
+            name: 'editor',
+            path: 'editor',
+            params: {
+              loadScoreData: {
+                timings: [
+                  {
+                    label: 1,
+                    firstNum: 200,
+                    bpm: 140
+                  },
+                  {
+                    label: 3,
+                    firstNum: 2000,
+                    bpm: 1800
+                  }
+                ],
+                scores: [
+                  {
+                    notes: new Array(5).fill([]).map(() => []),
+                    freezes: new Array(5).fill([]).map(() => [])
+                  }
+                ]
+              }
+            },
+            query: { key: selectedKey }
+          }"
           class="start-go-btn btn-red"
         >
           NEXT
