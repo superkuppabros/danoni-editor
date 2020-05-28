@@ -7,6 +7,7 @@ export type KeyConfig = {
     keys: string[];
     noteNames: string[];
     freezeNames: string[];
+    colorGroup: number[];
   };
 };
 
@@ -28,7 +29,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzUp_data",
       "frzRight_data",
       "frzSpace_data"
-    ]
+    ],
+    colorGroup: [0, 0, 0, 0, 2]
   },
 
   "7": {
@@ -52,7 +54,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzUp_data",
       "frzRdia_data",
       "frzRight_data"
-    ]
+    ],
+    colorGroup: [0, 1, 0, 2, 0, 1, 0]
   },
 
   "7i": {
@@ -76,7 +79,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzUp_data",
       "frzRdia_data",
       "frzRight_data"
-    ]
+    ],
+    colorGroup: [1, 1, 1, 0, 0, 0, 0]
   },
 
   "8": {
@@ -102,7 +106,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzRdia_data",
       "frzRight_data",
       "sfrzLeft_data"
-    ]
+    ],
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2]
   },
 
   "9A": {
@@ -140,7 +145,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1]
   },
 
   "9B": {
@@ -178,7 +184,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [1, 0, 1, 0, 2, 0, 1, 0, 1]
   },
 
   "9i": {
@@ -216,7 +223,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [1, 0, 1, 0, 2, 3, 3, 3, 3]
   },
 
   "11": {
@@ -260,7 +268,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
   },
 
   "11L": {
@@ -304,7 +313,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzUp_data",
       "frzRdia_data",
       "frzRight_data"
-    ]
+    ],
+    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0]
   },
 
   "11W": {
@@ -348,7 +358,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2, 3, 3, 2]
   },
 
   "11i": {
@@ -392,12 +403,13 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzIyo_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 0, 2, 0, 0, 2, 1, 1, 2, 1, 1]
   },
 
   "12": {
     id: 12,
-    num: 11,
+    num: 12,
     keys: [
       "KeyB",
       "KeyN",
@@ -439,14 +451,15 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data"
-    ]
+    ],
+    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 3, 3, 3, 3]
   },
 
   "13": {
     id: 13,
-    num: 11,
+    num: 13,
     keys: [
-      "keyA",
+      "KeyA",
       "KeyS",
       "KeyD",
       "KeyF",
@@ -489,12 +502,13 @@ export const DefaultKeyConfig: KeyConfig = {
       "tfrzDown_data",
       "tfrzUp_data",
       "tfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 3, 3, 3]
   },
 
   "14": {
     id: 14,
-    num: 11,
+    num: 14,
     keys: [
       "KeyB",
       "KeyN",
@@ -542,7 +556,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzUp_data",
       "sfrzRight_data",
       "sfrzRdia_data"
-    ]
+    ],
+    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 2, 3, 3, 3, 3, 2]
   },
 
   "14i": {
@@ -595,7 +610,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzDown_data",
       "frzUp_data",
       "frzRight_data"
-    ]
+    ],
+    colorGroup: [2, 2, 2, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
   },
 
   "15": {
@@ -651,7 +667,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "tfrzDown_data",
       "tfrzUp_data",
       "tfrzRight_data"
-    ]
+    ],
+    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
   },
 
   "16i": {
@@ -661,7 +678,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyZ",
       "KeyX",
       "KeyC",
-      "keyA",
+      "KeyA",
       "KeyS",
       "KeyD",
       "KeyF",
@@ -710,7 +727,8 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzDown_data",
       "frzUp_data",
       "frzRight_data"
-    ]
+    ],
+    colorGroup: [2, 2, 2, 1, 0, 1, 0, 2, 0, 1, 0, 1, 3, 3, 3, 3]
   },
 
   "17": {
@@ -771,6 +789,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "dfrzUp_data",
       "cfrzRight_data",
       "dfrzRight_data"
-    ]
+    ],
+    colorGroup: [0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0]
   }
 };

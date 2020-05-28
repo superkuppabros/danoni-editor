@@ -10,7 +10,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
-import { DefaultKeyConfig } from "@/model/KeyConfig";
+import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore } from "@/model/PageScore";
@@ -20,12 +20,15 @@ import {
   verticalSizeNum,
   quarterInterval,
   noteHeight,
-  canvasMargin
+  canvasMargin,
+  freezeColors,
+  noteColors
 } from "./EditorConstant";
 
 type DataType = {
   currentPosition: number;
   scoreData: ScoreData;
+  keyConfig: KeyConfig;
   divisor: number;
   keyKind: KeyKind;
   keyNum: number;
@@ -46,14 +49,16 @@ export default Vue.extend({
   },
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
+    const keyConfig = DefaultKeyConfig;
     return {
       currentPosition: 0,
       scoreData: this.loadScoreData,
+      keyConfig: keyConfig,
       divisor: 24,
       keyKind: keyKind,
       page: 1,
-      keyNum: DefaultKeyConfig[keyKind].num,
-      editorWidth: noteWidth * DefaultKeyConfig[keyKind].num
+      keyNum: keyConfig[keyKind].num,
+      editorWidth: noteWidth * keyConfig[keyKind].num
     };
   },
   methods: {
@@ -168,13 +173,13 @@ export default Vue.extend({
     noteDraw(lane: number, position: number, isFreeze: boolean): void {
       const stage = this.stage as Konva.Stage;
       const notesLayer = this.notesLayer as Konva.Layer;
+      const colorGroup = this.keyConfig[this.keyKind].colorGroup;
 
-      // Todo: 色設定作る
       const color = ((lane: number, isFreeze: boolean) => {
         if (isFreeze) {
-          return lane % 2 == 0 ? "#ff4dd2" : "#00ffff";
+          return freezeColors[colorGroup[lane]];
         } else {
-          return lane % 2 == 0 ? "red" : "blue";
+          return noteColors[colorGroup[lane]];
         }
       })(lane, isFreeze);
 
@@ -318,7 +323,7 @@ export default Vue.extend({
             else this.pagePlus(1);
             break;
           default: {
-            const possiblyLane = DefaultKeyConfig[this.keyKind].keys.indexOf(
+            const possiblyLane = this.keyConfig[this.keyKind].keys.indexOf(
               e.code
             );
             const isFreeze = e.shiftKey;
