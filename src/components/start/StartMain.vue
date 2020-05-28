@@ -16,9 +16,9 @@
           class="uk-select uk-form-width-medium"
           v-model="selectedKey"
         >
-          <option>5</option>
-          <option>7</option>
-          <option>11</option>
+          <option v-for="(value, keyKind) in keyConfig" :key="value.id">{{
+            keyKind
+          }}</option>
         </select>
         <router-link
           :to="{
@@ -45,8 +45,10 @@
 import Vue from "vue";
 import StartUploader from "./StartUploader.vue";
 import { KeyKind } from "@/model/KeyKind";
+import { DefaultKeyConfig, KeyConfig } from "../../model/KeyConfig";
 
 type DataType = {
+  keyConfig: KeyConfig;
   musicTitle: string;
   scoreTitle: string;
   selectedKey: KeyKind;
@@ -61,6 +63,7 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
+      keyConfig: DefaultKeyConfig,
       musicTitle: "楽曲ファイルをドロップ",
       scoreTitle: "譜面ファイルをドロップ",
       selectedKey: "5",
