@@ -2,8 +2,14 @@
   <div id="start-container">
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
-      <start-uploader msg="楽曲ファイルをドロップ"></start-uploader>
-      <start-uploader msg="譜面ファイルをドロップ"></start-uploader>
+      <start-uploader
+        :msg="musicTitle"
+        @fileRecieve="onMusicFileRecieve"
+      ></start-uploader>
+      <start-uploader
+        :msg="scoreTitle"
+        @fileRecieve="onScoreFileRecieve"
+      ></start-uploader>
       <div id="start-go-next">
         <select
           id="start-key-selector"
@@ -19,26 +25,8 @@
             name: 'editor',
             path: 'editor',
             params: {
-              loadScoreData: {
-                timings: [
-                  {
-                    label: 1,
-                    firstNum: 200,
-                    bpm: 140
-                  },
-                  {
-                    label: 3,
-                    firstNum: 2000,
-                    bpm: 1800
-                  }
-                ],
-                scores: [
-                  {
-                    notes: new Array(5).fill([]).map(() => []),
-                    freezes: new Array(5).fill([]).map(() => [])
-                  }
-                ]
-              }
+              scoreData: scoreDataStr,
+              musicUrl: musicUrl
             },
             query: { key: selectedKey }
           }"
@@ -59,8 +47,11 @@ import StartUploader from "./StartUploader.vue";
 import { KeyKind } from "@/model/KeyKind";
 
 type DataType = {
-  msg: string;
+  musicTitle: string;
+  scoreTitle: string;
   selectedKey: KeyKind;
+  musicUrl: string | null;
+  scoreDataStr: string | null;
 };
 
 export default Vue.extend({
@@ -70,9 +61,46 @@ export default Vue.extend({
   },
   data(): DataType {
     return {
-      msg: "hello",
-      selectedKey: "5"
+      musicTitle: "楽曲ファイルをドロップ",
+      scoreTitle: "譜面ファイルをドロップ",
+      selectedKey: "5",
+      musicUrl: null,
+      scoreDataStr: null
     };
+  },
+  methods: {
+    onMusicFileRecieve(file: File) {
+      const mimeTypePattern = "audio.*";
+      if (!file.type.match(mimeTypePattern))
+        alert("音楽ファイルではありません。");
+      else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          if (typeof result == "string") {
+            this.musicUrl = result;
+            this.musicTitle = file.name;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    },
+    onScoreFileRecieve(file: File) {
+      const mimeTypePattern = "(application/json|text/plain)";
+      if (!file.type.match(mimeTypePattern))
+        alert("譜面ファイルではありません。");
+      else {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result;
+          if (typeof result == "string") {
+            this.scoreDataStr = result;
+            this.scoreTitle = file.name;
+          }
+        };
+        reader.readAsText(file);
+      }
+    }
   }
 });
 </script>

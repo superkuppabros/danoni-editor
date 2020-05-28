@@ -64,10 +64,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import Vue from "vue";
 import EditorMain from "./EditorMain.vue";
 import { Timing } from "../../model/Timing";
-import { ScoreData } from "../../model/ScoreData";
+import { ScoreData, DefaultScoreData } from "../../model/ScoreData";
 import { ScoreConverter } from "./ScoreConverter";
 import { KeyKind } from "../../model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "../../model/KeyConfig";
@@ -89,11 +89,23 @@ export default Vue.extend({
   },
   props: {
     selectedKey: String,
-    loadScoreData: Object as PropType<ScoreData>
+    loadScoreDataStr: String,
+    loadMusicUrl: String
   },
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
     const keyNum = DefaultKeyConfig[keyKind].num;
+    let scoreData;
+    try {
+      //TODO: 譜面データのチェッカーを作る
+      if (!this.loadScoreDataStr) scoreData = new DefaultScoreData(keyNum);
+      else
+        scoreData = (JSON.parse(this.loadScoreDataStr) as unknown) as ScoreData;
+    } catch {
+      alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
+      scoreData = new DefaultScoreData(keyNum);
+    }
+
     return {
       pageNum: 1,
       labelNum: 1,
@@ -102,7 +114,7 @@ export default Vue.extend({
         firstNum: 200,
         bpm: 140
       },
-      scoreData: this.loadScoreData,
+      scoreData: scoreData,
       keyKind: this.selectedKey as KeyKind,
       keyConfig: DefaultKeyConfig
     };
@@ -138,12 +150,18 @@ export default Vue.extend({
     convert(): void {
       const converter = new ScoreConverter(this.keyKind, this.keyConfig);
       const data: string = converter.convert(this.scoreData);
-      if (navigator.clipboard) navigator.clipboard.writeText(data);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(data);
+        alert("セーブデータをクリップボードにコピーしました！");
+      }
     },
     save(): void {
       const converter = new ScoreConverter(this.keyKind, this.keyConfig);
       const data: string = converter.save(this.scoreData);
-      if (navigator.clipboard) navigator.clipboard.writeText(data);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(data);
+        alert("セーブデータをクリップボードにコピーしました！");
+      }
     },
     getLabelNumByPageNum(pageNum: number): number {
       const labels = this.scoreData.timings.map(timing => timing.label);

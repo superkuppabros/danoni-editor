@@ -96,7 +96,6 @@ export class ScoreConverter {
     );
 
     //Todo: 速度変化なんとかする
-    console.log(dataStr);
     return dataStr;
   }
 

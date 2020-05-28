@@ -266,8 +266,6 @@ export default Vue.extend({
 
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
-      console.log(e.code);
-
       if (e.ctrlKey) {
         switch (e.code) {
           case "Digit1":
@@ -342,7 +340,6 @@ export default Vue.extend({
               this.currentPosition += this.divisor;
               if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
               else this.currentPositionMove(this.currentPosition);
-              console.log(this.scoreData);
             }
             break;
           }
@@ -376,6 +373,7 @@ export default Vue.extend({
 
     this.baseLayerDraw();
     this.currentPositionDraw();
+    this.displayPageScore(1);
   },
 
   watch: {

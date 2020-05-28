@@ -3,14 +3,14 @@ import Editor from "./pages/Editor.vue";
 import Start from "./pages/Start.vue";
 import Router from "vue-router";
 import { KeyKind } from "./model/KeyKind";
-import { ScoreData } from "./model/ScoreData";
 
 Vue.config.productionTip = false;
 
 Vue.use(Router);
 
-type QueryType = {
-  loadScoreData: ScoreData;
+type PropsType = {
+  loadScoreDataStr: string;
+  loadMusicUrl: string;
   selectedKey: KeyKind;
 };
 
@@ -26,9 +26,10 @@ export default new Router({
       path: "/editor",
       name: "editor",
       component: Editor,
-      props(routes): QueryType {
+      props(routes): PropsType {
         return {
-          loadScoreData: (routes.params.scoreData as unknown) as ScoreData,
+          loadScoreDataStr: routes.params.scoreData,
+          loadMusicUrl: routes.params.musicUrl,
           selectedKey: (routes.query.key || "7") as KeyKind
         };
       }
