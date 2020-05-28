@@ -22,7 +22,8 @@ import {
   noteHeight,
   canvasMargin,
   freezeColors,
-  noteColors
+  noteColors,
+  laneColors
 } from "./EditorConstant";
 
 type DataType = {
@@ -76,25 +77,27 @@ export default Vue.extend({
       baseLayer.destroyChildren();
 
       // 縦罫線の描画
-      for (let i = 0; i < keyNum; i++) {
-        const xPos = (i + 1) * noteWidth;
+      for (let lane = 0; lane < keyNum; lane++) {
+        const xPos = (lane + 1) * noteWidth;
+
+        const colorGroup = this.keyConfig[this.keyKind].colorGroup;
+        const color = laneColors[colorGroup[lane]];
+
+        const filler = new Konva.Rect({
+          x: xPos - noteWidth,
+          width: noteWidth,
+          height: editorHeight,
+          fill: color,
+          strokeWidth: 0
+        });
+        baseLayer.add(filler);
+
         const line = new Konva.Line({
           points: [xPos, 0, xPos, editorHeight],
           stroke: "#969696",
           strokeWidth: 0.5
         });
         baseLayer.add(line);
-
-        if (i % 2 == 1) {
-          const filler = new Konva.Rect({
-            x: xPos - noteWidth,
-            width: noteWidth,
-            height: editorHeight,
-            fill: "#c3f3ff",
-            strokeWidth: 0
-          });
-          baseLayer.add(filler);
-        }
       }
 
       // 横罫線の描画
@@ -131,8 +134,8 @@ export default Vue.extend({
       const currentPositionLine = new Konva.Line({
         y: editorHeight - this.currentPosition,
         points: [0, 0, this.editorWidth, 0],
-        stroke: "#ffff00",
-        strokeWidth: 1.5
+        stroke: "#d8d800",
+        strokeWidth: 1.75
       });
       currentPositionLayer.add(currentPositionLine);
       stage.add(currentPositionLayer);
