@@ -15,10 +15,9 @@ type PropsType = {
 };
 
 export default new Router({
-  mode: "history",
   routes: [
     {
-      path: "/start",
+      path: "/",
       name: "Start",
       component: Start
     },

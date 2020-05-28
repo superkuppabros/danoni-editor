@@ -1,0 +1,151 @@
+/* 汎用 */
+body {
+  background-color: #ffffff;
+  text-align: center;
+}
+
+/* エディタ本体 */
+
+#canvas:focus {
+  outline: none;
+}
+
+/* エディタメニュー関連 */
+
+#editor-controller {
+  display: flex;
+  border-width: 1px;
+  font-size: 16px;
+  font-family: "Yu Gothic", sans-serif;
+}
+
+#editor-menu {
+  margin-top: 20px;
+  padding: 0 10px;
+  border: 1px solid;
+  height: 384px;
+  text-align: left;
+}
+
+.menu-item-container {
+  margin-top: 5px;
+  width: 106px;
+}
+
+.menu-move-display {
+  display: flex;
+  margin-top: 5px;
+}
+
+.menu-move-btn,
+.menu-move-txt {
+  margin: auto 3px;
+}
+
+.menu-move-btn:hover {
+  color: orange;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#menu-move-header {
+  display: flex;
+  height: 30px;
+  line-height: 30px;
+}
+
+#menu-label-checkbox {
+  margin: auto 10px;
+  width: 15px;
+  height: 15px;
+  transition: 0.1s;
+}
+
+#menu-output {
+  display: flex;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.menu-output-btn {
+  width: 50px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  margin-right: 2px;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: 0.4s;
+}
+
+.btn-blue {
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+}
+
+.btn-red {
+  color: #ff67de;
+  border: solid 2px #ff67de;
+}
+
+.btn-blue:hover {
+  background: #67c5ff;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-red:hover {
+  background: #ff67de;
+  color: white;
+  cursor: pointer;
+}
+
+/* スタート画面 */
+#start-container {
+  width: 500px;
+  height: 400px;
+  background-color: aquamarine;
+  font-family: "Segoe UI", "Yu Gothic", sans-serif;
+}
+
+#start-title {
+  color: lightyellow;
+  font: 40px "Segoe UI";
+  text-align: center;
+  border-bottom: solid 1px linen;
+}
+
+#start-music-select,
+#start-score-select {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+#start-go-next {
+  display: flex;
+  height: 80px;
+  justify-content: space-evenly;
+  border: solid linen;
+  border-width: 1px 0 ;
+}
+
+.start-go-btn {
+  width: 100px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 22px;
+  text-align: center;
+  border-radius: 3px;
+  transition: 0.4s;
+  margin: auto;
+}
+
+#start-key-selector {
+  margin: auto;
+}
+
+#start-version {
+  color: gray;
+}
+
