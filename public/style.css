@@ -2,6 +2,8 @@
 body {
   background-color: rgb(197, 197, 197);
   text-align: center;
+  height: 100vh;
+  min-height: 500px;
 }
 
 container {
@@ -158,4 +160,5 @@ container {
 
 #start-version {
   color: gray;
+  margin-top: 3px;
 }
