@@ -5,7 +5,9 @@
 Vue.js + TypeScript 製の [Dancing☆Onigiri](https://github.com/cwtickle/danoniplus) エディターです。  
 Google Chromeにて動作を確認しています。  
 必要な機能については順次実装していきます。  
-バグ報告はissue, PRかTwitter(@superkuppabros)までお願いします。
+
+既知のバグについてはIssueをご覧ください。
+その他のバグ報告はissue, PRかTwitter(@superkuppabros)までお願いします。
 
 ## 使い方
 - キー操作
@@ -37,6 +39,7 @@ Google Chromeにて動作を確認しています。
     </details>
 
   - フリーズノート打ち込み: `Shift` + 各種キー
+  - 音楽再生・停止: `Enter`
   - 上下移動: 上下方向キー、`Space`(上方向)
   - ページ移動: 左右方向キー
   - 5ページ移動: `Shift` + 左右方向キー
@@ -89,6 +92,9 @@ npm run lint
 ```
 
 ## バージョン
+
+### ver 1.1.0α
+音楽再生機能の追加
 
 ### ver 1.0.0α
 α版公開
