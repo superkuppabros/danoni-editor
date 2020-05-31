@@ -23,8 +23,11 @@ import {
   canvasMargin,
   freezeColors,
   noteColors,
-  laneColors
+  laneColors,
+  fps
 } from "./EditorConstant";
+import { Timing } from "../../model/Timing";
+import { MusicPlayer } from "./MusicPlayer";
 
 type DataType = {
   currentPosition: number;
@@ -35,22 +38,29 @@ type DataType = {
   keyNum: number;
   page: number;
   editorWidth: number;
+  musicTimer: number | null;
+  musicPlayer: MusicPlayer;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
   currentPositionLayer?: Konva.Layer;
+  // audio: HTMLAudioElement;
 };
 
 export default Vue.extend({
   name: "EditorMain",
   props: {
     pageNum: Number,
+    loadScoreData: { type: Object as PropType<ScoreData> },
+    loadMusicUrl: String,
     selectedKey: String,
-    loadScoreData: { type: Object as PropType<ScoreData> }
+    timing: { type: Object as PropType<Timing> }
   },
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
     const keyConfig = DefaultKeyConfig;
+    const audio = new Audio(this.loadMusicUrl);
+
     return {
       currentPosition: 0,
       scoreData: this.loadScoreData,
@@ -59,7 +69,10 @@ export default Vue.extend({
       keyKind: keyKind,
       page: 1,
       keyNum: keyConfig[keyKind].num,
-      editorWidth: noteWidth * keyConfig[keyKind].num
+      editorWidth: noteWidth * keyConfig[keyKind].num,
+      musicPlayer: new MusicPlayer(audio),
+      musicTimer: null
+      // audio: audio
     };
   },
   methods: {
@@ -139,6 +152,11 @@ export default Vue.extend({
       });
       currentPositionLayer.add(currentPositionLine);
       stage.add(currentPositionLayer);
+    },
+
+    // 現在位置の移動アニメーション
+    currentPositionAnimation() {
+      console.log("hoge");
     },
 
     // ノーツの有無の判定
@@ -300,6 +318,41 @@ export default Vue.extend({
         }
       } else {
         switch (e.code) {
+          case "Enter": {
+            if (!this.musicTimer) {
+              // 再生処理
+              const timing = this.timing;
+              const secondsPerPage =
+                (60 / quarterInterval / timing.bpm) * verticalSizeNum;
+              const bufferNum = 0.25; // 2拍分
+              const durationNum = 2; // 8拍分
+              const firstSeconds =
+                timing.firstNum / fps +
+                (this.pageNum - timing.label) * secondsPerPage;
+              const startTime = firstSeconds - bufferNum * secondsPerPage;
+              const endTime = firstSeconds + durationNum * secondsPerPage;
+              console.log(startTime, endTime);
+
+              const loop = (startTime: number, endTime: number) => {
+                const playDuration = (endTime - startTime) * 1000;
+                this.musicPlayer.play(startTime);
+                if (this.musicTimer) {
+                  const timer: number = setTimeout(() => {
+                    loop(startTime, endTime);
+                  }, playDuration);
+                  this.musicTimer = timer;
+                }
+              };
+
+              this.musicTimer = 1;
+              loop(startTime, endTime);
+            } else {
+              // 停止処理
+              this.musicPlayer.pause(this.musicTimer);
+              this.musicTimer = null;
+            }
+            break;
+          }
           case "Space":
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);

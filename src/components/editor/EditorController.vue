@@ -3,7 +3,9 @@
     <editor-main
       :page-num="pageNum"
       :load-score-data="scoreData"
+      :load-music-url="loadMusicUrl"
       :selected-key="keyKind"
+      :timing="timing"
       @page-minus="pageMinus"
       @page-plus="pagePlus"
     ></editor-main>
