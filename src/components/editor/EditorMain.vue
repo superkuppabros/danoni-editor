@@ -44,7 +44,6 @@ type DataType = {
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
   currentPositionLayer?: Konva.Layer;
-  // audio: HTMLAudioElement;
 };
 
 export default Vue.extend({
@@ -142,21 +141,52 @@ export default Vue.extend({
     currentPositionDraw(): void {
       const stage = this.stage as Konva.Stage;
       const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
-      currentPositionLayer.destroyChildren();
 
-      const currentPositionLine = new Konva.Line({
-        y: editorHeight - this.currentPosition,
-        points: [0, 0, this.editorWidth, 0],
-        stroke: "#d8d800",
-        strokeWidth: 1.75
-      });
+      const node = currentPositionLayer.findOne("#currentPosition");
+      const currentPositionLine: Konva.Line =
+        node instanceof Konva.Line
+          ? node.y(editorHeight - this.currentPosition)
+          : new Konva.Line({
+              y: editorHeight - this.currentPosition,
+              points: [0, 0, this.editorWidth, 0],
+              stroke: "#d8d800",
+              strokeWidth: 1.75,
+              id: "currentPosition"
+            });
       currentPositionLayer.add(currentPositionLine);
       stage.add(currentPositionLayer);
     },
 
-    // 現在位置の移動アニメーション
-    currentPositionAnimation() {
-      console.log("hoge");
+    // 再生位置の移動アニメーション
+    musicPositionAnimation(duration: number) {
+      const stage = this.stage as Konva.Stage;
+      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
+
+      const node = currentPositionLayer.findOne("#musicPosition");
+      const currentPositionLine: Konva.Line =
+        node instanceof Konva.Line
+          ? node.y(editorHeight)
+          : new Konva.Line({
+              y: editorHeight,
+              points: [0, 0, this.editorWidth, 0],
+              stroke: "#8000ff",
+              strokeWidth: 1.75,
+              id: "musicPosition"
+            });
+
+      currentPositionLayer.add(currentPositionLine);
+      stage.add(currentPositionLayer);
+
+      const tween = new Konva.Tween({
+        node: currentPositionLine,
+        duration: (duration * 4) / 5 / 1000, // 10拍中の8拍で上まで到達する
+        x: 0,
+        y: 0
+      });
+
+      setTimeout(() => {
+        tween.play();
+      }, duration / 5);
     },
 
     // ノーツの有無の判定
@@ -257,7 +287,6 @@ export default Vue.extend({
     // ページ遷移
     pageMove(page: number): void {
       this.page = page;
-      this.currentPositionMove(0);
 
       const pageScore: PageScore = this.scoreData.scores[page - 1];
       if (pageScore === undefined) {
@@ -267,6 +296,7 @@ export default Vue.extend({
         };
       }
       this.displayPageScore(page);
+      this.currentPositionMove(0);
     },
     pageMinus(n: number): void {
       this.$emit("page-minus", n);
@@ -325,17 +355,17 @@ export default Vue.extend({
               const secondsPerPage =
                 (60 / quarterInterval / timing.bpm) * verticalSizeNum;
               const bufferNum = 0.25; // 2拍分
-              const durationNum = 2; // 8拍分
+              const durationNum = 1; // 8拍分
               const firstSeconds =
                 timing.firstNum / fps +
                 (this.pageNum - timing.label) * secondsPerPage;
               const startTime = firstSeconds - bufferNum * secondsPerPage;
               const endTime = firstSeconds + durationNum * secondsPerPage;
-              console.log(startTime, endTime);
 
               const loop = (startTime: number, endTime: number) => {
                 const playDuration = (endTime - startTime) * 1000;
                 this.musicPlayer.play(startTime);
+                this.musicPositionAnimation(playDuration);
                 if (this.musicTimer) {
                   const timer: number = setTimeout(() => {
                     loop(startTime, endTime);
@@ -348,6 +378,13 @@ export default Vue.extend({
               loop(startTime, endTime);
             } else {
               // 停止処理
+              const stage = this.stage as Konva.Stage;
+              const currentPositionLayer = this
+                .currentPositionLayer as Konva.Layer;
+              const node = currentPositionLayer.findOne("#musicPosition");
+              node.destroy();
+              stage.add(currentPositionLayer);
+
               this.musicPlayer.pause(this.musicTimer);
               this.musicTimer = null;
             }

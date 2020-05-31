@@ -5,7 +5,6 @@ export class MusicPlayer {
 
   play(startTime: number): void {
     const duration = this.audio.duration;
-    console.log(duration);
     if (duration > startTime) {
       this.audio.currentTime = startTime;
       this.audio.play();
