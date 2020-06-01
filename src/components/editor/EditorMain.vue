@@ -189,6 +189,45 @@ export default Vue.extend({
       }, duration / 5);
     },
 
+    // 音楽再生処理
+    playMusicLoop(timing: Timing) {
+      const secondsPerPage =
+        (60 / quarterInterval / timing.bpm) * verticalSizeNum;
+      const bufferNum = 0.25; // 2拍分
+      const durationNum = 1; // 8拍分
+      const firstSeconds =
+        timing.firstNum / fps + (this.pageNum - timing.label) * secondsPerPage;
+      const startTime = firstSeconds - bufferNum * secondsPerPage;
+      const endTime = firstSeconds + durationNum * secondsPerPage;
+
+      const loop = (startTime: number, endTime: number) => {
+        const playDuration = (endTime - startTime) * 1000;
+        this.musicPlayer.play(startTime);
+        this.musicPositionAnimation(playDuration);
+        if (this.musicTimer) {
+          const timer: number = setTimeout(() => {
+            loop(startTime, endTime);
+          }, playDuration);
+          this.musicTimer = timer;
+        }
+      };
+
+      this.musicTimer = 1;
+      loop(startTime, endTime);
+    },
+
+    // 音楽停止処理
+    stopMusicLoop(timer: number) {
+      const stage = this.stage as Konva.Stage;
+      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
+      const node = currentPositionLayer.findOne("#musicPosition");
+      node.destroy();
+      stage.add(currentPositionLayer);
+
+      this.musicPlayer.pause(timer);
+      this.musicTimer = null;
+    },
+
     // ノーツの有無の判定
     hasNote(page: number, lane: number, position: number): boolean {
       const pageScore = this.scoreData.scores[this.page - 1];
@@ -297,6 +336,12 @@ export default Vue.extend({
       }
       this.displayPageScore(page);
       this.currentPositionMove(0);
+
+      // 音楽再生時に移動すると再生位置を変更する
+      if (this.musicTimer) {
+        this.stopMusicLoop(this.musicTimer);
+        this.playMusicLoop(this.timing);
+      }
     },
     pageMinus(n: number): void {
       this.$emit("page-minus", n);
@@ -350,43 +395,11 @@ export default Vue.extend({
         switch (e.code) {
           case "Enter": {
             if (!this.musicTimer) {
-              // 再生処理
               const timing = this.timing;
-              const secondsPerPage =
-                (60 / quarterInterval / timing.bpm) * verticalSizeNum;
-              const bufferNum = 0.25; // 2拍分
-              const durationNum = 1; // 8拍分
-              const firstSeconds =
-                timing.firstNum / fps +
-                (this.pageNum - timing.label) * secondsPerPage;
-              const startTime = firstSeconds - bufferNum * secondsPerPage;
-              const endTime = firstSeconds + durationNum * secondsPerPage;
-
-              const loop = (startTime: number, endTime: number) => {
-                const playDuration = (endTime - startTime) * 1000;
-                this.musicPlayer.play(startTime);
-                this.musicPositionAnimation(playDuration);
-                if (this.musicTimer) {
-                  const timer: number = setTimeout(() => {
-                    loop(startTime, endTime);
-                  }, playDuration);
-                  this.musicTimer = timer;
-                }
-              };
-
-              this.musicTimer = 1;
-              loop(startTime, endTime);
+              this.playMusicLoop(timing);
             } else {
-              // 停止処理
-              const stage = this.stage as Konva.Stage;
-              const currentPositionLayer = this
-                .currentPositionLayer as Konva.Layer;
-              const node = currentPositionLayer.findOne("#musicPosition");
-              node.destroy();
-              stage.add(currentPositionLayer);
-
-              this.musicPlayer.pause(this.musicTimer);
-              this.musicTimer = null;
+              const timer = this.musicTimer;
+              this.stopMusicLoop(timer);
             }
             break;
           }
