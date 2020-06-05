@@ -9,7 +9,9 @@
     <speed-piece
       v-for="(speed, index) in scoreData.scores[page - 1].speeds"
       :key="index"
+      v-model="speed.value"
       :position="speed.position"
+      :type="speed.type"
     ></speed-piece>
   </div>
 </template>
@@ -313,10 +315,10 @@ export default Vue.extend({
     },
 
     // 速度変化コマの追加
-    speedPieceAdd(page: number, position: number, type: SpeedType) {
+    speedPieceAdd(page: number, position: number, type: SpeedType, value = 1) {
       this.scoreData.scores[page - 1].speeds.push({
         position,
-        value: 1.0,
+        value,
         type
       });
     },

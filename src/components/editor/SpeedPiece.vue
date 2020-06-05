@@ -3,27 +3,35 @@
     type="number"
     step="0.01"
     class="editor-speed-piece"
-    v-model="value"
+    v-model="inputValue"
     :style="{ top: 400 - position + 'px' }"
   />
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
+import { SpeedType } from "../../model/Speed";
 export default Vue.extend({
   name: "SpeedPiece",
-  props: {
-    position: Number
+  model: {
+    prop: "propValue",
+    event: "changeSpeed"
   },
-  data() {
-    return {
-      value: 1
-    };
+  props: {
+    position: Number,
+    propValue: Number,
+    type: { type: String as PropType<SpeedType> }
+  },
+  computed: {
+    inputValue: {
+      get(): number {
+        return this.propValue;
+      },
+      set(inputValue: string) {
+        const value = Number(inputValue);
+        this.$emit("changeSpeed", value);
+      }
+    }
   }
-  // watch: {
-  //   value(){
-  //     this.$emit("changeSpeed")
-  //   }
-  // }
 });
 </script>

@@ -40,6 +40,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 .editor-speed-piece:focus {
   outline: none;
   border: solid 1px #001068;
+  z-index: 100;
 }
 
 /* エディタメニュー関連 */
