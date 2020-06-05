@@ -2,8 +2,9 @@
   <input
     type="number"
     step="0.01"
-    class="uk-input uk-form-xsmall"
+    class="editor-speed-piece"
     v-model="value"
+    :style="{ top: 400 - position + 'px' }"
   />
 </template>
 
@@ -11,9 +12,9 @@
 import Vue from "vue";
 export default Vue.extend({
   name: "SpeedPiece",
-  // props: {
-  //   page: Number
-  // },
+  props: {
+    position: Number
+  },
   data() {
     return {
       value: 1

@@ -1,10 +1,17 @@
 <template>
-  <div
-    id="canvas"
-    ref="canvas"
-    tabindex="-1"
-    @keydown.prevent="keydownAction"
-  ></div>
+  <div id="editor-main">
+    <div
+      id="canvas"
+      ref="canvas"
+      tabindex="-1"
+      @keydown.prevent="keydownAction"
+    ></div>
+    <speed-piece
+      v-for="(speed, index) in scoreData.scores[page - 1].speeds"
+      :key="index"
+      :position="speed.position"
+    ></speed-piece>
+  </div>
 </template>
 
 <script lang="ts">
@@ -30,6 +37,7 @@ import {
 import { Timing } from "../../model/Timing";
 import { MusicPlayer } from "./MusicPlayer";
 import { SpeedType } from "../../model/Speed";
+import SpeedPiece from "./SpeedPiece.vue";
 
 type DataType = {
   currentPosition: number;
@@ -57,6 +65,7 @@ export default Vue.extend({
     selectedKey: String,
     timing: { type: Object as PropType<Timing> }
   },
+  components: { SpeedPiece },
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
     const keyConfig = DefaultKeyConfig;
@@ -485,7 +494,6 @@ export default Vue.extend({
             break;
           case "Quote":
             {
-              console.log("hello");
               const speedType: SpeedType = e.shiftKey ? "boost" : "speed";
               const page = this.page;
               const position = this.currentPosition;
