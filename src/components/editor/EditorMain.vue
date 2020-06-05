@@ -13,7 +13,7 @@ import Konva from "konva";
 import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
-import { PageScore } from "@/model/PageScore";
+import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import {
   noteWidth,
   editorHeight,
@@ -24,10 +24,12 @@ import {
   freezeColors,
   noteColors,
   laneColors,
-  fps
+  fps,
+  speedChangeWidth
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicPlayer } from "./MusicPlayer";
+import { SpeedType } from "../../model/Speed";
 
 type DataType = {
   currentPosition: number;
@@ -71,7 +73,6 @@ export default Vue.extend({
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicPlayer: new MusicPlayer(audio),
       musicTimer: null
-      // audio: audio
     };
   },
   methods: {
@@ -295,6 +296,60 @@ export default Vue.extend({
       stage.add(notesLayer);
     },
 
+    // 速度変化コマの存在判定
+    hasSpeedPiece(page: number, position: number): boolean {
+      return this.scoreData.scores[page - 1].speeds.some(
+        speed => speed.position === position
+      );
+    },
+
+    // 速度変化コマの追加
+    speedPieceAdd(page: number, position: number, type: SpeedType) {
+      this.scoreData.scores[page - 1].speeds.push({
+        position,
+        value: 1.0,
+        type
+      });
+    },
+
+    // 速度変化コマの削除
+    speedPieceRemove(page: number, position: number) {
+      this.scoreData.scores[page - 1].speeds = this.scoreData.scores[
+        page - 1
+      ].speeds.filter(speed => speed.position !== position);
+    },
+
+    // 速度変化コマの描画
+    speedPieceDraw(position: number, type: SpeedType) {
+      const stage = this.stage as Konva.Stage;
+      const notesLayer = this.notesLayer as Konva.Layer;
+
+      const color = type === "speed" ? "orange" : "purple";
+      const radius = 6;
+      const triangle = new Konva.RegularPolygon({
+        sides: 3,
+        radius,
+        rotation: 30,
+        fill: color,
+        x: this.editorWidth + radius,
+        y: editorHeight - position,
+        id: `speed-${position}`
+      });
+
+      notesLayer.add(triangle);
+      stage.add(notesLayer);
+    },
+
+    // 速度変化コマのクリア
+    speedPieceClear(position: number): void {
+      const stage = this.stage as Konva.Stage;
+      const notesLayer = this.notesLayer as Konva.Layer;
+
+      const note = notesLayer.findOne(`#speed-${position}`);
+      note.destroy();
+      stage.add(notesLayer);
+    },
+
     // 譜面データのページ反映
     displayPageScore(page: number): void {
       const stage = this.stage as Konva.Stage;
@@ -315,6 +370,9 @@ export default Vue.extend({
           this.noteDraw(lane, position, true);
         });
       });
+      pageScore.speeds.forEach(speed => {
+        this.speedPieceDraw(speed.position, speed.type);
+      });
     },
 
     // 現在位置移動
@@ -329,10 +387,7 @@ export default Vue.extend({
 
       const pageScore: PageScore = this.scoreData.scores[page - 1];
       if (pageScore === undefined) {
-        this.scoreData.scores[page - 1] = {
-          notes: new Array(this.keyNum).fill([]).map(() => []),
-          freezes: new Array(this.keyNum).fill([]).map(() => [])
-        };
+        this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
       }
       this.displayPageScore(page);
       this.currentPositionMove(0);
@@ -428,24 +483,38 @@ export default Vue.extend({
             if (e.shiftKey) this.pagePlus(5);
             else this.pagePlus(1);
             break;
+          case "Quote":
+            {
+              console.log("hello");
+              const speedType: SpeedType = e.shiftKey ? "boost" : "speed";
+              const page = this.page;
+              const position = this.currentPosition;
+
+              if (this.hasSpeedPiece(page, position)) {
+                this.speedPieceRemove(page, position);
+                this.speedPieceClear(position);
+              } else {
+                this.speedPieceAdd(page, position, speedType);
+                this.speedPieceDraw(position, speedType);
+              }
+            }
+            break;
+
           default: {
             const possiblyLane = this.keyConfig[this.keyKind].keys.indexOf(
               e.code
             );
             const isFreeze = e.shiftKey;
+            const page = this.page;
+            const position = this.currentPosition;
 
             if (possiblyLane >= 0) {
-              if (this.hasNote(this.page, possiblyLane, this.currentPosition)) {
-                this.noteRemove(this.page, possiblyLane, this.currentPosition);
-                this.noteClear(possiblyLane, this.currentPosition);
+              if (this.hasNote(page, possiblyLane, position)) {
+                this.noteRemove(page, possiblyLane, position);
+                this.noteClear(possiblyLane, position);
               } else {
-                this.noteAdd(
-                  this.page,
-                  possiblyLane,
-                  this.currentPosition,
-                  isFreeze
-                );
-                this.noteDraw(possiblyLane, this.currentPosition, isFreeze);
+                this.noteAdd(page, possiblyLane, position, isFreeze);
+                this.noteDraw(possiblyLane, position, isFreeze);
               }
 
               this.currentPosition += this.divisor;
@@ -464,7 +533,7 @@ export default Vue.extend({
       x: canvasMargin,
       y: canvasMargin,
       container: "canvas",
-      width: this.editorWidth + canvasMargin * 2,
+      width: this.editorWidth + canvasMargin * 2 + speedChangeWidth,
       height: editorHeight + canvasMargin * 2
     });
     const baseLayer = new Konva.Layer({

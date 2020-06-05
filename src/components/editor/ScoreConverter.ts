@@ -1,7 +1,7 @@
 import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
-import { PageScore } from "@/model/PageScore";
+import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import { quarterInterval, verticalSizeNum, fps } from "./EditorConstant";
 
 export type FrameData = {
@@ -15,10 +15,7 @@ export class ScoreConverter {
   private keyNum = this.keyConfig[this.keyKind].num;
 
   toFrameData(scoreData: ScoreData): FrameData[] {
-    const initialPageScore = {
-      notes: new Array(this.keyNum).fill([]).map(() => []),
-      freezes: new Array(this.keyNum).fill([]).map(() => [])
-    };
+    const initialPageScore = new DefaultPageScore(this.keyNum);
     const timings = scoreData.timings.sort((a, b) => a.label - b.label);
     const scores = scoreData.scores;
 
@@ -50,7 +47,8 @@ export class ScoreConverter {
         );
         frameScores.push({
           notes: pageNoteFrames,
-          freezes: freezeNoteFrames
+          freezes: freezeNoteFrames,
+          speeds: [] // TODO: 実装
         });
       }
     }
