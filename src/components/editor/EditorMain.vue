@@ -244,12 +244,15 @@ export default Vue.extend({
     },
 
     // ノーツの有無の判定
-    hasNote(page: number, lane: number, position: number): boolean {
-      const pageScore = this.scoreData.scores[this.page - 1];
-      return (
-        pageScore.notes[lane].includes(position) ||
-        pageScore.freezes[lane].includes(position)
-      );
+    hasNote(
+      page: number,
+      lane: number,
+      position: number
+    ): { exists: boolean; isFreeze: boolean } {
+      const pageScore = this.scoreData.scores[page - 1];
+      const isFreeze = pageScore.freezes[lane].includes(position);
+      const exists = pageScore.notes[lane].includes(position) || isFreeze;
+      return { exists, isFreeze };
     },
 
     // ノーツの追加
@@ -461,6 +464,29 @@ export default Vue.extend({
       this.displayPageScore(page);
     },
 
+    // 行削除
+    notesRemoveOnPosition(
+      position: number,
+      page: number
+    ): {
+      lane: number;
+      isFreeze: boolean;
+    }[] {
+      const keyNum = this.keyNum;
+      const removedLanes = [];
+      for (let lane = 0; lane < keyNum; lane++) {
+        if (this.hasNote(page, lane, position).exists) {
+          this.noteRemove(page, lane, position);
+          removedLanes.push({
+            lane,
+            isFreeze: this.hasNote(page, lane, position).isFreeze
+          });
+        }
+      }
+      this.displayPageScore(page);
+      return removedLanes;
+    },
+
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       if (e.ctrlKey) {
@@ -495,6 +521,56 @@ export default Vue.extend({
           case "KeyV":
             this.pageScorePaste();
             break;
+          case "ArrowUp": {
+            let operateNotesPage = this.page;
+            const removedLanes = this.notesRemoveOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
+            this.currentPosition += this.divisor;
+            if (this.currentPosition >= verticalSizeNum) {
+              this.pagePlus(1);
+              operateNotesPage++;
+            } else this.currentPositionMove(this.currentPosition);
+            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            removedLanes.forEach(obj =>
+              this.noteAdd(
+                operateNotesPage,
+                obj.lane,
+                this.currentPosition,
+                obj.isFreeze
+              )
+            );
+            this.displayPageScore(operateNotesPage);
+            break;
+          }
+          case "ArrowDown": {
+            let operateNotesPage = this.page;
+            const removedLanes = this.notesRemoveOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
+            this.currentPosition -= this.divisor;
+            if (this.currentPosition < 0) {
+              if (this.page === 1) {
+                this.currentPosition = 0;
+              } else {
+                this.pageMinus(1, this.currentPosition + verticalSizeNum);
+                operateNotesPage--;
+              }
+            } else this.currentPositionMove(this.currentPosition);
+            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            removedLanes.forEach(obj =>
+              this.noteAdd(
+                operateNotesPage,
+                obj.lane,
+                this.currentPosition,
+                obj.isFreeze
+              )
+            );
+            this.displayPageScore(operateNotesPage);
+            break;
+          }
         }
       } else {
         switch (e.code) {
@@ -508,6 +584,9 @@ export default Vue.extend({
             }
             break;
           }
+          case "Backspace":
+            this.notesRemoveOnPosition(this.currentPosition, this.page);
+            break;
           case "Space":
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
@@ -559,7 +638,7 @@ export default Vue.extend({
             const position = this.currentPosition;
 
             if (possiblyLane >= 0) {
-              if (this.hasNote(page, possiblyLane, position)) {
+              if (this.hasNote(page, possiblyLane, position).exists) {
                 this.noteRemove(page, possiblyLane, position);
                 this.noteClear(possiblyLane, position);
               } else {
