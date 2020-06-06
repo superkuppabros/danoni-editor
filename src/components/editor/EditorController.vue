@@ -45,6 +45,7 @@
         <div class="menu-txt">First Number</div>
         <input
           type="number"
+          step="0.01"
           class="uk-input uk-form-small"
           v-model="timing.firstNum"
         />
@@ -190,8 +191,13 @@ export default Vue.extend({
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newFirstNum =
-          oldTiming.firstNum +
-          (pageNum - oldTiming.label) * verticalSizeNum * framePerPosition;
+          Math.round(
+            (oldTiming.firstNum +
+              (pageNum - oldTiming.label) *
+                verticalSizeNum *
+                framePerPosition) *
+              100
+          ) / 100;
         const newTiming: Timing = {
           label: pageNum,
           firstNum: newFirstNum,
