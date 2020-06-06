@@ -11,7 +11,9 @@
     ></editor-main>
     <div id="editor-menu">
       <div id="menu-page" class="menu-item-container">
-        <div class="menu-txt">Page</div>
+        <div class="menu-move-header">
+          <div class="menu-txt">Page</div>
+        </div>
         <div class="menu-move-display">
           <div class="menu-move-btn" @click="pageMinus(5)">◁</div>
           <div class="menu-move-btn" @click="pageMinus(1)">◁</div>
@@ -21,7 +23,7 @@
         </div>
       </div>
       <div id="menu-label" class="menu-item-container">
-        <div id="menu-move-header">
+        <div class="menu-move-header">
           <div class="menu-txt">Label</div>
           <input
             class="uk-checkbox"
@@ -43,21 +45,11 @@
       </div>
       <div id="menu-fn" class="menu-item-container">
         <div class="menu-txt">First Number</div>
-        <input
-          type="number"
-          step="0.01"
-          class="uk-input uk-form-small"
-          v-model="timing.firstNum"
-        />
+        <input type="number" step="0.01" class="uk-input uk-form-small" v-model="timing.firstNum" />
       </div>
       <div id="menu-bpm" class="menu-item-container">
         <div class="menu-txt">BPM</div>
-        <input
-          type="number"
-          step="0.01"
-          class="uk-input uk-form-small"
-          v-model="timing.bpm"
-        />
+        <input type="number" step="0.01" class="uk-input uk-form-small" v-model="timing.bpm" />
       </div>
       <div id="menu-output" class="menu-item-container">
         <div class="menu-output-btn btn-red" @click="convert">GO</div>
