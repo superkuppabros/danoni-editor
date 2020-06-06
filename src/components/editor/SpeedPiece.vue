@@ -4,7 +4,7 @@
     step="0.01"
     class="editor-speed-piece"
     v-model="inputValue"
-    :style="{ top: 400 - position + 'px' }"
+    :style="{ top: 397 - position + 'px' }"
   />
 </template>
 
