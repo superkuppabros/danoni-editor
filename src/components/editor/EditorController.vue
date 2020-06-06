@@ -43,13 +43,32 @@
           <div class="menu-move-btn" @click="labelPlus(5)">▷</div>
         </div>
       </div>
-      <div id="menu-fn" class="menu-item-container">
-        <div class="menu-txt">First Number</div>
-        <input type="number" step="0.01" class="uk-input uk-form-small" v-model="timing.firstNum" />
+      <div id="menu-adj" class="menu-item-container">
+        <div class="menu-txt">Adjustment</div>
+        <input
+          type="number"
+          step="0.01"
+          class="uk-input uk-form-small"
+          v-model="scoreData.adjustment"
+        />
+      </div>
+      <div id="menu-sn" class="menu-item-container">
+        <div class="menu-txt">Start Number</div>
+        <input
+          type="number"
+          step="0.01"
+          class="uk-input uk-form-small"
+          v-model="timing.startNum"
+        />
       </div>
       <div id="menu-bpm" class="menu-item-container">
         <div class="menu-txt">BPM</div>
-        <input type="number" step="0.01" class="uk-input uk-form-small" v-model="timing.bpm" />
+        <input
+          type="number"
+          step="0.01"
+          class="uk-input uk-form-small"
+          v-model="timing.bpm"
+        />
       </div>
       <div id="menu-output" class="menu-item-container">
         <div class="menu-output-btn btn-red" @click="convert">GO</div>
@@ -105,11 +124,7 @@ export default Vue.extend({
     return {
       pageNum: 1,
       labelNum: 1,
-      timing: {
-        label: 1,
-        firstNum: 200,
-        bpm: 140
-      },
+      timing: scoreData.timings[0],
       scoreData: scoreData,
       keyKind: this.selectedKey as KeyKind,
       keyConfig: DefaultKeyConfig
@@ -182,9 +197,9 @@ export default Vue.extend({
         // 挿入処理
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
-        const newFirstNum =
+        const newStartNum =
           Math.round(
-            (oldTiming.firstNum +
+            (oldTiming.startNum +
               (pageNum - oldTiming.label) *
                 verticalSizeNum *
                 framePerPosition) *
@@ -192,7 +207,7 @@ export default Vue.extend({
           ) / 100;
         const newTiming: Timing = {
           label: pageNum,
-          firstNum: newFirstNum,
+          startNum: newStartNum,
           bpm: oldTiming.bpm
         };
         this.scoreData.timings.splice(this.labelNum, 0, newTiming);

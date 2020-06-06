@@ -211,7 +211,7 @@ export default Vue.extend({
       const bufferNum = 0.25; // 2拍分
       const durationNum = 1; // 8拍分
       const firstSeconds =
-        timing.firstNum / fps + (this.pageNum - timing.label) * secondsPerPage;
+        timing.startNum / fps + (this.pageNum - timing.label) * secondsPerPage;
       const startTime = firstSeconds - bufferNum * secondsPerPage;
       const endTime = firstSeconds + durationNum * secondsPerPage;
 

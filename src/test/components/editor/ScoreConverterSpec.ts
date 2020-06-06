@@ -8,15 +8,16 @@ describe("scoreConverter", () => {
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const scoreConverter = new ScoreConverter(keyKind, keyConfig);
   const scoreData: ScoreData = {
+    adjustment: 0,
     timings: [
       {
         label: 1,
-        firstNum: 200,
+        startNum: 200,
         bpm: 180
       },
       {
         label: 3,
-        firstNum: 440,
+        startNum: 440,
         bpm: 120
       }
     ],

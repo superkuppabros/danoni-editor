@@ -2,6 +2,7 @@ import { Timing } from "./Timing";
 import { PageScore, DefaultPageScore } from "./PageScore";
 
 export interface ScoreData {
+  adjustment: number;
   timings: Timing[];
   scores: PageScore[];
 }
@@ -9,10 +10,12 @@ export interface ScoreData {
 export class DefaultScoreData implements ScoreData {
   constructor(private keyNum: number) {}
 
+  adjustment = 200;
+
   timings: Timing[] = [
     {
       label: 1,
-      firstNum: 200,
+      startNum: 0,
       bpm: 140
     }
   ];

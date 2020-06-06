@@ -25,6 +25,7 @@ export class ScoreConverter {
 
   toFrameData(scoreData: ScoreData): FrameData[] {
     const initialPageScore = new DefaultPageScore(this.keyNum);
+    const adjustment = scoreData.adjustment;
     const timings = scoreData.timings.sort((a, b) => a.label - b.label);
     const scores = scoreData.scores;
 
@@ -41,7 +42,8 @@ export class ScoreConverter {
         const timing = timings[labelCounter - 1];
         const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
         const startFrame =
-          timing.firstNum +
+          adjustment +
+          timing.startNum +
           (pageNum - timing.label) * verticalSizeNum * framePerPosition;
         const positionToFrame = (position: number) =>
           Math.round(startFrame + position * framePerPosition);
