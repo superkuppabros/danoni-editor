@@ -171,6 +171,6 @@ ${noteStr + freezeStr}
   }
 
   save(scoreData: ScoreData): string {
-    return JSON.stringify(scoreData);
+    return JSON.stringify(this.cutLastDefault(scoreData));
   }
 }
