@@ -52,6 +52,7 @@ type DataType = {
   editorWidth: number;
   musicTimer: number | null;
   musicPlayer: MusicPlayer;
+  copyScoreStore: PageScore;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
@@ -71,6 +72,7 @@ export default Vue.extend({
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
     const keyConfig = DefaultKeyConfig;
+    const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
 
     return {
@@ -78,12 +80,13 @@ export default Vue.extend({
       scoreData: this.loadScoreData,
       keyConfig: keyConfig,
       divisor: 24,
-      keyKind: keyKind,
+      keyKind,
       page: 1,
-      keyNum: keyConfig[keyKind].num,
+      keyNum,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicPlayer: new MusicPlayer(audio),
-      musicTimer: null
+      musicTimer: null,
+      copyScoreStore: new DefaultPageScore(keyNum)
     };
   },
   methods: {
@@ -241,12 +244,15 @@ export default Vue.extend({
     },
 
     // ノーツの有無の判定
-    hasNote(page: number, lane: number, position: number): boolean {
-      const pageScore = this.scoreData.scores[this.page - 1];
-      return (
-        pageScore.notes[lane].includes(position) ||
-        pageScore.freezes[lane].includes(position)
-      );
+    hasNote(
+      page: number,
+      lane: number,
+      position: number
+    ): { exists: boolean; isFreeze: boolean } {
+      const pageScore = this.scoreData.scores[page - 1];
+      const isFreeze = pageScore.freezes[lane].includes(position);
+      const exists = pageScore.notes[lane].includes(position) || isFreeze;
+      return { exists, isFreeze };
     },
 
     // ノーツの追加
@@ -401,7 +407,6 @@ export default Vue.extend({
         this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
       }
       this.displayPageScore(page);
-      this.currentPositionMove(0);
 
       // 音楽再生時に移動すると再生位置を変更する
       if (this.musicTimer) {
@@ -409,15 +414,13 @@ export default Vue.extend({
         this.playMusicLoop(this.timing);
       }
     },
-    pageMinus(n: number): void {
+    pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
-      Math.max(1, this.page - n);
-      this.pageMove(this.page);
+      this.currentPositionMove(position);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
-      this.page += n;
-      this.pageMove(this.page);
+      this.currentPositionMove(0);
     },
 
     // 移動間隔変更
@@ -429,6 +432,59 @@ export default Vue.extend({
         );
       }
       this.baseLayerDraw();
+    },
+
+    // ページコピー
+    pageScoreCopy() {
+      const page = this.page;
+
+      // Workaround of deep copy
+      const pageScore = JSON.parse(
+        JSON.stringify(this.scoreData.scores[page - 1])
+      );
+      this.copyScoreStore = pageScore;
+    },
+
+    // ページカット
+    pageScoreCut() {
+      const page = this.page;
+
+      this.pageScoreCopy();
+      this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
+      this.displayPageScore(page);
+    },
+
+    // ページ貼り付け
+    pageScorePaste() {
+      const page = this.page;
+
+      // Workaround of deep copy
+      const pageScore = JSON.parse(JSON.stringify(this.copyScoreStore));
+      this.scoreData.scores[page - 1] = pageScore;
+      this.displayPageScore(page);
+    },
+
+    // 行削除
+    notesRemoveOnPosition(
+      position: number,
+      page: number
+    ): {
+      lane: number;
+      isFreeze: boolean;
+    }[] {
+      const keyNum = this.keyNum;
+      const removedLanes = [];
+      for (let lane = 0; lane < keyNum; lane++) {
+        if (this.hasNote(page, lane, position).exists) {
+          this.noteRemove(page, lane, position);
+          removedLanes.push({
+            lane,
+            isFreeze: this.hasNote(page, lane, position).isFreeze
+          });
+        }
+      }
+      this.displayPageScore(page);
+      return removedLanes;
     },
 
     // キーを押したときの挙動
@@ -456,6 +512,65 @@ export default Vue.extend({
           case "Digit7":
             this.changeDivisor(quarterInterval / 8);
             break;
+          case "KeyX":
+            this.pageScoreCut();
+            break;
+          case "KeyC":
+            this.pageScoreCopy();
+            break;
+          case "KeyV":
+            this.pageScorePaste();
+            break;
+          case "ArrowUp": {
+            let operateNotesPage = this.page;
+            const removedLanes = this.notesRemoveOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
+            this.currentPosition += this.divisor;
+            if (this.currentPosition >= verticalSizeNum) {
+              this.pagePlus(1);
+              operateNotesPage++;
+            } else this.currentPositionMove(this.currentPosition);
+            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            removedLanes.forEach(obj =>
+              this.noteAdd(
+                operateNotesPage,
+                obj.lane,
+                this.currentPosition,
+                obj.isFreeze
+              )
+            );
+            this.displayPageScore(operateNotesPage);
+            break;
+          }
+          case "ArrowDown": {
+            let operateNotesPage = this.page;
+            const removedLanes = this.notesRemoveOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
+            this.currentPosition -= this.divisor;
+            if (this.currentPosition < 0) {
+              if (this.page === 1) {
+                this.currentPosition = 0;
+              } else {
+                this.pageMinus(1, this.currentPosition + verticalSizeNum);
+                operateNotesPage--;
+              }
+            } else this.currentPositionMove(this.currentPosition);
+            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            removedLanes.forEach(obj =>
+              this.noteAdd(
+                operateNotesPage,
+                obj.lane,
+                this.currentPosition,
+                obj.isFreeze
+              )
+            );
+            this.displayPageScore(operateNotesPage);
+            break;
+          }
         }
       } else {
         switch (e.code) {
@@ -469,6 +584,9 @@ export default Vue.extend({
             }
             break;
           }
+          case "Backspace":
+            this.notesRemoveOnPosition(this.currentPosition, this.page);
+            break;
           case "Space":
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
@@ -483,7 +601,7 @@ export default Vue.extend({
             this.currentPosition -= this.divisor;
             if (this.currentPosition < 0) {
               if (this.page === 1) this.currentPosition = 0;
-              else this.pageMinus(1);
+              else this.pageMinus(1, this.currentPosition + verticalSizeNum);
             } else this.currentPositionMove(this.currentPosition);
             break;
           case "ArrowLeft":
@@ -520,7 +638,7 @@ export default Vue.extend({
             const position = this.currentPosition;
 
             if (possiblyLane >= 0) {
-              if (this.hasNote(page, possiblyLane, position)) {
+              if (this.hasNote(page, possiblyLane, position).exists) {
                 this.noteRemove(page, possiblyLane, position);
                 this.noteClear(possiblyLane, position);
               } else {
