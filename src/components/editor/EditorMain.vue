@@ -511,8 +511,9 @@ export default Vue.extend({
             break;
 
           default: {
-            const possiblyLane = this.keyConfig[this.keyKind].keys.indexOf(
-              e.code
+            const possiblyLane = Math.max(
+              this.keyConfig[this.keyKind].keys.indexOf(e.code),
+              this.keyConfig[this.keyKind].alternativeKeys.indexOf(e.code)
             );
             const isFreeze = e.shiftKey;
             const page = this.page;
