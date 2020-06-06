@@ -3,10 +3,19 @@ import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import { quarterInterval, verticalSizeNum, fps } from "./EditorConstant";
+import { Speed } from "@/model/Speed";
 
 export type FrameData = {
   notes: number[][];
   freezes: number[][];
+  speeds: Speed[];
+};
+
+export type OutputData = {
+  notes: number[][];
+  freezes: number[][];
+  speeds: Speed[];
+  boosts: Speed[];
 };
 
 export class ScoreConverter {
@@ -34,21 +43,25 @@ export class ScoreConverter {
         const startFrame =
           timing.firstNum +
           (pageNum - timing.label) * verticalSizeNum * framePerPosition;
+        const positionToFrame = (position: number) =>
+          Math.round(startFrame + position * framePerPosition);
 
         const pageNoteFrames = pageScore.notes.map(notesArr =>
-          notesArr.map(position =>
-            Math.round(startFrame + position * framePerPosition)
-          )
+          notesArr.map(positionToFrame)
         );
         const freezeNoteFrames = pageScore.freezes.map(freezesArr =>
-          freezesArr.map(position =>
-            Math.round(startFrame + position * framePerPosition)
-          )
+          freezesArr.map(positionToFrame)
         );
+        const speedsNoteFrames = pageScore.speeds.map(speed => {
+          // Workaround of deep copy
+          const newSpeed: Speed = JSON.parse(JSON.stringify(speed));
+          newSpeed.position = positionToFrame(speed.position);
+          return newSpeed;
+        });
         frameScores.push({
           notes: pageNoteFrames,
           freezes: freezeNoteFrames,
-          speeds: [] // TODO: 実装
+          speeds: speedsNoteFrames
         });
       }
     }
@@ -59,19 +72,30 @@ export class ScoreConverter {
     const frameScores = this.toFrameData(scoreData);
     const initialData = {
       notes: new Array(this.keyNum).fill([]).map(() => []),
-      freezes: new Array(this.keyNum).fill([]).map(() => [])
+      freezes: new Array(this.keyNum).fill([]).map(() => []),
+      speeds: [],
+      boosts: []
     };
 
-    const data: FrameData = frameScores.reduce(
-      (data: FrameData, currentPage) => {
+    const data: OutputData = frameScores.reduce(
+      (data: OutputData, currentPage) => {
         for (let i = 0; i < this.keyNum; i++) {
           data.notes[i] = data.notes[i].concat(currentPage.notes[i]);
           data.freezes[i] = data.freezes[i].concat(currentPage.freezes[i]);
         }
+        data.speeds = data.speeds.concat(
+          currentPage.speeds.filter(speed => speed.type === "speed")
+        );
+        data.boosts = data.boosts.concat(
+          currentPage.speeds.filter(speed => speed.type === "boost")
+        );
         return data;
       },
       initialData
     );
+
+    data.speeds.sort((a, b) => a.position - b.position);
+    data.boosts.sort((a, b) => a.position - b.position);
 
     const noteStr = data.notes.reduce(
       (str, notesArr, laneNum) =>
@@ -83,18 +107,28 @@ export class ScoreConverter {
       "|"
     );
 
-    const dataStr = data.freezes.reduce(
+    const freezeStr = data.freezes.reduce(
       (str, freezesArr, laneNum) =>
         str +
         this.keyConfig[this.keyKind].freezeNames[laneNum] +
         "=" +
         freezesArr.join(",") +
         "|",
-      noteStr
+      ""
     );
 
-    //Todo: 速度変化なんとかする
-    return dataStr;
+    const speedStr =
+      "speed_data=" +
+      data.speeds.map(speed => `${speed.position},${speed.value}`).join(",") +
+      "|";
+    const boostStr =
+      "boost_data=" +
+      data.boosts.map(speed => `${speed.position},${speed.value}`).join(",") +
+      "|";
+
+    return `
+${noteStr + freezeStr}
+|${speedStr + boostStr}`;
   }
 
   save(scoreData: ScoreData): string {
