@@ -1,5 +1,5 @@
 export interface Timing {
   label: number;
-  firstNum: number;
+  startNum: number;
   bpm: number;
 }
