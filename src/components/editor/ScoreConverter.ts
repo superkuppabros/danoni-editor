@@ -147,7 +147,30 @@ ${noteStr + freezeStr}
     return copiedScoreData;
   }
 
+  createQuarterNotesData(scoreData: ScoreData): string {
+    const quarterNotes: number[] = [];
+    for (let i = 0; i < 8; i++) {
+      quarterNotes.push(i * quarterInterval);
+    }
+
+    // Todo: 四分譜面を出力するページ数を変更できるようにする
+    const pushQuartersPageNum = 20;
+
+    // Todo: ノーツを置く位置を変更できるようにする
+    const pushQuartersLane = 0;
+
+    const newScoreData = this.cutLastDefault(_.cloneDeep(scoreData));
+
+    for (let i = 0; i < pushQuartersPageNum; i++) {
+      const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+      quartersPageScore.notes[pushQuartersLane] = quarterNotes;
+      newScoreData.scores.push(quartersPageScore);
+    }
+
+    return this.convert(this.cutLastDefault(newScoreData));
+  }
+
   save(scoreData: ScoreData): string {
-    return JSON.stringify(this.cutLastDefault(scoreData));
+    return JSON.stringify(scoreData);
   }
 }
