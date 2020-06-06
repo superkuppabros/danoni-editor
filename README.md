@@ -10,6 +10,15 @@ Google Chromeにて動作を確認しています。
 その他のバグ報告はissue, PRかTwitter(@superkuppabros)までお願いします。
 
 ## バージョン
+### ver 2.1.0β
+#### 機能追加
+- 4分譜面の出力(TESTボタンから)
+#### 変更点
+- `FirstNumber`の入力を廃止し、`Adjustment`と`StartNumber`を導入
+  - `Adjustment`: 全体の補正フレーム
+  - `StartNumber`: 音楽の再生開始フレーム
+  - ダンおにでの`FirstNumber`は`Adjustment`と`StartNumber`の和
+
 ### ver 2.0.0β
 #### 機能追加
 - 全体変速、個別変速
@@ -98,9 +107,10 @@ Google Chromeにて動作を確認しています。
 
 - その他操作
   - ページ、ラベル移動: 各種ボタン（◁, ▷）
-  - 途中のBPM/FirstNum変更: Labelにチェックを入れて数値を変更する
+  - 途中のBPM/StartNum変更: Labelにチェックを入れて数値を変更する
   - ダンおにデータ出力: GOボタン(クリップボードにコピーされます)
   - セーブデータ(JSON)出力: SAVEボタン(クリップボードにコピーされます)
+  - 4分譜面出力: TESTボタン(クリップボードにコピーされます)
 
 ## 開発者向け
 

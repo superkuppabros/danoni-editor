@@ -53,7 +53,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 #editor-controller {
   display: flex;
   border-width: 1px;
-  font-size: 16px;
+  font-size: 15px;
   font-family: "Yu Gothic", sans-serif;
 }
 
@@ -67,18 +67,18 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .menu-item-container {
-  margin-top: 5px;
+  margin-top: 4px;
   width: 106px;
 }
 
 .menu-move-display {
   display: flex;
-  margin-top: 5px;
+  margin-top: 3px;
 }
 
 .menu-move-btn,
 .menu-move-txt {
-  margin: auto 3px;
+  margin: auto 4px;
 }
 
 .menu-move-btn:hover {
@@ -87,10 +87,10 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   cursor: pointer;
 }
 
-#menu-move-header {
+.menu-move-header {
   display: flex;
-  height: 30px;
-  line-height: 30px;
+  height: 22px;
+  line-height: 22px;
 }
 
 #menu-label-checkbox {
@@ -100,18 +100,23 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   transition: 0.1s;
 }
 
+.uk-form-small {
+  height: 24px!important;
+}
+
 #menu-output {
   display: flex;
-  margin-top: 20px;
+  margin-top: 14px;
   font-size: 14px;
+  flex-wrap: wrap;
 }
 
 .menu-output-btn {
-  width: 50px;
-  height: 30px;
-  line-height: 30px;
+  width: 45px;
+  height: 24px;
+  line-height: 24px;
   text-align: center;
-  margin-right: 2px;
+  margin: 2px;
   color: #67c5ff;
   border: solid 2px #67c5ff;
   border-radius: 3px;
@@ -124,8 +129,14 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .btn-red {
+  width: 98px;
   color: #ff67de;
   border: solid 2px #ff67de;
+}
+
+.btn-gray {
+  color: #646464;
+  border: solid 2px #646464;
 }
 
 .btn-blue:hover {
@@ -136,6 +147,12 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .btn-red:hover {
   background: #ff67de;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-gray:hover {
+  background: #646464;
   color: white;
   cursor: pointer;
 }
