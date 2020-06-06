@@ -16,8 +16,8 @@ export const DefaultKeyConfig: KeyConfig = {
   "5": {
     id: 1,
     num: 5,
-    keys: ["KeyJ", "KeyK", "KeyI", "KeyL", "KeyF"],
-    alternativeKeys: ["", "", "", "KeyO", ""],
+    keys: ["KeyJ", "KeyK", "KeyI", "KeyL", "KeyG"],
+    alternativeKeys: ["KeyS", "KeyD", "KeyE", "KeyF", "KeyH"],
     noteNames: [
       "left_data",
       "down_data",
