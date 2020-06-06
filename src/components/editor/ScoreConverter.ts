@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
@@ -22,6 +23,7 @@ export class ScoreConverter {
   constructor(private keyKind: KeyKind, private keyConfig: KeyConfig) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
+  private defaultPageScore = new DefaultPageScore(this.keyNum);
 
   toFrameData(scoreData: ScoreData): FrameData[] {
     const initialPageScore = new DefaultPageScore(this.keyNum);
@@ -55,8 +57,7 @@ export class ScoreConverter {
           freezesArr.map(positionToFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
-          // Workaround of deep copy
-          const newSpeed: Speed = JSON.parse(JSON.stringify(speed));
+          const newSpeed: Speed = _.cloneDeep(speed);
           newSpeed.position = positionToFrame(speed.position);
           return newSpeed;
         });
@@ -131,6 +132,42 @@ export class ScoreConverter {
     return `
 ${noteStr + freezeStr}
 |${speedStr + boostStr}`;
+  }
+
+  cutLastDefault(scoreData: ScoreData): ScoreData {
+    const len = scoreData.scores.length;
+    const copiedScoreData = _.cloneDeep(scoreData);
+    let i = len - 1;
+    while (i >= 0) {
+      if (_.isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
+        copiedScoreData.scores.pop();
+        i--;
+      } else break;
+    }
+    return copiedScoreData;
+  }
+
+  convertWithQuarters(scoreData: ScoreData): string {
+    const quarterNotes: number[] = [];
+    for (let i = 0; i < 8; i++) {
+      quarterNotes.push(i * quarterInterval);
+    }
+
+    // Todo: 四分譜面を出力するページ数を変更できるようにする
+    const pushQuartersPageNum = 20;
+
+    // Todo: ノーツを置く位置を変更できるようにする
+    const pushQuartersLane = 0;
+
+    const newScoreData = this.cutLastDefault(_.cloneDeep(scoreData));
+
+    for (let i = 0; i < pushQuartersPageNum; i++) {
+      const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+      quartersPageScore.notes[pushQuartersLane] = quarterNotes;
+      newScoreData.scores.push(quartersPageScore);
+    }
+
+    return this.convert(this.cutLastDefault(newScoreData));
   }
 
   save(scoreData: ScoreData): string {

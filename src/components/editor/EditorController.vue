@@ -71,8 +71,11 @@
         />
       </div>
       <div id="menu-output" class="menu-item-container">
-        <div class="menu-output-btn btn-red" @click="convert">GO</div>
+        <div class="menu-output-btn btn-gray" @click="convertWithQuarters">
+          TEST
+        </div>
         <div class="menu-output-btn btn-blue" @click="save">SAVE</div>
+        <div class="menu-output-btn btn-red" @click="convert">GO!</div>
       </div>
     </div>
   </div>
@@ -163,7 +166,7 @@ export default Vue.extend({
       const data: string = converter.convert(this.scoreData);
       if (navigator.clipboard) {
         navigator.clipboard.writeText(data);
-        alert("セーブデータをクリップボードにコピーしました！");
+        alert("譜面データをクリップボードにコピーしました！");
       }
     },
     save(): void {
@@ -172,6 +175,14 @@ export default Vue.extend({
       if (navigator.clipboard) {
         navigator.clipboard.writeText(data);
         alert("セーブデータをクリップボードにコピーしました！");
+      }
+    },
+    convertWithQuarters(): void {
+      const converter = new ScoreConverter(this.keyKind, this.keyConfig);
+      const data: string = converter.convertWithQuarters(this.scoreData);
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(data);
+        alert("四分譜面データをクリップボードにコピーしました！");
       }
     },
     getLabelNumByPageNum(pageNum: number): number {

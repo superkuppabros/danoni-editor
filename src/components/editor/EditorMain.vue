@@ -19,6 +19,7 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
+import _ from "lodash";
 import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
@@ -440,11 +441,7 @@ export default Vue.extend({
     // ページコピー
     pageScoreCopy() {
       const page = this.page;
-
-      // Workaround of deep copy
-      const pageScore = JSON.parse(
-        JSON.stringify(this.scoreData.scores[page - 1])
-      );
+      const pageScore = _.cloneDeep(this.scoreData.scores[page - 1]);
       this.copyScoreStore = pageScore;
     },
 
@@ -460,9 +457,7 @@ export default Vue.extend({
     // ページ貼り付け
     pageScorePaste() {
       const page = this.page;
-
-      // Workaround of deep copy
-      const pageScore = JSON.parse(JSON.stringify(this.copyScoreStore));
+      const pageScore = _.cloneDeep(this.copyScoreStore);
       this.scoreData.scores[page - 1] = pageScore;
       this.displayPageScore(page);
     },
