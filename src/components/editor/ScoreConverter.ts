@@ -23,6 +23,7 @@ export class ScoreConverter {
   constructor(private keyKind: KeyKind, private keyConfig: KeyConfig) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
+  private defaultPageScore = new DefaultPageScore(this.keyNum);
 
   toFrameData(scoreData: ScoreData): FrameData[] {
     const initialPageScore = new DefaultPageScore(this.keyNum);
@@ -133,7 +134,20 @@ ${noteStr + freezeStr}
 |${speedStr + boostStr}`;
   }
 
+  cutLastDefault(scoreData: ScoreData): ScoreData {
+    const len = scoreData.scores.length;
+    const copiedScoreData = _.cloneDeep(scoreData);
+    let i = len - 1;
+    while (i >= 0) {
+      if (_.isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
+        copiedScoreData.scores.pop();
+        i--;
+      } else break;
+    }
+    return copiedScoreData;
+  }
+
   save(scoreData: ScoreData): string {
-    return JSON.stringify(scoreData);
+    return JSON.stringify(this.cutLastDefault(scoreData));
   }
 }

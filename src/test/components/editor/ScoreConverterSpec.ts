@@ -2,10 +2,13 @@ import { ScoreConverter, FrameData } from "@/components/editor/ScoreConverter";
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
+import _ from "lodash";
+import { DefaultPageScore } from "@/model/PageScore";
 
 describe("scoreConverter", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
+  const keyNum: number = keyConfig[keyKind].num;
   const scoreConverter = new ScoreConverter(keyKind, keyConfig);
   const scoreData: ScoreData = {
     adjustment: 0,
@@ -75,5 +78,16 @@ describe("scoreConverter", () => {
 |left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
 |speed_data=360,1.1,440,0.7|boost_data=400,0.8|`;
     expect(scoreConverter.convert(scoreData)).toBe(expectedData);
+  });
+
+  it("譜面データの後ろの空白が削除されている", () => {
+    const scoreDataWithDefault = _.cloneDeep(scoreData);
+    scoreDataWithDefault.scores.push(
+      new DefaultPageScore(keyNum),
+      new DefaultPageScore(keyNum)
+    );
+    expect(scoreConverter.cutLastDefault(scoreDataWithDefault)).toStrictEqual(
+      scoreData
+    );
   });
 });
