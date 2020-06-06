@@ -1,5 +1,5 @@
 import { Timing } from "./Timing";
-import { PageScore } from "./PageScore";
+import { PageScore, DefaultPageScore } from "./PageScore";
 
 export interface ScoreData {
   timings: Timing[];
@@ -17,10 +17,5 @@ export class DefaultScoreData implements ScoreData {
     }
   ];
 
-  scores: PageScore[] = [
-    {
-      notes: new Array(this.keyNum).fill([]).map(() => []),
-      freezes: new Array(this.keyNum).fill([]).map(() => [])
-    }
-  ];
+  scores: PageScore[] = [new DefaultPageScore(this.keyNum)];
 }

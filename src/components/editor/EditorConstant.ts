@@ -6,6 +6,7 @@ export const quarterInterval = verticalSizeNum / 8;
 export const fps = 60;
 
 export const canvasMargin = 20;
+export const speedChangeWidth = 30;
 
 export const noteColors = ["#ff0000", "#0000ff", "#00cc00", "#ff9000"];
 export const freezeColors = ["#ff4dd2", "#00ffff", "#ceff00", "#c99b7d"];

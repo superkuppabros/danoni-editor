@@ -53,6 +53,7 @@
         <div class="menu-txt">BPM</div>
         <input
           type="number"
+          step="0.01"
           class="uk-input uk-form-small"
           v-model="timing.bpm"
         />
