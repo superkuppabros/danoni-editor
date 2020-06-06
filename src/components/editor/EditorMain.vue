@@ -52,6 +52,7 @@ type DataType = {
   editorWidth: number;
   musicTimer: number | null;
   musicPlayer: MusicPlayer;
+  copyScoreStore: PageScore;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
@@ -71,6 +72,7 @@ export default Vue.extend({
   data(): DataType {
     const keyKind = this.selectedKey as KeyKind;
     const keyConfig = DefaultKeyConfig;
+    const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
 
     return {
@@ -78,12 +80,13 @@ export default Vue.extend({
       scoreData: this.loadScoreData,
       keyConfig: keyConfig,
       divisor: 24,
-      keyKind: keyKind,
+      keyKind,
       page: 1,
-      keyNum: keyConfig[keyKind].num,
+      keyNum,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicPlayer: new MusicPlayer(audio),
-      musicTimer: null
+      musicTimer: null,
+      copyScoreStore: new DefaultPageScore(keyNum)
     };
   },
   methods: {
@@ -431,6 +434,36 @@ export default Vue.extend({
       this.baseLayerDraw();
     },
 
+    // ページコピー
+    pageScoreCopy() {
+      const page = this.page;
+
+      // Workaround of deep copy
+      const pageScore = JSON.parse(
+        JSON.stringify(this.scoreData.scores[page - 1])
+      );
+      this.copyScoreStore = pageScore;
+    },
+
+    // ページカット
+    pageScoreCut() {
+      const page = this.page;
+
+      this.pageScoreCopy();
+      this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
+      this.displayPageScore(page);
+    },
+
+    // ページ貼り付け
+    pageScorePaste() {
+      const page = this.page;
+
+      // Workaround of deep copy
+      const pageScore = JSON.parse(JSON.stringify(this.copyScoreStore));
+      this.scoreData.scores[page - 1] = pageScore;
+      this.displayPageScore(page);
+    },
+
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       if (e.ctrlKey) {
@@ -455,6 +488,15 @@ export default Vue.extend({
             break;
           case "Digit7":
             this.changeDivisor(quarterInterval / 8);
+            break;
+          case "KeyX":
+            this.pageScoreCut();
+            break;
+          case "KeyC":
+            this.pageScoreCopy();
+            break;
+          case "KeyV":
+            this.pageScorePaste();
             break;
         }
       } else {
