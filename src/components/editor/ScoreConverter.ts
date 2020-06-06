@@ -147,7 +147,7 @@ ${noteStr + freezeStr}
     return copiedScoreData;
   }
 
-  createQuarterNotesData(scoreData: ScoreData): string {
+  convertWithQuarters(scoreData: ScoreData): string {
     const quarterNotes: number[] = [];
     for (let i = 0; i < 8; i++) {
       quarterNotes.push(i * quarterInterval);
