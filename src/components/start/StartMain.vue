@@ -36,7 +36,7 @@
         </router-link>
       </div>
 
-      <div id="start-version">ver 1.1.1α created by SKB</div>
+      <div id="start-version">ver 2.0.0β created by SKB</div>
     </div>
   </div>
 </template>
