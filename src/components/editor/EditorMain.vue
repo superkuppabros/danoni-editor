@@ -404,7 +404,6 @@ export default Vue.extend({
         this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
       }
       this.displayPageScore(page);
-      this.currentPositionMove(0);
 
       // 音楽再生時に移動すると再生位置を変更する
       if (this.musicTimer) {
@@ -412,15 +411,13 @@ export default Vue.extend({
         this.playMusicLoop(this.timing);
       }
     },
-    pageMinus(n: number): void {
+    pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
-      Math.max(1, this.page - n);
-      this.pageMove(this.page);
+      this.currentPositionMove(position);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
-      this.page += n;
-      this.pageMove(this.page);
+      this.currentPositionMove(0);
     },
 
     // 移動間隔変更
@@ -525,7 +522,7 @@ export default Vue.extend({
             this.currentPosition -= this.divisor;
             if (this.currentPosition < 0) {
               if (this.page === 1) this.currentPosition = 0;
-              else this.pageMinus(1);
+              else this.pageMinus(1, this.currentPosition + verticalSizeNum);
             } else this.currentPositionMove(this.currentPosition);
             break;
           case "ArrowLeft":
