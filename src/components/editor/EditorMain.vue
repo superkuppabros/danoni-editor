@@ -402,10 +402,12 @@ export default Vue.extend({
     pageMove(page: number): void {
       this.page = page;
 
-      const pageScore: PageScore = this.scoreData.scores[page - 1];
-      if (pageScore === undefined) {
-        this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
-      }
+      // 今いるページ + 1までの範囲でemptyのページを初期化する
+      if (!this.scoreData.scores[page]) this.scoreData.scores.length = page + 1;
+      this.scoreData.scores = [...this.scoreData.scores].map(pageScore => {
+        if (!pageScore) return new DefaultPageScore(this.keyNum);
+        else return pageScore;
+      });
       this.displayPageScore(page);
 
       // 音楽再生時に移動すると再生位置を変更する
