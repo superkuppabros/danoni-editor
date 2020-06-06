@@ -221,6 +221,7 @@ export default Vue.extend({
         this.musicPositionAnimation(playDuration);
         if (this.musicTimer) {
           const timer: number = setTimeout(() => {
+            this.musicPlayer.pause();
             loop(startTime, endTime);
           }, playDuration);
           this.musicTimer = timer;
