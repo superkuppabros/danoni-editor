@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
@@ -55,8 +56,7 @@ export class ScoreConverter {
           freezesArr.map(positionToFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
-          // Workaround of deep copy
-          const newSpeed: Speed = JSON.parse(JSON.stringify(speed));
+          const newSpeed: Speed = _.cloneDeep(speed);
           newSpeed.position = positionToFrame(speed.position);
           return newSpeed;
         });
