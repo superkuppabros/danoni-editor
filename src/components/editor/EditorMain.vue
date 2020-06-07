@@ -19,7 +19,6 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
-import _ from "lodash";
 import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
@@ -29,17 +28,17 @@ import {
   editorHeight,
   verticalSizeNum,
   quarterInterval,
-  noteHeight,
   canvasMargin,
-  freezeColors,
-  noteColors,
   laneColors,
   fps,
   speedChangeWidth
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
-import { MusicPlayer } from "./MusicPlayer";
+import { MusicService } from "./service/MusicService";
 import { SpeedType } from "../../model/Speed";
+import { NoteService } from "./service/NoteService";
+import { SpeedPieceService } from "./service/SpeedPieceService";
+import { PageScoreService } from "./service/PageScoreService";
 import SpeedPiece from "./SpeedPiece.vue";
 
 type DataType = {
@@ -52,8 +51,11 @@ type DataType = {
   page: number;
   editorWidth: number;
   musicTimer: number | null;
-  musicPlayer: MusicPlayer;
+  musicService: MusicService;
   copyScoreStore: PageScore;
+  noteService?: NoteService;
+  speedPieceService?: SpeedPieceService;
+  pageScoreService?: PageScoreService;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
@@ -85,7 +87,7 @@ export default Vue.extend({
       page: 1,
       keyNum,
       editorWidth: noteWidth * keyConfig[keyKind].num,
-      musicPlayer: new MusicPlayer(audio),
+      musicService: new MusicService(audio),
       musicTimer: null,
       copyScoreStore: new DefaultPageScore(keyNum)
     };
@@ -218,11 +220,11 @@ export default Vue.extend({
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = (endTime - startTime) * 1000;
-        this.musicPlayer.play(startTime);
+        this.musicService.play(startTime);
         this.musicPositionAnimation(playDuration);
         if (this.musicTimer) {
           const timer: number = setTimeout(() => {
-            this.musicPlayer.pause();
+            this.musicService.pause();
             loop(startTime, endTime);
           }, playDuration);
           this.musicTimer = timer;
@@ -241,138 +243,16 @@ export default Vue.extend({
       node.destroy();
       stage.add(currentPositionLayer);
 
-      this.musicPlayer.pause(timer);
+      this.musicService.pause(timer);
       this.musicTimer = null;
-    },
-
-    // ノーツの有無の判定
-    hasNote(
-      page: number,
-      lane: number,
-      position: number
-    ): { exists: boolean; isFreeze: boolean } {
-      const pageScore = this.scoreData.scores[page - 1];
-      const isFreeze = pageScore.freezes[lane].includes(position);
-      const exists = pageScore.notes[lane].includes(position) || isFreeze;
-      return { exists, isFreeze };
-    },
-
-    // ノーツの追加
-    noteAdd(
-      page: number,
-      lane: number,
-      position: number,
-      isFreeze: boolean
-    ): void {
-      if (isFreeze)
-        this.scoreData.scores[page - 1].freezes[lane].push(position);
-      else this.scoreData.scores[page - 1].notes[lane].push(position);
-    },
-
-    // ノーツの削除
-    noteRemove(page: number, lane: number, position: number): void {
-      this.scoreData.scores[page - 1].freezes[lane] = this.scoreData.scores[
-        page - 1
-      ].freezes[lane].filter(pos => pos !== position);
-      this.scoreData.scores[page - 1].notes[lane] = this.scoreData.scores[
-        page - 1
-      ].notes[lane].filter(pos => pos !== position);
-    },
-
-    // ノーツの描画
-    noteDraw(lane: number, position: number, isFreeze: boolean): void {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-      const colorGroup = this.keyConfig[this.keyKind].colorGroup;
-
-      const color = ((lane: number, isFreeze: boolean) => {
-        if (isFreeze) {
-          return freezeColors[colorGroup[lane]];
-        } else {
-          return noteColors[colorGroup[lane]];
-        }
-      })(lane, isFreeze);
-
-      const note = new Konva.Rect({
-        x: lane * noteWidth,
-        y: editorHeight - position - noteHeight / 2,
-        width: noteWidth,
-        height: noteHeight,
-        fill: color,
-        id: `note-${lane}-${position}`
-      });
-      notesLayer.add(note);
-      stage.add(notesLayer);
-    },
-
-    // ノーツのクリア
-    noteClear(lane: number, position: number): void {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-
-      const note = notesLayer.findOne(`#note-${lane}-${position}`);
-      note.destroy();
-      stage.add(notesLayer);
-    },
-
-    // 速度変化コマの存在判定
-    hasSpeedPiece(page: number, position: number): boolean {
-      return this.scoreData.scores[page - 1].speeds.some(
-        speed => speed.position === position
-      );
-    },
-
-    // 速度変化コマの追加
-    speedPieceAdd(page: number, position: number, type: SpeedType, value = 1) {
-      this.scoreData.scores[page - 1].speeds.push({
-        position,
-        value,
-        type
-      });
-    },
-
-    // 速度変化コマの削除
-    speedPieceRemove(page: number, position: number) {
-      this.scoreData.scores[page - 1].speeds = this.scoreData.scores[
-        page - 1
-      ].speeds.filter(speed => speed.position !== position);
-    },
-
-    // 速度変化コマの描画
-    speedPieceDraw(position: number, type: SpeedType) {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-
-      const color = type === "speed" ? "orange" : "purple";
-      const radius = 6;
-      const triangle = new Konva.RegularPolygon({
-        sides: 3,
-        radius,
-        rotation: 30,
-        fill: color,
-        x: this.editorWidth + radius,
-        y: editorHeight - position,
-        id: `speed-${position}`
-      });
-
-      notesLayer.add(triangle);
-      stage.add(notesLayer);
-    },
-
-    // 速度変化コマのクリア
-    speedPieceClear(position: number): void {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-
-      const note = notesLayer.findOne(`#speed-${position}`);
-      note.destroy();
-      stage.add(notesLayer);
     },
 
     // 譜面データのページ反映
     displayPageScore(page: number): void {
       const stage = this.stage as Konva.Stage;
       const notesLayer = this.notesLayer as Konva.Layer;
+      const noteService = this.noteService as NoteService;
+      const speedPieceService = this.speedPieceService as SpeedPieceService;
 
       const pageScore = this.scoreData.scores[page - 1];
 
@@ -381,16 +261,16 @@ export default Vue.extend({
 
       pageScore.notes.forEach((laneArr, lane) => {
         laneArr.forEach(position => {
-          this.noteDraw(lane, position, false);
+          noteService.draw(lane, position, false);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
         laneArr.forEach(position => {
-          this.noteDraw(lane, position, true);
+          noteService.draw(lane, position, true);
         });
       });
       pageScore.speeds.forEach(speed => {
-        this.speedPieceDraw(speed.position, speed.type);
+        speedPieceService.draw(speed.position, speed.type);
       });
     },
 
@@ -438,55 +318,12 @@ export default Vue.extend({
       this.baseLayerDraw();
     },
 
-    // ページコピー
-    pageScoreCopy() {
-      const page = this.page;
-      const pageScore = _.cloneDeep(this.scoreData.scores[page - 1]);
-      this.copyScoreStore = pageScore;
-    },
-
-    // ページカット
-    pageScoreCut() {
-      const page = this.page;
-
-      this.pageScoreCopy();
-      this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
-      this.displayPageScore(page);
-    },
-
-    // ページ貼り付け
-    pageScorePaste() {
-      const page = this.page;
-      const pageScore = _.cloneDeep(this.copyScoreStore);
-      this.scoreData.scores[page - 1] = pageScore;
-      this.displayPageScore(page);
-    },
-
-    // 行削除
-    notesRemoveOnPosition(
-      position: number,
-      page: number
-    ): {
-      lane: number;
-      isFreeze: boolean;
-    }[] {
-      const keyNum = this.keyNum;
-      const removedLanes = [];
-      for (let lane = 0; lane < keyNum; lane++) {
-        if (this.hasNote(page, lane, position).exists) {
-          this.noteRemove(page, lane, position);
-          removedLanes.push({
-            lane,
-            isFreeze: this.hasNote(page, lane, position).isFreeze
-          });
-        }
-      }
-      this.displayPageScore(page);
-      return removedLanes;
-    },
-
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
+      const noteService = this.noteService as NoteService;
+      const speedPieceService = this.speedPieceService as SpeedPieceService;
+      const pageScoreService = this.pageScoreService as PageScoreService;
+
       if (e.ctrlKey) {
         switch (e.code) {
           case "Digit1":
@@ -511,17 +348,17 @@ export default Vue.extend({
             this.changeDivisor(quarterInterval / 8);
             break;
           case "KeyX":
-            this.pageScoreCut();
+            pageScoreService.cut(this.page);
             break;
           case "KeyC":
-            this.pageScoreCopy();
+            pageScoreService.copy(this.page);
             break;
           case "KeyV":
-            this.pageScorePaste();
+            pageScoreService.paste(this.page);
             break;
           case "ArrowUp": {
             let operateNotesPage = this.page;
-            const removedLanes = this.notesRemoveOnPosition(
+            const removedLanes = noteService.removeOnPosition(
               this.currentPosition,
               operateNotesPage
             );
@@ -530,9 +367,12 @@ export default Vue.extend({
               this.pagePlus(1);
               operateNotesPage++;
             } else this.currentPositionMove(this.currentPosition);
-            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            noteService.removeOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
             removedLanes.forEach(obj =>
-              this.noteAdd(
+              noteService.add(
                 operateNotesPage,
                 obj.lane,
                 this.currentPosition,
@@ -544,7 +384,7 @@ export default Vue.extend({
           }
           case "ArrowDown": {
             let operateNotesPage = this.page;
-            const removedLanes = this.notesRemoveOnPosition(
+            const removedLanes = noteService.removeOnPosition(
               this.currentPosition,
               operateNotesPage
             );
@@ -557,9 +397,12 @@ export default Vue.extend({
                 operateNotesPage--;
               }
             } else this.currentPositionMove(this.currentPosition);
-            this.notesRemoveOnPosition(this.currentPosition, operateNotesPage);
+            noteService.removeOnPosition(
+              this.currentPosition,
+              operateNotesPage
+            );
             removedLanes.forEach(obj =>
-              this.noteAdd(
+              noteService.add(
                 operateNotesPage,
                 obj.lane,
                 this.currentPosition,
@@ -583,7 +426,8 @@ export default Vue.extend({
             break;
           }
           case "Backspace":
-            this.notesRemoveOnPosition(this.currentPosition, this.page);
+            noteService.removeOnPosition(this.currentPosition, this.page);
+            this.displayPageScore(this.page);
             break;
           case "Space":
             this.currentPosition += this.divisor;
@@ -616,12 +460,12 @@ export default Vue.extend({
               const page = this.page;
               const position = this.currentPosition;
 
-              if (this.hasSpeedPiece(page, position)) {
-                this.speedPieceRemove(page, position);
-                this.speedPieceClear(position);
+              if (speedPieceService.hasSpeedPiece(page, position)) {
+                speedPieceService.remove(page, position);
+                speedPieceService.clear(position);
               } else {
-                this.speedPieceAdd(page, position, speedType);
-                this.speedPieceDraw(position, speedType);
+                speedPieceService.add(page, position, speedType);
+                speedPieceService.draw(position, speedType);
               }
             }
             break;
@@ -636,12 +480,12 @@ export default Vue.extend({
             const position = this.currentPosition;
 
             if (possiblyLane >= 0) {
-              if (this.hasNote(page, possiblyLane, position).exists) {
-                this.noteRemove(page, possiblyLane, position);
-                this.noteClear(possiblyLane, position);
+              if (noteService.hasNote(page, possiblyLane, position).exists) {
+                noteService.remove(page, possiblyLane, position);
+                noteService.clear(possiblyLane, position);
               } else {
-                this.noteAdd(page, possiblyLane, position, isFreeze);
-                this.noteDraw(possiblyLane, position, isFreeze);
+                noteService.add(page, possiblyLane, position, isFreeze);
+                noteService.draw(possiblyLane, position, isFreeze);
               }
 
               this.currentPosition += this.divisor;
@@ -680,7 +524,30 @@ export default Vue.extend({
 
     this.baseLayerDraw();
     this.currentPositionDraw();
+    this.pageMove(1);
     this.displayPageScore(1);
+
+    this.noteService = new NoteService(
+      this.scoreData,
+      this.keyConfig,
+      this.keyKind,
+      this.stage,
+      this.notesLayer
+    );
+
+    this.speedPieceService = new SpeedPieceService(
+      this.scoreData,
+      this.editorWidth,
+      this.stage,
+      this.notesLayer
+    );
+
+    this.pageScoreService = new PageScoreService(
+      this.scoreData,
+      this.copyScoreStore,
+      this.keyNum,
+      this.displayPageScore
+    );
   },
 
   watch: {

@@ -3,7 +3,7 @@ import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
-import { quarterInterval, verticalSizeNum, fps } from "./EditorConstant";
+import { quarterInterval, verticalSizeNum, fps } from "../EditorConstant";
 import { Speed } from "@/model/Speed";
 
 export type FrameData = {
@@ -19,7 +19,7 @@ export type OutputData = {
   boosts: Speed[];
 };
 
-export class ScoreConverter {
+export class ScoreConvertService {
   constructor(private keyKind: KeyKind, private keyConfig: KeyConfig) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
@@ -147,6 +147,7 @@ ${noteStr + freezeStr}
     return copiedScoreData;
   }
 
+  // 四分譜面の作成・変換
   convertWithQuarters(scoreData: ScoreData): string {
     const quarterNotes: number[] = [];
     for (let i = 0; i < 8; i++) {
