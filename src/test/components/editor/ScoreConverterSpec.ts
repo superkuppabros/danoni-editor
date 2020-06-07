@@ -1,7 +1,7 @@
 import {
-  ScoreConverter,
+  ScoreConvertService,
   FrameData
-} from "@/components/editor/service/ScoreConverterService";
+} from "@/components/editor/service/ScoreConvertService";
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
@@ -12,7 +12,7 @@ describe("scoreConverter", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const keyNum: number = keyConfig[keyKind].num;
-  const scoreConverter = new ScoreConverter(keyKind, keyConfig);
+  const scoreConverter = new ScoreConvertService(keyKind, keyConfig);
   const scoreData: ScoreData = {
     blankFrame: 200,
     timings: [

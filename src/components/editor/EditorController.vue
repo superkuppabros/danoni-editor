@@ -86,7 +86,7 @@ import Vue from "vue";
 import EditorMain from "./EditorMain.vue";
 import { Timing } from "../../model/Timing";
 import { ScoreData, DefaultScoreData } from "../../model/ScoreData";
-import { ScoreConverter } from "./ScoreConverter";
+import { ScoreConvertService } from "./service/ScoreConvertService";
 import { KeyKind } from "../../model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "../../model/KeyConfig";
 import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
@@ -98,6 +98,7 @@ type DataType = {
   scoreData: ScoreData;
   keyKind: KeyKind;
   keyConfig: KeyConfig;
+  scoreConvertService: ScoreConvertService;
 };
 
 export default Vue.extend({
@@ -111,8 +112,9 @@ export default Vue.extend({
     loadMusicUrl: String
   },
   data(): DataType {
+    const keyConfig = DefaultKeyConfig;
     const keyKind = this.selectedKey as KeyKind;
-    const keyNum = DefaultKeyConfig[keyKind].num;
+    const keyNum = keyConfig[keyKind].num;
     let scoreData;
     try {
       //TODO: 譜面データのチェッカーを作る
@@ -128,9 +130,10 @@ export default Vue.extend({
       pageNum: 1,
       labelNum: 1,
       timing: scoreData.timings[0],
-      scoreData: scoreData,
-      keyKind: this.selectedKey as KeyKind,
-      keyConfig: DefaultKeyConfig
+      scoreData,
+      keyKind,
+      keyConfig,
+      scoreConvertService: new ScoreConvertService(keyKind, keyConfig)
     };
   },
   methods: {
@@ -161,29 +164,31 @@ export default Vue.extend({
     changeScoreData(scoreData: ScoreData) {
       this.scoreData = scoreData;
     },
-    convert(): void {
-      const converter = new ScoreConverter(this.keyKind, this.keyConfig);
-      const data: string = converter.convert(this.scoreData);
+
+    writeClipBoard(data: string, message: string): void {
       if (navigator.clipboard) {
         navigator.clipboard.writeText(data);
-        alert("譜面データをクリップボードにコピーしました！");
+        alert(message);
       }
+    },
+
+    convert(): void {
+      const converter = this.scoreConvertService;
+      const data: string = converter.convert(this.scoreData);
+      const message = "譜面データをクリップボードにコピーしました！";
+      this.writeClipBoard(data, message);
     },
     save(): void {
-      const converter = new ScoreConverter(this.keyKind, this.keyConfig);
+      const converter = this.scoreConvertService;
       const data: string = converter.save(this.scoreData);
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(data);
-        alert("セーブデータをクリップボードにコピーしました！");
-      }
+      const message = "セーブデータをクリップボードにコピーしました！";
+      this.writeClipBoard(data, message);
     },
     convertWithQuarters(): void {
-      const converter = new ScoreConverter(this.keyKind, this.keyConfig);
+      const converter = this.scoreConvertService;
       const data: string = converter.convertWithQuarters(this.scoreData);
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(data);
-        alert("四分譜面データをクリップボードにコピーしました！");
-      }
+      const message = "四分譜面データをクリップボードにコピーしました！";
+      this.writeClipBoard(data, message);
     },
     getLabelNumByPageNum(pageNum: number): number {
       const labels = this.scoreData.timings.map(timing => timing.label);

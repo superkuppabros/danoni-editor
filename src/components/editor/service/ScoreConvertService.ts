@@ -19,7 +19,7 @@ export type OutputData = {
   boosts: Speed[];
 };
 
-export class ScoreConverter {
+export class ScoreConvertService {
   constructor(private keyKind: KeyKind, private keyConfig: KeyConfig) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
@@ -147,6 +147,7 @@ ${noteStr + freezeStr}
     return copiedScoreData;
   }
 
+  // 四分譜面の作成・変換
   convertWithQuarters(scoreData: ScoreData): string {
     const quarterNotes: number[] = [];
     for (let i = 0; i < 8; i++) {
