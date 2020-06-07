@@ -3,8 +3,9 @@ import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
-import { quarterInterval, verticalSizeNum, fps } from "../EditorConstant";
+import { quarterInterval } from "../EditorConstant";
 import { Speed } from "@/model/Speed";
+import { positionToFrame } from "../helper/Calculator";
 
 export type FrameData = {
   notes: number[][];
@@ -42,23 +43,18 @@ export class ScoreConvertService {
         if (timings[labelCounter] && pageNum === timings[labelCounter].label)
           labelCounter++;
         const timing = timings[labelCounter - 1];
-        const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
-        const startFrame =
-          blankFrame +
-          timing.startNum +
-          (pageNum - timing.label) * verticalSizeNum * framePerPosition;
-        const positionToFrame = (position: number) =>
-          Math.round(startFrame + position * framePerPosition);
+        const calculateFrame = (position: number) =>
+          Math.round(positionToFrame(timing, pageNum, position, blankFrame));
 
         const pageNoteFrames = pageScore.notes.map(notesArr =>
-          notesArr.map(positionToFrame)
+          notesArr.map(calculateFrame)
         );
         const freezeNoteFrames = pageScore.freezes.map(freezesArr =>
-          freezesArr.map(positionToFrame)
+          freezesArr.map(calculateFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
           const newSpeed: Speed = _.cloneDeep(speed);
-          newSpeed.position = positionToFrame(speed.position);
+          newSpeed.position = calculateFrame(speed.position);
           return newSpeed;
         });
         frameScores.push({
