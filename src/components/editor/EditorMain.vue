@@ -19,7 +19,6 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
-import _ from "lodash";
 import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
@@ -39,6 +38,7 @@ import { MusicService } from "./service/MusicService";
 import { SpeedType } from "../../model/Speed";
 import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
+import { PageScoreService } from "./service/PageScoreService";
 import SpeedPiece from "./SpeedPiece.vue";
 
 type DataType = {
@@ -55,6 +55,7 @@ type DataType = {
   copyScoreStore: PageScore;
   noteService?: NoteService;
   speedPieceService?: SpeedPieceService;
+  pageScoreService?: PageScoreService;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
@@ -317,34 +318,11 @@ export default Vue.extend({
       this.baseLayerDraw();
     },
 
-    // ページコピー
-    pageScoreCopy() {
-      const page = this.page;
-      const pageScore = _.cloneDeep(this.scoreData.scores[page - 1]);
-      this.copyScoreStore = pageScore;
-    },
-
-    // ページカット
-    pageScoreCut() {
-      const page = this.page;
-
-      this.pageScoreCopy();
-      this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
-      this.displayPageScore(page);
-    },
-
-    // ページ貼り付け
-    pageScorePaste() {
-      const page = this.page;
-      const pageScore = _.cloneDeep(this.copyScoreStore);
-      this.scoreData.scores[page - 1] = pageScore;
-      this.displayPageScore(page);
-    },
-
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       const noteService = this.noteService as NoteService;
       const speedPieceService = this.speedPieceService as SpeedPieceService;
+      const pageScoreService = this.pageScoreService as PageScoreService;
 
       if (e.ctrlKey) {
         switch (e.code) {
@@ -370,13 +348,13 @@ export default Vue.extend({
             this.changeDivisor(quarterInterval / 8);
             break;
           case "KeyX":
-            this.pageScoreCut();
+            pageScoreService.cut(this.page);
             break;
           case "KeyC":
-            this.pageScoreCopy();
+            pageScoreService.copy(this.page);
             break;
           case "KeyV":
-            this.pageScorePaste();
+            pageScoreService.paste(this.page);
             break;
           case "ArrowUp": {
             let operateNotesPage = this.page;
@@ -562,6 +540,13 @@ export default Vue.extend({
       this.editorWidth,
       this.stage,
       this.notesLayer
+    );
+
+    this.pageScoreService = new PageScoreService(
+      this.scoreData,
+      this.copyScoreStore,
+      this.keyNum,
+      this.displayPageScore
     );
   },
 
