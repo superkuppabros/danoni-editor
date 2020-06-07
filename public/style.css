@@ -58,6 +58,8 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 #editor-menu {
+  background-color: white;
+
   margin-top: 20px;
   margin-right: 20px;
   padding: 0 10px;
@@ -78,7 +80,12 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .menu-move-btn,
 .menu-move-txt {
-  margin: auto 4px;
+  margin: auto 2px;
+}
+
+.menu-move-txt {
+  width: 27px;
+  text-align: center;
 }
 
 .menu-move-btn:hover {

@@ -28,10 +28,9 @@ import {
   editorHeight,
   verticalSizeNum,
   quarterInterval,
-  canvasMargin,
   laneColors,
-  fps,
-  speedChangeWidth
+  canvasMarginHorizontal,
+  canvasMarginVertical
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
@@ -40,6 +39,11 @@ import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
 import { PageScoreService } from "./service/PageScoreService";
 import SpeedPiece from "./SpeedPiece.vue";
+import {
+  positionToSeconds,
+  positionToFrame,
+  secondsToTimeStr
+} from "./helper/Calculator";
 
 type DataType = {
   currentPosition: number;
@@ -160,18 +164,78 @@ export default Vue.extend({
       const stage = this.stage as Konva.Stage;
       const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
 
-      const node = currentPositionLayer.findOne("#currentPosition");
-      const currentPositionLine: Konva.Line =
-        node instanceof Konva.Line
-          ? node.y(editorHeight - this.currentPosition)
+      const color = "#d8d800";
+      const position = this.currentPosition;
+
+      const maybeLine = currentPositionLayer.findOne("#currentPositionLine");
+      const line: Konva.Line =
+        maybeLine instanceof Konva.Line
+          ? maybeLine.y(editorHeight - position)
           : new Konva.Line({
-              y: editorHeight - this.currentPosition,
+              y: editorHeight - position,
               points: [0, 0, this.editorWidth, 0],
-              stroke: "#d8d800",
+              stroke: color,
               strokeWidth: 1.75,
-              id: "currentPosition"
+              id: "currentPositionLine"
             });
-      currentPositionLayer.add(currentPositionLine);
+      const radius = 6;
+
+      const maybeTriangle = currentPositionLayer.findOne(
+        "#currentPositionTriangle"
+      );
+      const triangle: Konva.RegularPolygon =
+        maybeTriangle instanceof Konva.RegularPolygon
+          ? maybeTriangle.y(editorHeight - position)
+          : new Konva.RegularPolygon({
+              sides: 3,
+              radius,
+              rotation: -30,
+              fill: color,
+              x: -radius,
+              y: editorHeight - position,
+              id: `currentPositionTriangle`
+            });
+
+      const timing = this.timing;
+      const page = this.page;
+      const blankFrame = this.scoreData.blankFrame;
+      const currentFrame =
+        positionToFrame(timing, page, position, blankFrame) < 100000
+          ? Math.round(
+              positionToFrame(timing, page, position, blankFrame) * 10
+            ) / 10
+          : Math.round(positionToFrame(timing, page, position, blankFrame));
+
+      const currentSeconds = positionToSeconds(
+        timing,
+        page,
+        position,
+        blankFrame
+      );
+      const currentTimeStr = secondsToTimeStr(currentSeconds);
+      const displayedText = `${currentFrame}\n[${currentTimeStr}]`;
+      const textWidth = 40;
+      const textHeight = 22;
+
+      const maybeText = currentPositionLayer.findOne("#currentPositionText");
+      const text: Konva.Text =
+        maybeText instanceof Konva.Text
+          ? maybeText
+              .y(editorHeight - position - textHeight / 2)
+              .text(displayedText)
+          : new Konva.Text({
+              width: textWidth,
+              height: textHeight,
+              text: displayedText,
+              fill: "black",
+              fontSize: textHeight / 2,
+              align: "center",
+              x: -canvasMarginHorizontal + 2,
+              y: editorHeight - position - textHeight / 2,
+              id: `currentPositionText`
+            });
+
+      currentPositionLayer.add(line, triangle, text);
       stage.add(currentPositionLayer);
     },
 
@@ -209,14 +273,10 @@ export default Vue.extend({
 
     // 音楽再生処理
     playMusicLoop(timing: Timing) {
-      const secondsPerPage =
-        (60 / quarterInterval / timing.bpm) * verticalSizeNum;
-      const bufferNum = 0.25; // 2拍分
-      const durationNum = 1; // 8拍分
-      const firstSeconds =
-        timing.startNum / fps + (this.pageNum - timing.label) * secondsPerPage;
-      const startTime = firstSeconds - bufferNum * secondsPerPage;
-      const endTime = firstSeconds + durationNum * secondsPerPage;
+      const startPosition = -verticalSizeNum / 4;
+      const endPosition = verticalSizeNum;
+      const startTime = positionToSeconds(timing, this.page, startPosition);
+      const endTime = positionToSeconds(timing, this.page, endPosition);
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = (endTime - startTime) * 1000;
@@ -359,8 +419,8 @@ export default Vue.extend({
           case "ArrowUp": {
             let operateNotesPage = this.page;
             const removedLanes = noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) {
@@ -368,8 +428,8 @@ export default Vue.extend({
               operateNotesPage++;
             } else this.currentPositionMove(this.currentPosition);
             noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             removedLanes.forEach(obj =>
               noteService.add(
@@ -385,8 +445,8 @@ export default Vue.extend({
           case "ArrowDown": {
             let operateNotesPage = this.page;
             const removedLanes = noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             this.currentPosition -= this.divisor;
             if (this.currentPosition < 0) {
@@ -398,8 +458,8 @@ export default Vue.extend({
               }
             } else this.currentPositionMove(this.currentPosition);
             noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             removedLanes.forEach(obj =>
               noteService.add(
@@ -426,7 +486,7 @@ export default Vue.extend({
             break;
           }
           case "Backspace":
-            noteService.removeOnPosition(this.currentPosition, this.page);
+            noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
             break;
           case "Space":
@@ -501,11 +561,11 @@ export default Vue.extend({
 
   mounted(): void {
     const stage = new Konva.Stage({
-      x: canvasMargin,
-      y: canvasMargin,
+      x: canvasMarginHorizontal,
+      y: canvasMarginVertical,
       container: "canvas",
-      width: this.editorWidth + canvasMargin * 2 + speedChangeWidth,
-      height: editorHeight + canvasMargin * 2
+      width: this.editorWidth + canvasMarginHorizontal * 2,
+      height: editorHeight + canvasMarginVertical * 2
     });
     const baseLayer = new Konva.Layer({
       container: "baseLayer"

@@ -87,8 +87,8 @@ export class NoteService {
 
   // 行削除
   removeOnPosition(
-    position: number,
-    page: number
+    page: number,
+    position: number
   ): {
     lane: number;
     isFreeze: boolean;
