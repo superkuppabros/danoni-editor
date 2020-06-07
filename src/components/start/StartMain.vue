@@ -16,7 +16,7 @@
           class="uk-select uk-form-width-medium"
           v-model="selectedKey"
         >
-          <option v-for="(value, keyKind) in keyConfig" :key="value.id">{{
+          <option v-for="keyKind in keyKinds" :key="keyKind">{{
             keyKind
           }}</option>
         </select>
@@ -31,9 +31,8 @@
             query: { key: selectedKey }
           }"
           class="start-go-btn btn-red"
+          >NEXT</router-link
         >
-          NEXT
-        </router-link>
       </div>
 
       <div id="start-version">ver 2.1.3β created by SKB</div>
@@ -70,6 +69,14 @@ export default Vue.extend({
       musicUrl: null,
       scoreDataStr: null
     };
+  },
+  computed: {
+    keyKinds(): KeyKind[] {
+      const keyConfig = this.keyConfig as KeyConfig;
+      const keys = Object.keys(keyConfig) as KeyKind[];
+      keys.sort((a, b) => keyConfig[a].id - keyConfig[b].id);
+      return keys;
+    }
   },
   methods: {
     onMusicFileRecieve(file: File) {
