@@ -49,7 +49,7 @@
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model="scoreData.adjustment"
+          v-model.number="scoreData.adjustment"
         />
       </div>
       <div id="menu-sn" class="menu-item-container">
@@ -58,7 +58,7 @@
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model="timing.startNum"
+          v-model.number="timing.startNum"
         />
       </div>
       <div id="menu-bpm" class="menu-item-container">
@@ -67,7 +67,7 @@
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model="timing.bpm"
+          v-model.number="timing.bpm"
         />
       </div>
       <div id="menu-output" class="menu-item-container">

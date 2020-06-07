@@ -11,16 +11,16 @@ describe("scoreConverter", () => {
   const keyNum: number = keyConfig[keyKind].num;
   const scoreConverter = new ScoreConverter(keyKind, keyConfig);
   const scoreData: ScoreData = {
-    adjustment: 0,
+    adjustment: 200,
     timings: [
       {
         label: 1,
-        startNum: 200,
+        startNum: 0,
         bpm: 180
       },
       {
         label: 3,
-        startNum: 440,
+        startNum: 240,
         bpm: 120
       }
     ],
