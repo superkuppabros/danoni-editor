@@ -359,8 +359,8 @@ export default Vue.extend({
           case "ArrowUp": {
             let operateNotesPage = this.page;
             const removedLanes = noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) {
@@ -368,8 +368,8 @@ export default Vue.extend({
               operateNotesPage++;
             } else this.currentPositionMove(this.currentPosition);
             noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             removedLanes.forEach(obj =>
               noteService.add(
@@ -385,8 +385,8 @@ export default Vue.extend({
           case "ArrowDown": {
             let operateNotesPage = this.page;
             const removedLanes = noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             this.currentPosition -= this.divisor;
             if (this.currentPosition < 0) {
@@ -398,8 +398,8 @@ export default Vue.extend({
               }
             } else this.currentPositionMove(this.currentPosition);
             noteService.removeOnPosition(
-              this.currentPosition,
-              operateNotesPage
+              operateNotesPage,
+              this.currentPosition
             );
             removedLanes.forEach(obj =>
               noteService.add(
@@ -426,7 +426,7 @@ export default Vue.extend({
             break;
           }
           case "Backspace":
-            noteService.removeOnPosition(this.currentPosition, this.page);
+            noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
             break;
           case "Space":

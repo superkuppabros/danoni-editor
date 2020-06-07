@@ -7,47 +7,14 @@ import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
 import _ from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
+import { testScoreData } from "./testScoreData";
 
-describe("scoreConverter", () => {
+describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const keyNum: number = keyConfig[keyKind].num;
   const scoreConverter = new ScoreConvertService(keyKind, keyConfig);
-  const scoreData: ScoreData = {
-    blankFrame: 200,
-    timings: [
-      {
-        label: 1,
-        startNum: 0,
-        bpm: 180
-      },
-      {
-        label: 3,
-        startNum: 240,
-        bpm: 120
-      }
-    ],
-    scores: [
-      {
-        notes: [[0], [], [96], [], []],
-        freezes: [[], [], [], [192], []],
-        speeds: []
-      },
-      {
-        notes: [[], [0, 48], [96], [], []],
-        freezes: [[], [], [], [0], []],
-        speeds: [
-          { position: 0, value: 1.1, type: "speed" },
-          { position: 96, value: 0.8, type: "boost" }
-        ]
-      },
-      {
-        notes: [[], [], [], [], [0, 96]],
-        freezes: [[], [], [], [], []],
-        speeds: [{ position: 0, value: 0.7, type: "speed" }]
-      }
-    ]
-  };
+  const scoreData: ScoreData = testScoreData;
 
   it("frameDataへの変換が正しく出来る", () => {
     const expectedFrameData: FrameData[] = [
