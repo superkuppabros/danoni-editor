@@ -10,9 +10,13 @@ Google Chromeにて動作を確認しています。
 その他のバグ報告はissue, PRかTwitter(@superkuppabros)までお願いします。
 
 ## バージョン
+### ver 2.1.2β
+#### 機能追加
+- ページ離脱時に警告を出すようにする
+
 ### ver 2.1.1β
 #### 変更点
-- `Adjustment` -> `BlankFlame`
+- `Adjustment` -> `BlankFrame` に名称を変更
 
 #### バグ修正
 - 各種数値を変更した際に文字列として扱っていたものを数値として扱うようにした
@@ -24,7 +28,7 @@ Google Chromeにて動作を確認しています。
 - `FirstNumber`の入力を廃止し、`Adjustment`と`StartNumber`を導入
   - `Adjustment`: 全体の補正フレーム
   - `StartNumber`: 音楽の再生開始フレーム
-  - ダンおにでの`FirstNumber`は`Adjustment`と`StartNumber`の和
+  - **Dancing☆Onigiriでの`FirstNumber`は`Adjustment`と`StartNumber`の和** となります。
 
 ### ver 2.0.0β
 #### 機能追加
