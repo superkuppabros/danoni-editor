@@ -1,4 +1,7 @@
-import { ScoreConverter, FrameData } from "@/components/editor/ScoreConverter";
+import {
+  ScoreConverter,
+  FrameData
+} from "@/components/editor/service/ScoreConverterService";
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";

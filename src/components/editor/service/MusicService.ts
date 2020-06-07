@@ -1,4 +1,4 @@
-export class MusicPlayer {
+export class MusicService {
   constructor(private audio: HTMLAudioElement) {
     audio.load();
   }

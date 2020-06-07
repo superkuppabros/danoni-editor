@@ -35,7 +35,7 @@ import {
   speedChangeWidth
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
-import { MusicPlayer } from "./MusicPlayer";
+import { MusicService } from "./service/MusicService";
 import { SpeedType } from "../../model/Speed";
 import { NoteService } from "./service/NoteService";
 import SpeedPiece from "./SpeedPiece.vue";
@@ -50,7 +50,7 @@ type DataType = {
   page: number;
   editorWidth: number;
   musicTimer: number | null;
-  musicPlayer: MusicPlayer;
+  musicService: MusicService;
   copyScoreStore: PageScore;
   noteService?: NoteService;
   stage?: Konva.Stage;
@@ -84,7 +84,7 @@ export default Vue.extend({
       page: 1,
       keyNum,
       editorWidth: noteWidth * keyConfig[keyKind].num,
-      musicPlayer: new MusicPlayer(audio),
+      musicService: new MusicService(audio),
       musicTimer: null,
       copyScoreStore: new DefaultPageScore(keyNum)
     };
@@ -217,11 +217,11 @@ export default Vue.extend({
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = (endTime - startTime) * 1000;
-        this.musicPlayer.play(startTime);
+        this.musicService.play(startTime);
         this.musicPositionAnimation(playDuration);
         if (this.musicTimer) {
           const timer: number = setTimeout(() => {
-            this.musicPlayer.pause();
+            this.musicService.pause();
             loop(startTime, endTime);
           }, playDuration);
           this.musicTimer = timer;
@@ -240,7 +240,7 @@ export default Vue.extend({
       node.destroy();
       stage.add(currentPositionLayer);
 
-      this.musicPlayer.pause(timer);
+      this.musicService.pause(timer);
       this.musicTimer = null;
     },
 

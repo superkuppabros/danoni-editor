@@ -3,7 +3,7 @@ import { KeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { KeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
-import { quarterInterval, verticalSizeNum, fps } from "./EditorConstant";
+import { quarterInterval, verticalSizeNum, fps } from "../EditorConstant";
 import { Speed } from "@/model/Speed";
 
 export type FrameData = {
