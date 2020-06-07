@@ -44,12 +44,12 @@
         </div>
       </div>
       <div id="menu-adj" class="menu-item-container">
-        <div class="menu-txt">Adjustment</div>
+        <div class="menu-txt">Blank Frame</div>
         <input
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model.number="scoreData.adjustment"
+          v-model.number="scoreData.blankFrame"
         />
       </div>
       <div id="menu-sn" class="menu-item-container">

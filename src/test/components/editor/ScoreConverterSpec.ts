@@ -11,7 +11,7 @@ describe("scoreConverter", () => {
   const keyNum: number = keyConfig[keyKind].num;
   const scoreConverter = new ScoreConverter(keyKind, keyConfig);
   const scoreData: ScoreData = {
-    adjustment: 200,
+    blankFrame: 200,
     timings: [
       {
         label: 1,
