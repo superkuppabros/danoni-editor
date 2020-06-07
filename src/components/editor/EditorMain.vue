@@ -357,6 +357,8 @@ export default Vue.extend({
         this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
       }
+
+      this.currentPositionDraw();
     },
     pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
