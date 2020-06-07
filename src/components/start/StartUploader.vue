@@ -11,7 +11,7 @@
       <input type="file" ref="input" @change="loadFile" />
       <span uk-icon="icon: upload"></span>
       <span class="uk-text-middle"> {{ msg }} </span>
-      <span class="uk-link">参照</span>
+      <span class="uk-text-middle uk-link">参照</span>
     </div>
   </div>
 </template>
