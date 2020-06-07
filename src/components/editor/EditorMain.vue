@@ -38,6 +38,7 @@ import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
 import { SpeedType } from "../../model/Speed";
 import { NoteService } from "./service/NoteService";
+import { SpeedPieceService } from "./service/SpeedPieceService";
 import SpeedPiece from "./SpeedPiece.vue";
 
 type DataType = {
@@ -53,6 +54,7 @@ type DataType = {
   musicService: MusicService;
   copyScoreStore: PageScore;
   noteService?: NoteService;
+  speedPieceService?: SpeedPieceService;
   stage?: Konva.Stage;
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
@@ -244,65 +246,12 @@ export default Vue.extend({
       this.musicTimer = null;
     },
 
-    // 速度変化コマの存在判定
-    hasSpeedPiece(page: number, position: number): boolean {
-      return this.scoreData.scores[page - 1].speeds.some(
-        speed => speed.position === position
-      );
-    },
-
-    // 速度変化コマの追加
-    speedPieceAdd(page: number, position: number, type: SpeedType, value = 1) {
-      this.scoreData.scores[page - 1].speeds.push({
-        position,
-        value,
-        type
-      });
-    },
-
-    // 速度変化コマの削除
-    speedPieceRemove(page: number, position: number) {
-      this.scoreData.scores[page - 1].speeds = this.scoreData.scores[
-        page - 1
-      ].speeds.filter(speed => speed.position !== position);
-    },
-
-    // 速度変化コマの描画
-    speedPieceDraw(position: number, type: SpeedType) {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-
-      const color = type === "speed" ? "orange" : "purple";
-      const radius = 6;
-      const triangle = new Konva.RegularPolygon({
-        sides: 3,
-        radius,
-        rotation: 30,
-        fill: color,
-        x: this.editorWidth + radius,
-        y: editorHeight - position,
-        id: `speed-${position}`
-      });
-
-      notesLayer.add(triangle);
-      stage.add(notesLayer);
-    },
-
-    // 速度変化コマのクリア
-    speedPieceClear(position: number): void {
-      const stage = this.stage as Konva.Stage;
-      const notesLayer = this.notesLayer as Konva.Layer;
-
-      const note = notesLayer.findOne(`#speed-${position}`);
-      note.destroy();
-      stage.add(notesLayer);
-    },
-
     // 譜面データのページ反映
     displayPageScore(page: number): void {
       const stage = this.stage as Konva.Stage;
       const notesLayer = this.notesLayer as Konva.Layer;
       const noteService = this.noteService as NoteService;
+      const speedPieceService = this.speedPieceService as SpeedPieceService;
 
       const pageScore = this.scoreData.scores[page - 1];
 
@@ -320,7 +269,7 @@ export default Vue.extend({
         });
       });
       pageScore.speeds.forEach(speed => {
-        this.speedPieceDraw(speed.position, speed.type);
+        speedPieceService.draw(speed.position, speed.type);
       });
     },
 
@@ -395,6 +344,7 @@ export default Vue.extend({
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       const noteService = this.noteService as NoteService;
+      const speedPieceService = this.speedPieceService as SpeedPieceService;
 
       if (e.ctrlKey) {
         switch (e.code) {
@@ -532,12 +482,12 @@ export default Vue.extend({
               const page = this.page;
               const position = this.currentPosition;
 
-              if (this.hasSpeedPiece(page, position)) {
-                this.speedPieceRemove(page, position);
-                this.speedPieceClear(position);
+              if (speedPieceService.hasSpeedPiece(page, position)) {
+                speedPieceService.remove(page, position);
+                speedPieceService.clear(position);
               } else {
-                this.speedPieceAdd(page, position, speedType);
-                this.speedPieceDraw(position, speedType);
+                speedPieceService.add(page, position, speedType);
+                speedPieceService.draw(position, speedType);
               }
             }
             break;
@@ -603,6 +553,13 @@ export default Vue.extend({
       this.scoreData,
       this.keyConfig,
       this.keyKind,
+      this.stage,
+      this.notesLayer
+    );
+
+    this.speedPieceService = new SpeedPieceService(
+      this.scoreData,
+      this.editorWidth,
       this.stage,
       this.notesLayer
     );
