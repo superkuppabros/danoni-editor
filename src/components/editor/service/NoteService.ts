@@ -41,12 +41,15 @@ export class NoteService {
 
   // ノーツの削除
   remove(page: number, lane: number, position: number): void {
-    this.scoreData.scores[page - 1].freezes[lane] = this.scoreData.scores[
-      page - 1
-    ].freezes[lane].filter(pos => pos !== position);
-    this.scoreData.scores[page - 1].notes[lane] = this.scoreData.scores[
-      page - 1
-    ].notes[lane].filter(pos => pos !== position);
+    const removedFreezes = this.scoreData.scores[page - 1].freezes[lane].filter(
+      pos => pos !== position
+    );
+    this.scoreData.scores[page - 1].freezes.splice(lane, 1, removedFreezes);
+
+    const removedNotes = this.scoreData.scores[page - 1].notes[lane].filter(
+      pos => pos !== position
+    );
+    this.scoreData.scores[page - 1].notes.splice(lane, 1, removedNotes);
   }
 
   // ノーツの描画

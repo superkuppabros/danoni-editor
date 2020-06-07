@@ -19,14 +19,18 @@ export class PageScoreService {
   // ページカット
   cut(page: number) {
     this.copy(page);
-    this.scoreData.scores[page - 1] = new DefaultPageScore(this.keyNum);
+    this.scoreData.scores.splice(
+      page - 1,
+      1,
+      new DefaultPageScore(this.keyNum)
+    );
     this.displayPageScore(page);
   }
 
   // ページ貼り付け
   paste(page: number) {
     const pageScore = _.cloneDeep(this.copyScoreStore);
-    this.scoreData.scores[page - 1] = pageScore;
+    this.scoreData.scores.splice(page - 1, 1, pageScore);
     this.displayPageScore(page);
   }
 }
