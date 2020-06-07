@@ -21,6 +21,24 @@ export default Vue.extend({
     loadScoreDataStr: String,
     loadMusicUrl: String,
     selectedKey: String
+  },
+  beforeRouteLeave(to, from, next) {
+    const answer = window.confirm("内容が消去されますがよろしいですか？");
+    if (answer) next();
+    else next(false);
+  },
+
+  methods: {
+    beforeunloadAlert(event: BeforeUnloadEvent) {
+      console.log(event);
+      event.returnValue = "内容が消去されますがよろしいですか？";
+    }
+  },
+  created() {
+    window.addEventListener("beforeunload", this.beforeunloadAlert);
+  },
+  destroyed() {
+    window.removeEventListener("beforeunload", this.beforeunloadAlert);
   }
 });
 </script>
