@@ -30,7 +30,6 @@ export default Vue.extend({
 
   methods: {
     beforeunloadAlert(event: BeforeUnloadEvent) {
-      console.log(event);
       event.returnValue = "内容が消去されますがよろしいですか？";
     }
   },
