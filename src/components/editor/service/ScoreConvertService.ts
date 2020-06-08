@@ -67,8 +67,7 @@ export class ScoreConvertService {
     return frameScores;
   }
 
-  convert(scoreData: ScoreData): string {
-    const frameScores = this.toFrameData(scoreData);
+  framesToOutputData(frameScores: FrameData[]) {
     const initialData = {
       notes: new Array(this.keyNum).fill([]).map(() => []),
       freezes: new Array(this.keyNum).fill([]).map(() => []),
@@ -76,7 +75,7 @@ export class ScoreConvertService {
       boosts: []
     };
 
-    const data: OutputData = frameScores.reduce(
+    const outputData: OutputData = frameScores.reduce(
       (data: OutputData, currentPage) => {
         for (let i = 0; i < this.keyNum; i++) {
           data.notes[i] = data.notes[i].concat(currentPage.notes[i]);
@@ -92,6 +91,13 @@ export class ScoreConvertService {
       },
       initialData
     );
+
+    return outputData;
+  }
+
+  convert(scoreData: ScoreData): string {
+    const frameScores = this.toFrameData(scoreData);
+    const data = this.framesToOutputData(frameScores);
 
     data.speeds.sort((a, b) => a.position - b.position);
     data.boosts.sort((a, b) => a.position - b.position);
