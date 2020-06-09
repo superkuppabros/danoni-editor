@@ -67,7 +67,7 @@ export class ScoreConvertService {
     return frameScores;
   }
 
-  convert(scoreData: ScoreData): string {
+  convert(scoreData: ScoreData, scorePostfix = ""): string {
     const frameScores = this.toFrameData(scoreData);
     const initialData = {
       notes: new Array(this.keyNum).fill([]).map(() => []),
@@ -98,21 +98,17 @@ export class ScoreConvertService {
 
     const noteStr = data.notes.reduce(
       (str, notesArr, laneNum) =>
-        str +
-        this.keyConfig[this.keyKind].noteNames[laneNum] +
-        "=" +
-        notesArr.join(",") +
-        "|",
+        `${str}${
+          this.keyConfig[this.keyKind].noteNames[laneNum]
+        }=${notesArr.join(",")}|`,
       "|"
     );
 
     const freezeStr = data.freezes.reduce(
       (str, freezesArr, laneNum) =>
-        str +
-        this.keyConfig[this.keyKind].freezeNames[laneNum] +
-        "=" +
-        freezesArr.join(",") +
-        "|",
+        `${str}${
+          this.keyConfig[this.keyKind].freezeNames[laneNum]
+        }=${freezesArr.join(",")}|`,
       ""
     );
 
@@ -127,7 +123,7 @@ export class ScoreConvertService {
 
     return `
 ${noteStr + freezeStr}
-|${speedStr + boostStr}`;
+|${speedStr + boostStr}`.replace(/_/g, `${scorePostfix}_`);
   }
 
   cutLastDefault(scoreData: ScoreData): ScoreData {
@@ -144,7 +140,7 @@ ${noteStr + freezeStr}
   }
 
   // 四分譜面の作成・変換
-  convertWithQuarters(scoreData: ScoreData): string {
+  convertWithQuarters(scoreData: ScoreData, scorePostfix = ""): string {
     const quarterNotes: number[] = [];
     for (let i = 0; i < 8; i++) {
       quarterNotes.push(i * quarterInterval);
@@ -164,7 +160,7 @@ ${noteStr + freezeStr}
       newScoreData.scores.push(quartersPageScore);
     }
 
-    return this.convert(this.cutLastDefault(newScoreData));
+    return this.convert(this.cutLastDefault(newScoreData), scorePostfix);
   }
 
   save(scoreData: ScoreData): string {
