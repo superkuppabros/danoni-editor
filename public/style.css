@@ -136,7 +136,6 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .btn-red {
-  width: 98px;
   color: #ff67de;
   border: solid 2px #ff67de;
 }

@@ -51,4 +51,16 @@ describe("levelCalcService", () => {
     console.log(levelCalcService.calcLevel(noteFrames, freezeFrames));
     //tool says 3.29* but this says 3.27
   });
+
+  it("countNotes", () => {
+    const noteFrames = [[200, 205, 210, 230], [240, 242], [], [300], []];
+    const freezeFrames = [[], [], [], [305, 333], []];
+    const expectedValue = {
+      notesCountArr: [4, 2, 0, 1, 0],
+      freezesCountArr: [0, 0, 0, 2, 0]
+    };
+    expect(levelCalcService.countNotes(noteFrames, freezeFrames)).toStrictEqual(
+      expectedValue
+    );
+  });
 });

@@ -11,7 +11,8 @@ export type FlattenData = {
   frzEndData: number[];
 };
 
-export type AdjustValue = {
+export type ScoreDataInfo = {
+  level: number;
   single: number;
   double: number;
   overTriple: number;
@@ -70,7 +71,7 @@ export class LevelCalcService {
   }
 
   // 補正値の計算
-  calcAdjustValue(flattenData: FlattenData): AdjustValue {
+  calcAdjustValue(flattenData: FlattenData): ScoreDataInfo {
     const data = _.cloneDeep(flattenData);
     const allScorebook = data.allScorebook;
     const frzStartData = data.frzStartData;
@@ -80,7 +81,8 @@ export class LevelCalcService {
     allScorebook.push(allScorebook[allScorebook.length - 1] + 100);
     let currentFrzNum = 0;
     const uniqueScorebook = _.uniq(allScorebook);
-    const adjustValue: AdjustValue = {
+    const scoreDataInfo: ScoreDataInfo = {
+      level: 0,
       single: 0,
       double: 0,
       overTriple: 0,
@@ -97,7 +99,7 @@ export class LevelCalcService {
       if (index !== uniqueScorebook.length - 1 && index !== 0) {
         const hitsNum = allScorebook.filter(f => f === frame).length;
         if (hitsNum + currentFrzNum > 2)
-          adjustValue.overTriple += Math.min(
+          scoreDataInfo.overTriple += Math.min(
             hitsNum,
             hitsNum + currentFrzNum - 2
           );
@@ -106,12 +108,12 @@ export class LevelCalcService {
             40 /
             ((frame - uniqueScorebook[index - 1]) *
               (uniqueScorebook[index + 1] - frame));
-          adjustValue.double += doubleAdj;
+          scoreDataInfo.double += doubleAdj;
         }
         if (currentFrzNum < 2) {
           const singleAdj =
             2 / ((2 - currentFrzNum) * (uniqueScorebook[index + 1] - frame));
-          adjustValue.single += singleAdj;
+          scoreDataInfo.single += singleAdj;
         }
       }
 
@@ -119,35 +121,72 @@ export class LevelCalcService {
       currentFrzNum += increaseFrzNum;
       frzStartData.splice(0, increaseFrzNum);
     });
-    return adjustValue;
+    return scoreDataInfo;
   }
 
-  calcLevel(noteFrames: number[][], freezeFrames: number[][]) {
+  calcLevel(noteFrames: number[][], freezeFrames: number[][]): ScoreDataInfo {
     const flattenData = this.calcFlattenData(noteFrames, freezeFrames);
     const laneContinuous = this.calcLaneContinuous(noteFrames, freezeFrames);
-    const adjustValue = this.calcAdjustValue(flattenData);
-    adjustValue.laneContinuous = laneContinuous;
+    const scoreDataInfo = this.calcAdjustValue(flattenData);
+    scoreDataInfo.laneContinuous = laneContinuous;
 
     const totalNotes = flattenData.allScorebook.length;
-    if (totalNotes === 1) return 0.01;
+    if (totalNotes === 0) return scoreDataInfo;
+    else if (totalNotes === 1)
+      return Object.assign(scoreDataInfo, { level: 0.01 });
     else {
       const adjFunc = (adj: number) =>
-        (adj / Math.sqrt(totalNotes - 1 - adjustValue.overTriple)) * 4;
+        (adj / Math.sqrt(totalNotes - 1 - scoreDataInfo.overTriple)) * 4;
       const totalAdj = adjFunc(
-        adjustValue.single + adjustValue.double + adjustValue.laneContinuous
+        scoreDataInfo.single +
+          scoreDataInfo.double +
+          scoreDataInfo.laneContinuous
       );
-      adjustValue.single = adjFunc(adjustValue.single);
-      adjustValue.double = adjFunc(adjustValue.double);
-      adjustValue.laneContinuous = adjFunc(adjustValue.laneContinuous);
+      scoreDataInfo.single = adjFunc(scoreDataInfo.single);
+      scoreDataInfo.double = adjFunc(scoreDataInfo.double);
+      scoreDataInfo.laneContinuous = adjFunc(scoreDataInfo.laneContinuous);
 
       const tripleCorrectedLevel =
         (totalAdj * (totalNotes - 1)) /
-        (totalNotes - 1 - adjustValue.overTriple);
+        (totalNotes - 1 - scoreDataInfo.overTriple);
       const roundedLevel = Math.round(tripleCorrectedLevel * 100) / 100;
-      console.log(adjustValue);
-      console.log(roundedLevel);
 
-      return roundedLevel;
+      return Object.assign(scoreDataInfo, { level: roundedLevel });
     }
+  }
+
+  countNotes(noteFrames: number[][], freezeFrames: number[][]) {
+    const notesCountArr = noteFrames.map(notes => notes.length);
+    const freezesCountArr = freezeFrames.map(freezes => freezes.length);
+    return { notesCountArr, freezesCountArr };
+  }
+
+  createScoreDataInfoStr(
+    noteFrames: number[][],
+    freezeFrames: number[][]
+  ): string {
+    const scoreDataInfo = this.calcLevel(noteFrames, freezeFrames);
+
+    const levelStr = `ツール値: ${scoreDataInfo.level}${
+      scoreDataInfo.overTriple > 0 ? "*" : ""
+    }`;
+    const doubleStr = `同時補正: ${scoreDataInfo.double}`;
+    const continuousStr = `縦連補正: ${scoreDataInfo.laneContinuous}`;
+
+    const arrowsCount = this.countNotes(noteFrames, freezeFrames);
+    const totalNotes = _.sum(arrowsCount.notesCountArr);
+    const totalfreezes = _.sum(arrowsCount.freezesCountArr);
+    const arrowNumStr = `矢印数: ${totalNotes +
+      totalfreezes}(${totalNotes} + ${totalfreezes})`;
+    const notesStr = `通常ノーツ: (${arrowsCount.notesCountArr.join("/")})`;
+    const freezesStr = `氷矢: (${arrowsCount.freezesCountArr.join("/")})`;
+
+    const dataInfoStr = `${levelStr}
+${doubleStr}
+${continuousStr}
+${arrowNumStr}
+${notesStr}
+${freezesStr}`;
+    return dataInfoStr;
   }
 }
