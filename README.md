@@ -10,6 +10,15 @@ Google Chromeにて動作を確認しています。
 その他のバグ報告はissue, PRかTwitter(@superkuppabros)までお願いします。
 
 ## バージョン
+### ver 2.2.0β
+#### 機能追加
+- 譜面番号を付加出来るように
+  - Score No.を2にすると、出力データに2が付与されます(e.g. left2_data)
+- レベル計算機能の移植
+  - CALCを押すと各種情報を表示します
+  - ティックルさんのコードを参考に移植しています
+  - cf.) https://github.com/cwtickle/danoniplus/blob/v15.1.3/js/danoni_main.js#L1400-L1594
+
 ### ver 2.1.3β
 #### 機能追加
 - 現在位置のフレーム・時間を表示
@@ -34,6 +43,10 @@ Google Chromeにて動作を確認しています。
   - `StartNumber`: 音楽の再生開始フレーム
   - **Dancing☆Onigiriでの`FirstNumber`は`Adjustment`と`StartNumber`の和** となります。
 
+### 以前のバージョン
+<details>
+<summary>更新履歴</summary>
+
 ### ver 2.0.0β
 #### 機能追加
 - 全体変速、個別変速
@@ -43,10 +56,6 @@ Google Chromeにて動作を確認しています。
 - BPM・FirstNumを小数で入力可能にした
 #### バグ修正
 - `↓`キーでページ移動した際に正しく位置を反映させるようにした
-
-### 以前のバージョン
-<details>
-<summary>更新履歴</summary>
 
 ### ver 1.1.0α
 #### 機能追加
@@ -127,6 +136,7 @@ Google Chromeにて動作を確認しています。
   - ダンおにデータ出力: GOボタン(クリップボードにコピーされます)
   - セーブデータ(JSON)出力: SAVEボタン(クリップボードにコピーされます)
   - 4分譜面出力: TESTボタン(クリップボードにコピーされます)
+  - 譜面情報表示: CALCボタン
 
 ## 開発者向け
 

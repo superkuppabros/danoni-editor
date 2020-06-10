@@ -350,7 +350,6 @@ export default Vue.extend({
         if (!pageScore) return new DefaultPageScore(this.keyNum);
         else return pageScore;
       });
-      console.log(this.scoreData.scores);
       this.displayPageScore(page);
 
       // 音楽再生時に移動すると再生位置を変更する
