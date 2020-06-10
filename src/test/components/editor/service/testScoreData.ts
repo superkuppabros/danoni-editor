@@ -14,6 +14,7 @@ export const testScoreData: ScoreData = {
       bpm: 120
     }
   ],
+  scoreNumber: 1,
   scores: [
     {
       notes: [[0], [], [96], [], []],

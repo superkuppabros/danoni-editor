@@ -70,6 +70,15 @@
           v-model.number="timing.bpm"
         />
       </div>
+      <div id="menu-score-number" class="menu-item-container">
+        <div class="menu-txt">Score No.</div>
+        <input
+          type="number"
+          min="1"
+          class="uk-input uk-form-small"
+          v-model.number="scoreData.scoreNumber"
+        />
+      </div>
       <div id="menu-output" class="menu-item-container">
         <div class="menu-output-btn btn-gray" @click="convertWithQuarters">
           TEST
@@ -177,8 +186,12 @@ export default Vue.extend({
     },
 
     convert(): void {
+      const postfix =
+        this.scoreData.scoreNumber === 1
+          ? ""
+          : this.scoreData.scoreNumber.toString();
       const converter = this.scoreConvertService;
-      const data: string = converter.convert(this.scoreData);
+      const data: string = converter.convert(this.scoreData, postfix);
       const message = "譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },
@@ -189,8 +202,15 @@ export default Vue.extend({
       this.writeClipBoard(data, message);
     },
     convertWithQuarters(): void {
+      const postfix =
+        this.scoreData.scoreNumber === 1
+          ? ""
+          : this.scoreData.scoreNumber.toString();
       const converter = this.scoreConvertService;
-      const data: string = converter.convertWithQuarters(this.scoreData);
+      const data: string = converter.convertWithQuarters(
+        this.scoreData,
+        postfix
+      );
       const message = "四分譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },
