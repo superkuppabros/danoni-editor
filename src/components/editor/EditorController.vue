@@ -84,6 +84,9 @@
           TEST
         </div>
         <div class="menu-output-btn btn-blue" @click="save">SAVE</div>
+        <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">
+          CALC
+        </div>
         <div class="menu-output-btn btn-red" @click="convert">GO!</div>
       </div>
     </div>
@@ -96,6 +99,7 @@ import EditorMain from "./EditorMain.vue";
 import { Timing } from "../../model/Timing";
 import { ScoreData, DefaultScoreData } from "../../model/ScoreData";
 import { ScoreConvertService } from "./service/ScoreConvertService";
+import { LevelCalcService } from "./service/LevelCalcService";
 import { KeyKind } from "../../model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "../../model/KeyConfig";
 import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
@@ -210,6 +214,18 @@ export default Vue.extend({
       const message = "四分譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },
+
+    displayScoreDataInfo(): void {
+      const levelChecker = new LevelCalcService();
+      const frameData = this.scoreConvertService.toFrameData(this.scoreData);
+      const outputData = this.scoreConvertService.framesToOutputData(frameData);
+      const scoreDataInfoStr = levelChecker.createScoreDataInfoStr(
+        outputData.notes,
+        outputData.freezes
+      );
+      alert(scoreDataInfoStr);
+    },
+
     getLabelNumByPageNum(pageNum: number): number {
       const labels = this.scoreData.timings.map(timing => timing.label);
       return labels.indexOf(pageNum);
