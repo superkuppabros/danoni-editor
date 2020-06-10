@@ -350,6 +350,7 @@ export default Vue.extend({
         if (!pageScore) return new DefaultPageScore(this.keyNum);
         else return pageScore;
       });
+      console.log(this.scoreData.scores);
       this.displayPageScore(page);
 
       // 音楽再生時に移動すると再生位置を変更する
@@ -584,11 +585,6 @@ export default Vue.extend({
     this.currentPositionLayer = currentPositionLayer;
     this.notesLayer = notesLayer;
 
-    this.baseLayerDraw();
-    this.currentPositionDraw();
-    this.pageMove(1);
-    this.displayPageScore(1);
-
     this.noteService = new NoteService(
       this.scoreData,
       this.keyConfig,
@@ -610,6 +606,11 @@ export default Vue.extend({
       this.keyNum,
       this.displayPageScore
     );
+
+    this.baseLayerDraw();
+    this.currentPositionDraw();
+    this.pageMove(1);
+    this.displayPageScore(1);
   },
 
   watch: {
