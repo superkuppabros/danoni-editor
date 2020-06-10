@@ -4,7 +4,7 @@ import { PageScore, DefaultPageScore } from "./PageScore";
 export interface ScoreData {
   blankFrame: number;
   timings: Timing[];
-  scoreNumber: number;
+  scoreNumber?: number;
   scores: PageScore[];
 }
 

@@ -186,10 +186,11 @@ export default Vue.extend({
     },
 
     convert(): void {
+      // NOTE: scoreNoを増やしたことによる暫定処置
       const postfix =
-        this.scoreData.scoreNumber === 1
-          ? ""
-          : this.scoreData.scoreNumber.toString();
+        this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber
+          ? this.scoreData.scoreNumber.toString()
+          : "";
       const converter = this.scoreConvertService;
       const data: string = converter.convert(this.scoreData, postfix);
       const message = "譜面データをクリップボードにコピーしました！";
@@ -202,10 +203,11 @@ export default Vue.extend({
       this.writeClipBoard(data, message);
     },
     convertWithQuarters(): void {
+      // NOTE: scoreNoを増やしたことによる暫定処置
       const postfix =
-        this.scoreData.scoreNumber === 1
-          ? ""
-          : this.scoreData.scoreNumber.toString();
+        this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber
+          ? this.scoreData.scoreNumber.toString()
+          : "";
       const converter = this.scoreConvertService;
       const data: string = converter.convertWithQuarters(
         this.scoreData,
@@ -280,6 +282,9 @@ export default Vue.extend({
       this.labelNum = labelNum;
       this.labelMove(labelNum);
     }
+  },
+  mounted() {
+    if (!this.scoreData.scoreNumber) this.scoreData.scoreNumber = 1;
   }
 });
 </script>
