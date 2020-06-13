@@ -73,7 +73,10 @@ export default Vue.extend({
     loadScoreData: { type: Object as PropType<ScoreData> },
     loadMusicUrl: String,
     selectedKey: String,
-    timing: { type: Object as PropType<Timing> }
+    timing: { type: Object as PropType<Timing> },
+    propScoreNumber: Number,
+    musicVolume: Number,
+    musicRate: Number
   },
   components: { SpeedPiece },
   data(): DataType {
@@ -278,9 +281,12 @@ export default Vue.extend({
       const startTime = positionToSeconds(timing, this.page, startPosition);
       const endTime = positionToSeconds(timing, this.page, endPosition);
 
+      const musicVolume = this.musicVolume;
+      const musicRate = this.musicRate;
+
       const loop = (startTime: number, endTime: number) => {
-        const playDuration = (endTime - startTime) * 1000;
-        this.musicService.play(startTime);
+        const playDuration = ((endTime - startTime) * 1000) / musicRate;
+        this.musicService.play(startTime, musicVolume, musicRate);
         this.musicPositionAnimation(playDuration);
         if (this.musicTimer) {
           const timer: number = setTimeout(() => {
@@ -619,6 +625,10 @@ export default Vue.extend({
 
     scoreData(scoreData: ScoreData): void {
       this.$emit("changeScoreData", scoreData);
+    },
+
+    propScoreNumber(scoreNumber: number) {
+      this.scoreData.scoreNumber = scoreNumber;
     }
   }
 });

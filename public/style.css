@@ -51,6 +51,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 #editor-controller {
+  position: relative;
   display: flex;
   border-width: 1px;
   font-size: 15px;
@@ -59,7 +60,6 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 #editor-menu {
   background-color: white;
-
   margin-top: 20px;
   margin-right: 20px;
   padding: 0 10px;
@@ -145,22 +145,46 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   border: solid 2px #646464;
 }
 
-.btn-blue:hover {
-  background: #67c5ff;
+.btn-orange {
+  color: #ff9c4a;
+  border: solid 2px #ff9c4a;
+  width: 100px;
+}
+
+.menu-output-btn:hover {
   color: white;
   cursor: pointer;
+}
+
+.btn-blue:hover {
+  background: #67c5ff;
 }
 
 .btn-red:hover {
   background: #ff67de;
-  color: white;
-  cursor: pointer;
 }
 
 .btn-gray:hover {
   background: #646464;
-  color: white;
-  cursor: pointer;
+}
+
+.btn-orange:hover {
+  background: #ff9c4a;
+  text-decoration-line: none;
+}
+
+#editor-option {
+  position: absolute;
+  width: 300px;
+  height: 424px;
+  top:100px;
+  background-color: rgba(245, 228, 159, 0.9);
+  border-radius: 2px;
+}
+
+.option-item-container {
+  margin: 4px auto 0 auto;
+  width: 106px;
 }
 
 /* スタート画面 */

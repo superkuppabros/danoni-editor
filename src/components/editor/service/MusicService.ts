@@ -3,7 +3,10 @@ export class MusicService {
     audio.load();
   }
 
-  play(startTime: number): void {
+  play(startTime: number, musicVolume: number, musicRate: number): void {
+    this.audio.volume = musicVolume;
+    this.audio.playbackRate = musicRate;
+
     const duration = this.audio.duration;
     if (duration > startTime) {
       this.audio.currentTime = startTime;

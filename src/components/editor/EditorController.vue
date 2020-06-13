@@ -6,9 +6,17 @@
       :load-music-url="loadMusicUrl"
       :selected-key="keyKind"
       :timing="timing"
+      :prop-score-number="scoreNumber"
+      :music-volume="musicVolume"
+      :music-rate="musicRate"
       @page-minus="pageMinus"
       @page-plus="pagePlus"
     ></editor-main>
+    <editor-option
+      :scoreNumber.sync="scoreNumber"
+      :musicVolume.sync="musicVolume"
+      :musicRate.sync="musicRate"
+    ></editor-option>
     <div id="editor-menu">
       <div id="menu-page" class="menu-item-container">
         <div class="menu-move-header">
@@ -70,16 +78,11 @@
           v-model.number="timing.bpm"
         />
       </div>
-      <div id="menu-score-number" class="menu-item-container">
-        <div class="menu-txt">Score No.</div>
-        <input
-          type="number"
-          min="1"
-          class="uk-input uk-form-small"
-          v-model.number="scoreData.scoreNumber"
-        />
-      </div>
+
       <div id="menu-output" class="menu-item-container">
+        <a class="menu-output-btn btn-orange" href="#editor-option" uk-toggle
+          >OPTION</a
+        >
         <div class="menu-output-btn btn-gray" @click="convertWithQuarters">
           TEST
         </div>
@@ -96,6 +99,7 @@
 <script lang="ts">
 import Vue from "vue";
 import EditorMain from "./EditorMain.vue";
+import EditorOption from "./EditorOption.vue";
 import { Timing } from "../../model/Timing";
 import { ScoreData, DefaultScoreData } from "../../model/ScoreData";
 import { ScoreConvertService } from "./service/ScoreConvertService";
@@ -111,13 +115,17 @@ type DataType = {
   scoreData: ScoreData;
   keyKind: KeyKind;
   keyConfig: KeyConfig;
+  scoreNumber: number;
+  musicVolume: number;
+  musicRate: number;
   scoreConvertService: ScoreConvertService;
 };
 
 export default Vue.extend({
   name: "EditorController",
   components: {
-    EditorMain
+    EditorMain,
+    EditorOption
   },
   props: {
     selectedKey: String,
@@ -146,6 +154,9 @@ export default Vue.extend({
       scoreData,
       keyKind,
       keyConfig,
+      scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      musicVolume: 1.0,
+      musicRate: 1.0,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig)
     };
   },
