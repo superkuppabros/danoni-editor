@@ -47,10 +47,10 @@ export class ScoreConvertService {
           Math.round(positionToFrame(timing, pageNum, position, blankFrame));
 
         const pageNoteFrames = pageScore.notes.map(notesArr =>
-          notesArr.map(calculateFrame)
+          notesArr.sort((a, b) => a - b).map(calculateFrame)
         );
         const freezeNoteFrames = pageScore.freezes.map(freezesArr =>
-          freezesArr.map(calculateFrame)
+          freezesArr.sort((a, b) => a - b).map(calculateFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
           const newSpeed: Speed = _.cloneDeep(speed);
