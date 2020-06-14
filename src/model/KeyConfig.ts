@@ -459,7 +459,7 @@ export const DefaultKeyConfig: KeyConfig = {
     id: 12,
     num: 12,
     keys: [
-      "KeyB",
+      "KeyG",
       "KeyN",
       "KeyJ",
       "KeyM",
@@ -472,7 +472,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO"
     ],
-    alternativeKeys: ["", "", "", "", "", "", "", "", "", "", "Digit9", ""],
+    alternativeKeys: ["KeyH", "", "", "", "", "", "", "", "", "", "Digit9", ""],
     noteNames: [
       "oni_data",
       "left_data",
@@ -574,7 +574,7 @@ export const DefaultKeyConfig: KeyConfig = {
     id: 14,
     num: 14,
     keys: [
-      "KeyB",
+      "KeyG",
       "KeyN",
       "KeyJ",
       "KeyM",
@@ -590,7 +590,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyP"
     ],
     alternativeKeys: [
-      "",
+      "KeyH",
       "",
       "",
       "",

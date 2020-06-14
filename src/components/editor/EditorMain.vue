@@ -497,7 +497,7 @@ export default Vue.extend({
             noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
             break;
-          case "Space":
+          case "Space": // ArrowUpと同様
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
             else this.currentPositionMove(this.currentPosition);
@@ -506,6 +506,13 @@ export default Vue.extend({
             this.currentPosition += this.divisor;
             if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
             else this.currentPositionMove(this.currentPosition);
+            break;
+          case "KeyB": // ArrowDownと同様
+            this.currentPosition -= this.divisor;
+            if (this.currentPosition < 0) {
+              if (this.page === 1) this.currentPosition = 0;
+              else this.pageMinus(1, this.currentPosition + verticalSizeNum);
+            } else this.currentPositionMove(this.currentPosition);
             break;
           case "ArrowDown":
             this.currentPosition -= this.divisor;
