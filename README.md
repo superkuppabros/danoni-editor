@@ -40,15 +40,16 @@ Google Chrome にて動作を確認しています。
 
       親フィールド: key名  
       子フィールド:  
-        - id: 適当な数字(現バージョンでは19以上を指定しておくのが無難です)  
-        - num: キーの数  
-        - keys: 使用キーの `KeyboardEvent.code` の一覧  
-          - cf. https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code  
-        - alternativeKeys: 代替キーの `KeyboardEvent.code` の一覧  
-          - 使わない場合は空文字を入力  
-        - noteNames: 出力時の矢印名  
-        - freezeNames: 出力時の氷矢名  
-        - colorGroup: エディタのカラーパターン(0-3までの数字で指定)  
+
+      - id: 適当な数字(現バージョンでは19以上を指定しておくのが無難です)  
+      - num: キーの数  
+      - keys: 使用キーの `KeyboardEvent.code` の一覧  
+        - cf. https://developer.mozilla.org/ja/docs/Web/API/KeyboardEvent/code  
+      - alternativeKeys: 代替キーの `KeyboardEvent.code` の一覧  
+        - 使わない場合は空文字を入力  
+      - noteNames: 出力時の矢印名  
+      - freezeNames: 出力時の氷矢名  
+      - colorGroup: エディタのカラーパターン(0-3までの数字で指定)  
 
     </details>
   
