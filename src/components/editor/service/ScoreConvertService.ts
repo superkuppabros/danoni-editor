@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { KeyConfig } from "@/model/KeyConfig";
+import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
-import { KeyKind } from "@/model/KeyKind";
+import { CustomKeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import { quarterInterval } from "../EditorConstant";
 import { Speed } from "@/model/Speed";
@@ -21,7 +21,10 @@ export type OutputData = {
 };
 
 export class ScoreConvertService {
-  constructor(private keyKind: KeyKind, private keyConfig: KeyConfig) {}
+  constructor(
+    private keyKind: CustomKeyKind,
+    private keyConfig: CustomKeyConfig
+  ) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private defaultPageScore = new DefaultPageScore(this.keyNum);

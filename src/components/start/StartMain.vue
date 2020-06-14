@@ -22,6 +22,14 @@
         </select>
         <router-link
           :to="{
+            name: 'configure',
+            path: 'configure'
+          }"
+          class="start-btn btn-orange"
+          >CONFIG</router-link
+        >
+        <router-link
+          :to="{
             name: 'editor',
             path: 'editor',
             params: {
@@ -30,7 +38,7 @@
             },
             query: { key: selectedKey }
           }"
-          class="start-go-btn btn-red"
+          class="start-btn btn-red"
           >NEXT</router-link
         >
       </div>
@@ -43,14 +51,15 @@
 <script lang="ts">
 import Vue from "vue";
 import StartUploader from "./StartUploader.vue";
-import { KeyKind } from "@/model/KeyKind";
-import { DefaultKeyConfig, KeyConfig } from "../../model/KeyConfig";
+import { CustomKeyKind } from "@/model/KeyKind";
+import { CustomKeyConfig } from "../../model/KeyConfig";
+import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
-  keyConfig: KeyConfig;
+  keyConfig: CustomKeyConfig;
   musicTitle: string;
   scoreTitle: string;
-  selectedKey: KeyKind;
+  selectedKey: CustomKeyKind;
   musicUrl: string | null;
   scoreDataStr: string | null;
 };
@@ -61,8 +70,10 @@ export default Vue.extend({
     StartUploader
   },
   data(): DataType {
+    const keyConfig = createCustomKeyConfig();
+
     return {
-      keyConfig: DefaultKeyConfig,
+      keyConfig,
       musicTitle: "楽曲ファイルをドロップ",
       scoreTitle: "譜面ファイルをドロップ",
       selectedKey: "5",
@@ -71,9 +82,9 @@ export default Vue.extend({
     };
   },
   computed: {
-    keyKinds(): KeyKind[] {
-      const keyConfig = this.keyConfig as KeyConfig;
-      const keys = Object.keys(keyConfig) as KeyKind[];
+    keyKinds(): CustomKeyKind[] {
+      const keyConfig = this.keyConfig as CustomKeyConfig;
+      const keys = Object.keys(keyConfig) as CustomKeyKind[];
       keys.sort((a, b) => keyConfig[a].id - keyConfig[b].id);
       return keys;
     }

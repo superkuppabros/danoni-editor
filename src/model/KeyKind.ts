@@ -17,3 +17,5 @@ export type KeyKind =
   | "15"
   | "16i"
   | "17";
+
+export type CustomKeyKind = KeyKind | string;

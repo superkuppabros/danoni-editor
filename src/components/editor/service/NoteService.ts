@@ -1,7 +1,7 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { KeyConfig } from "@/model/KeyConfig";
-import { KeyKind } from "@/model/KeyKind";
+import { CustomKeyConfig } from "@/model/KeyConfig";
+import { CustomKeyKind } from "@/model/KeyKind";
 import {
   freezeColors,
   noteColors,
@@ -13,8 +13,8 @@ import {
 export class NoteService {
   constructor(
     private scoreData: ScoreData,
-    private keyConfig: KeyConfig,
-    private keyKind: KeyKind,
+    private keyConfig: CustomKeyConfig,
+    private keyKind: CustomKeyKind,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer
   ) {}
