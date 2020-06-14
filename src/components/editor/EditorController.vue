@@ -132,8 +132,7 @@ export default Vue.extend({
   props: {
     selectedKey: String,
     loadScoreDataStr: String,
-    loadMusicUrl: String,
-    loadKeyConfigStr: String
+    loadMusicUrl: String
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();

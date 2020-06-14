@@ -12,7 +12,6 @@ Vue.use(Router);
 type PropsType = {
   loadScoreDataStr: string;
   loadMusicUrl: string;
-  loadKeyConfigStr: string;
   selectedKey: CustomKeyKind;
 };
 
@@ -31,7 +30,6 @@ export default new Router({
         return {
           loadScoreDataStr: routes.params.scoreData,
           loadMusicUrl: routes.params.musicUrl,
-          loadKeyConfigStr: routes.params.keyConfigStr,
           selectedKey: (routes.query.key || "7") as CustomKeyKind
         };
       }

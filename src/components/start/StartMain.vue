@@ -34,8 +34,7 @@
             path: 'editor',
             params: {
               scoreData: scoreDataStr,
-              musicUrl: musicUrl,
-              keyConfigStr: keyConfigStr
+              musicUrl: musicUrl
             },
             query: { key: selectedKey }
           }"
@@ -58,7 +57,6 @@ import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
   keyConfig: CustomKeyConfig;
-  keyConfigStr: string;
   musicTitle: string;
   scoreTitle: string;
   selectedKey: CustomKeyKind;
@@ -73,11 +71,9 @@ export default Vue.extend({
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
-    const keyConfigStr = JSON.stringify(keyConfig);
 
     return {
       keyConfig,
-      keyConfigStr,
       musicTitle: "楽曲ファイルをドロップ",
       scoreTitle: "譜面ファイルをドロップ",
       selectedKey: "5",
