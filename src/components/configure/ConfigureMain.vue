@@ -10,7 +10,7 @@
         :msg="confTitle"
         @fileRecieve="onConfFileRecieve"
       ></configure-uploader>
-      <div class="start-btn btn-gray">RESET</div>
+      <div class="start-btn btn-gray" @click="resetConf">RESET</div>
     </div>
     <div id="start-go-next">
       <router-link
