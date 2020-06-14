@@ -1,7 +1,19 @@
-import { KeyKind } from "./KeyKind";
+import { KeyKind, CustomKeyKind } from "./KeyKind";
 
 export type KeyConfig = {
   [keyKind in KeyKind]: {
+    id: number;
+    num: number;
+    keys: string[];
+    alternativeKeys: string[];
+    noteNames: string[];
+    freezeNames: string[];
+    colorGroup: number[];
+  };
+};
+
+export type CustomKeyConfig = {
+  [customKeyKind in CustomKeyKind]: {
     id: number;
     num: number;
     keys: string[];

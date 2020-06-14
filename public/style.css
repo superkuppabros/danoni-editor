@@ -257,6 +257,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   color:white;
 }
 
+#configure-context-title {
+  margin: 10px auto;
+  color: salmon
+}
+
 #configure-uploader {
   display: flex;
   justify-content: space-evenly;

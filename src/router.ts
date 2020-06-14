@@ -3,7 +3,7 @@ import Editor from "./pages/Editor.vue";
 import Start from "./pages/Start.vue";
 import Configure from "./pages/Configure.vue";
 import Router from "vue-router";
-import { KeyKind } from "./model/KeyKind";
+import { CustomKeyKind } from "./model/KeyKind";
 
 Vue.config.productionTip = false;
 
@@ -12,7 +12,8 @@ Vue.use(Router);
 type PropsType = {
   loadScoreDataStr: string;
   loadMusicUrl: string;
-  selectedKey: KeyKind;
+  loadKeyConfigStr: string;
+  selectedKey: CustomKeyKind;
 };
 
 export default new Router({
@@ -30,7 +31,8 @@ export default new Router({
         return {
           loadScoreDataStr: routes.params.scoreData,
           loadMusicUrl: routes.params.musicUrl,
-          selectedKey: (routes.query.key || "7") as KeyKind
+          loadKeyConfigStr: routes.params.keyConfigStr,
+          selectedKey: (routes.query.key || "7") as CustomKeyKind
         };
       }
     },

@@ -19,9 +19,9 @@
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import Konva from "konva";
-import { DefaultKeyConfig, KeyConfig } from "@/model/KeyConfig";
+import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
-import { KeyKind } from "@/model/KeyKind";
+import { CustomKeyKind } from "@/model/KeyKind";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import {
   noteWidth,
@@ -44,13 +44,13 @@ import {
   positionToFrame,
   secondsToTimeStr
 } from "./helper/Calculator";
+import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
   currentPosition: number;
   scoreData: ScoreData;
-  keyConfig: KeyConfig;
   divisor: number;
-  keyKind: KeyKind;
+  keyKind: CustomKeyKind;
   keyNum: number;
   page: number;
   editorWidth: number;
@@ -72,6 +72,7 @@ export default Vue.extend({
     pageNum: Number,
     loadScoreData: { type: Object as PropType<ScoreData> },
     loadMusicUrl: String,
+    keyConfig: { type: Object as PropType<CustomKeyConfig> },
     selectedKey: String,
     timing: { type: Object as PropType<Timing> },
     propScoreNumber: Number,
@@ -80,15 +81,14 @@ export default Vue.extend({
   },
   components: { SpeedPiece },
   data(): DataType {
-    const keyKind = this.selectedKey as KeyKind;
-    const keyConfig = DefaultKeyConfig;
+    const keyKind = this.selectedKey as CustomKeyKind;
+    const keyConfig = createCustomKeyConfig();
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
 
     return {
       currentPosition: 0,
       scoreData: this.loadScoreData,
-      keyConfig: keyConfig,
       divisor: 24,
       keyKind,
       page: 1,

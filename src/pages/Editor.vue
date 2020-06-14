@@ -4,6 +4,7 @@
       :selected-key="selectedKey"
       :load-score-data-str="loadScoreDataStr"
       :load-music-url="loadMusicUrl"
+      :load-key-config-str="loadKeyConfigStr"
     ></editor-controller>
   </div>
 </template>
@@ -20,6 +21,7 @@ export default Vue.extend({
   props: {
     loadScoreDataStr: String,
     loadMusicUrl: String,
+    loadKeyConfigStr: String,
     selectedKey: String
   },
   beforeRouteLeave(to, from, next) {

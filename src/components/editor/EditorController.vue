@@ -4,6 +4,7 @@
       :page-num="pageNum"
       :load-score-data="scoreData"
       :load-music-url="loadMusicUrl"
+      :key-config="keyConfig"
       :selected-key="keyKind"
       :timing="timing"
       :prop-score-number="scoreNumber"
@@ -104,17 +105,18 @@ import { Timing } from "../../model/Timing";
 import { ScoreData, DefaultScoreData } from "../../model/ScoreData";
 import { ScoreConvertService } from "./service/ScoreConvertService";
 import { LevelCalcService } from "./service/LevelCalcService";
-import { KeyKind } from "../../model/KeyKind";
-import { KeyConfig, DefaultKeyConfig } from "../../model/KeyConfig";
+import { CustomKeyKind } from "../../model/KeyKind";
+import { CustomKeyConfig } from "../../model/KeyConfig";
 import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
+import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
   pageNum: number;
   labelNum: number;
   timing: Timing;
   scoreData: ScoreData;
-  keyKind: KeyKind;
-  keyConfig: KeyConfig;
+  keyKind: CustomKeyKind;
+  keyConfig: CustomKeyConfig;
   scoreNumber: number;
   musicVolume: number;
   musicRate: number;
@@ -130,11 +132,12 @@ export default Vue.extend({
   props: {
     selectedKey: String,
     loadScoreDataStr: String,
-    loadMusicUrl: String
+    loadMusicUrl: String,
+    loadKeyConfigStr: String
   },
   data(): DataType {
-    const keyConfig = DefaultKeyConfig;
-    const keyKind = this.selectedKey as KeyKind;
+    const keyConfig = createCustomKeyConfig();
+    const keyKind = this.selectedKey as CustomKeyKind;
     const keyNum = keyConfig[keyKind].num;
     let scoreData;
     try {
