@@ -16,10 +16,18 @@
           class="uk-select uk-form-width-medium"
           v-model="selectedKey"
         >
-          <option v-for="keyKind in keyKinds" :key="keyKind">{{
-            keyKind
-          }}</option>
+          <option v-for="keyKind in keyKinds" :key="keyKind">
+            {{ keyKind }}
+          </option>
         </select>
+        <router-link
+          :to="{
+            name: 'configure',
+            path: 'configure'
+          }"
+          class="start-btn btn-orange"
+          >CONFIG</router-link
+        >
         <router-link
           :to="{
             name: 'editor',
@@ -30,7 +38,7 @@
             },
             query: { key: selectedKey }
           }"
-          class="start-go-btn btn-red"
+          class="start-btn btn-red"
           >NEXT</router-link
         >
       </div>

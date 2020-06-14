@@ -217,8 +217,8 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   border-width: 1px 0;
 }
 
-.start-go-btn {
-  width: 100px;
+.start-btn {
+  width: 90px;
   height: 50px;
   line-height: 50px;
   font-size: 22px;
@@ -228,6 +228,12 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   margin: auto;
 }
 
+.start-btn:hover {
+  color: white;
+  cursor: pointer;
+  text-decoration: none;
+}
+
 #start-key-selector {
   margin: auto;
 }
@@ -235,4 +241,30 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 #start-version {
   color: gray;
   margin-top: 3px;
+}
+
+/* 設定画面 */
+#configure-container {
+  width: 500px;
+  height: 400px;
+  margin: auto;
+  background-color: rgb(255, 221, 127);
+  font-family: "Segoe UI", "Yu Gothic", sans-serif;
+}
+
+#configure-title {
+  padding-top: 10px;
+  color:white;
+}
+
+#configure-uploader {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 20px;
+}
+
+#configure-conf-select {
+  width: 250px;
+  margin-left: 40px;
+
 }
