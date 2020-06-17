@@ -48,6 +48,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   display: inline-block;
   margin: auto;
   max-height: 424px;
+  user-select: none;
 }
 
 #editor-controller {
@@ -194,6 +195,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   margin: auto;
   background-color: aquamarine;
   font-family: "Segoe UI", "Yu Gothic", sans-serif;
+  user-select: none;
 }
 
 #start-title {
@@ -250,6 +252,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   margin: auto;
   background-color: rgb(255, 221, 127);
   font-family: "Segoe UI", "Yu Gothic", sans-serif;
+  user-select: none;
 }
 
 #configure-title {
@@ -271,5 +274,4 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 #configure-conf-select {
   width: 250px;
   margin-left: 40px;
-
 }
