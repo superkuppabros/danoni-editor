@@ -9,12 +9,13 @@ import { testScoreData } from "./testScoreData";
 describe("noteService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
+  const isReverse = true;
   const stage = ("dummyStage" as unknown) as Konva.Stage;
   const layer = ("dummyLayer" as unknown) as Konva.Layer;
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
-    new NoteService(scoreData, keyConfig, keyKind, stage, layer);
+    new NoteService(scoreData, keyConfig, keyKind, isReverse, stage, layer);
 
   it("ノーツの有無が判定できる", () => {
     const noteService = createNoteService(_.cloneDeep(scoreData));

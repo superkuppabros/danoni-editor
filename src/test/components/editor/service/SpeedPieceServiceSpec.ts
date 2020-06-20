@@ -7,12 +7,13 @@ import { Speed } from "@/model/Speed";
 
 describe("speedPieceService", () => {
   const editorWidth = 150;
+  const isReverse = true;
   const stage = ("dummyStage" as unknown) as Konva.Stage;
   const layer = ("dummyLayer" as unknown) as Konva.Layer;
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
-    new SpeedPieceService(scoreData, editorWidth, stage, layer);
+    new SpeedPieceService(scoreData, editorWidth, isReverse, stage, layer);
 
   it("速度変化コマの有無が判定できる", () => {
     const speedPieceService = createNoteService(_.cloneDeep(scoreData));
