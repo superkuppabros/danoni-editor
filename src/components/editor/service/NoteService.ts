@@ -6,15 +6,17 @@ import {
   freezeColors,
   noteColors,
   noteWidth,
-  editorHeight,
-  noteHeight
+  noteHeight,
+  verticalSizeNum
 } from "../EditorConstant";
+import toPx from "../helper/toPx";
 
 export class NoteService {
   constructor(
     private scoreData: ScoreData,
     private keyConfig: CustomKeyConfig,
     private keyKind: CustomKeyKind,
+    private isReverse: boolean,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer
   ) {}
@@ -68,7 +70,7 @@ export class NoteService {
 
     const note = new Konva.Rect({
       x: lane * noteWidth,
-      y: editorHeight - position - noteHeight / 2,
+      y: toPx(position, this.isReverse) - noteHeight / 2,
       width: noteWidth,
       height: noteHeight,
       fill: color,
@@ -108,5 +110,27 @@ export class NoteService {
       }
     }
     return removedLanes;
+  }
+
+  // 行をずらす
+  shift(page: number, currentPosition: number, delta: number): void {
+    let newPosition = currentPosition + delta;
+    let newPage = page;
+    if (newPosition < 0) {
+      if (page === 1) return;
+      else {
+        newPage--;
+        newPosition += verticalSizeNum;
+      }
+    } else if (newPosition >= verticalSizeNum) {
+      newPage++;
+      newPosition -= verticalSizeNum;
+    }
+
+    const removedLanes = this.removeOnPosition(page, currentPosition);
+    this.removeOnPosition(newPage, newPosition);
+    removedLanes.forEach(obj =>
+      this.add(newPage, obj.lane, newPosition, obj.isFreeze)
+    );
   }
 }

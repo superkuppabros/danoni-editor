@@ -12,6 +12,7 @@
       v-model="speed.value"
       :position="speed.position"
       :type="speed.type"
+      :isReverse="isReverse"
     ></speed-piece>
   </div>
 </template>
@@ -38,12 +39,9 @@ import { SpeedType } from "../../model/Speed";
 import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
 import { PageScoreService } from "./service/PageScoreService";
+import { CurrentPositionService } from "./service/CurrentPositionService";
 import SpeedPiece from "./SpeedPiece.vue";
-import {
-  positionToSeconds,
-  positionToFrame,
-  secondsToTimeStr
-} from "./helper/Calculator";
+import { positionToSeconds } from "./helper/Calculator";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
@@ -54,9 +52,11 @@ type DataType = {
   keyNum: number;
   page: number;
   editorWidth: number;
+  isReverse: boolean;
   musicTimer: number | null;
   musicService: MusicService;
   copyScoreStore: PageScore;
+  currentPositionService: CurrentPositionService;
   noteService?: NoteService;
   speedPieceService?: SpeedPieceService;
   pageScoreService?: PageScoreService;
@@ -85,6 +85,8 @@ export default Vue.extend({
     const keyConfig = createCustomKeyConfig();
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
+    const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
+    const isReverse: boolean = JSON.parse(isReverseStr);
 
     return {
       currentPosition: 0,
@@ -93,10 +95,12 @@ export default Vue.extend({
       keyKind,
       page: 1,
       keyNum,
+      isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicService: new MusicService(audio),
       musicTimer: null,
-      copyScoreStore: new DefaultPageScore(keyNum)
+      copyScoreStore: new DefaultPageScore(keyNum),
+      currentPositionService: (undefined as unknown) as CurrentPositionService
     };
   },
   methods: {
@@ -162,118 +166,6 @@ export default Vue.extend({
       stage.add(currentPositionLayer);
     },
 
-    // 現在位置の描画
-    currentPositionDraw(): void {
-      const stage = this.stage as Konva.Stage;
-      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
-
-      const color = "#d8d800";
-      const position = this.currentPosition;
-
-      const maybeLine = currentPositionLayer.findOne("#currentPositionLine");
-      const line: Konva.Line =
-        maybeLine instanceof Konva.Line
-          ? maybeLine.y(editorHeight - position)
-          : new Konva.Line({
-              y: editorHeight - position,
-              points: [0, 0, this.editorWidth, 0],
-              stroke: color,
-              strokeWidth: 1.75,
-              id: "currentPositionLine"
-            });
-      const radius = 6;
-
-      const maybeTriangle = currentPositionLayer.findOne(
-        "#currentPositionTriangle"
-      );
-      const triangle: Konva.RegularPolygon =
-        maybeTriangle instanceof Konva.RegularPolygon
-          ? maybeTriangle.y(editorHeight - position)
-          : new Konva.RegularPolygon({
-              sides: 3,
-              radius,
-              rotation: -30,
-              fill: color,
-              x: -radius,
-              y: editorHeight - position,
-              id: `currentPositionTriangle`
-            });
-
-      const timing = this.timing;
-      const page = this.page;
-      const blankFrame = this.scoreData.blankFrame;
-      const currentFrame =
-        positionToFrame(timing, page, position, blankFrame) < 100000
-          ? Math.round(
-              positionToFrame(timing, page, position, blankFrame) * 10
-            ) / 10
-          : Math.round(positionToFrame(timing, page, position, blankFrame));
-
-      const currentSeconds = positionToSeconds(
-        timing,
-        page,
-        position,
-        blankFrame
-      );
-      const currentTimeStr = secondsToTimeStr(currentSeconds);
-      const displayedText = `${currentFrame}\n[${currentTimeStr}]`;
-      const textWidth = 40;
-      const textHeight = 22;
-
-      const maybeText = currentPositionLayer.findOne("#currentPositionText");
-      const text: Konva.Text =
-        maybeText instanceof Konva.Text
-          ? maybeText
-              .y(editorHeight - position - textHeight / 2)
-              .text(displayedText)
-          : new Konva.Text({
-              width: textWidth,
-              height: textHeight,
-              text: displayedText,
-              fill: "black",
-              fontSize: textHeight / 2,
-              align: "center",
-              x: -canvasMarginHorizontal + 2,
-              y: editorHeight - position - textHeight / 2,
-              id: `currentPositionText`
-            });
-
-      currentPositionLayer.add(line, triangle, text);
-      stage.add(currentPositionLayer);
-    },
-
-    // 再生位置の移動アニメーション
-    musicPositionAnimation(duration: number) {
-      const stage = this.stage as Konva.Stage;
-      const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
-
-      const node = currentPositionLayer.findOne("#musicPosition");
-      const currentPositionLine: Konva.Line =
-        node instanceof Konva.Line
-          ? node.y(editorHeight)
-          : new Konva.Line({
-              y: editorHeight,
-              points: [0, 0, this.editorWidth, 0],
-              stroke: "#8000ff",
-              strokeWidth: 1.75,
-              id: "musicPosition"
-            });
-
-      currentPositionLayer.add(currentPositionLine);
-      stage.add(currentPositionLayer);
-
-      const tween = new Konva.Tween({
-        node: currentPositionLine,
-        duration: (duration * 4) / 5 / 1000, // 10拍中の8拍で上まで到達する
-        x: 0,
-        y: 0
-      });
-
-      setTimeout(() => {
-        tween.play();
-      }, duration / 5);
-    },
-
     // 音楽再生処理
     playMusicLoop(timing: Timing) {
       const startPosition = -verticalSizeNum / 4;
@@ -287,7 +179,7 @@ export default Vue.extend({
       const loop = (startTime: number, endTime: number) => {
         const playDuration = ((endTime - startTime) * 1000) / musicRate;
         this.musicService.play(startTime, musicVolume, musicRate);
-        this.musicPositionAnimation(playDuration);
+        this.currentPositionService.musicAnimate(playDuration);
         if (this.musicTimer) {
           const timer: number = setTimeout(() => {
             this.musicService.pause();
@@ -340,12 +232,6 @@ export default Vue.extend({
       });
     },
 
-    // 現在位置移動
-    currentPositionMove(position: number) {
-      this.currentPosition = position;
-      this.currentPositionDraw();
-    },
-
     // ページ遷移
     pageMove(page: number): void {
       this.page = page;
@@ -364,26 +250,42 @@ export default Vue.extend({
         this.playMusicLoop(this.timing);
       }
 
-      this.currentPositionDraw();
+      this.currentPositionService.draw(this.currentPosition, page);
     },
     pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
-      this.currentPositionMove(position);
+      this.currentPositionService.move(position, this.page);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
-      this.currentPositionMove(0);
+      this.currentPositionService.move(0, this.page);
     },
 
     // 移動間隔変更
     changeDivisor(divisor: number) {
       this.divisor = divisor;
       if (this.currentPosition % divisor !== 0) {
-        this.currentPositionMove(
-          Math.floor(this.currentPosition / divisor) * divisor
+        this.currentPositionService.move(
+          Math.floor(this.currentPosition / divisor) * divisor,
+          this.page
         );
       }
       this.baseLayerDraw();
+    },
+
+    // 現在位置の上下移動
+    currentPositionIncrease() {
+      this.currentPosition += this.divisor;
+      if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
+      else this.currentPositionService.move(this.currentPosition, this.page);
+    },
+
+    currentPositionDecrese() {
+      this.currentPosition -= this.divisor;
+      if (this.currentPosition < 0) {
+        if (this.page === 1) this.currentPosition = 0;
+        else this.pageMinus(1, this.currentPosition + verticalSizeNum);
+      } else this.currentPositionService.move(this.currentPosition, this.page);
     },
 
     // キーを押したときの挙動
@@ -391,6 +293,16 @@ export default Vue.extend({
       const noteService = this.noteService as NoteService;
       const speedPieceService = this.speedPieceService as SpeedPieceService;
       const pageScoreService = this.pageScoreService as PageScoreService;
+
+      const page = this.page;
+      const currentPosition = this.currentPosition;
+      const divisor = this.divisor;
+
+      const positionLineMove = (isRaise: boolean) => {
+        return isRaise === this.isReverse
+          ? this.currentPositionDecrese
+          : this.currentPositionIncrease;
+      };
 
       if (e.ctrlKey) {
         switch (e.code) {
@@ -416,68 +328,26 @@ export default Vue.extend({
             this.changeDivisor(quarterInterval / 8);
             break;
           case "KeyX":
-            pageScoreService.cut(this.page);
+            pageScoreService.cut(page);
             break;
           case "KeyC":
-            pageScoreService.copy(this.page);
+            pageScoreService.copy(page);
             break;
           case "KeyV":
-            pageScoreService.paste(this.page);
+            pageScoreService.paste(page);
             break;
           case "ArrowUp": {
-            let operateNotesPage = this.page;
-            const removedLanes = noteService.removeOnPosition(
-              operateNotesPage,
-              this.currentPosition
-            );
-            this.currentPosition += this.divisor;
-            if (this.currentPosition >= verticalSizeNum) {
-              this.pagePlus(1);
-              operateNotesPage++;
-            } else this.currentPositionMove(this.currentPosition);
-            noteService.removeOnPosition(
-              operateNotesPage,
-              this.currentPosition
-            );
-            removedLanes.forEach(obj =>
-              noteService.add(
-                operateNotesPage,
-                obj.lane,
-                this.currentPosition,
-                obj.isFreeze
-              )
-            );
-            this.displayPageScore(operateNotesPage);
+            const delta = this.isReverse ? -divisor : divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(true)();
+            this.displayPageScore(this.page);
             break;
           }
           case "ArrowDown": {
-            let operateNotesPage = this.page;
-            const removedLanes = noteService.removeOnPosition(
-              operateNotesPage,
-              this.currentPosition
-            );
-            this.currentPosition -= this.divisor;
-            if (this.currentPosition < 0) {
-              if (this.page === 1) {
-                this.currentPosition = 0;
-              } else {
-                this.pageMinus(1, this.currentPosition + verticalSizeNum);
-                operateNotesPage--;
-              }
-            } else this.currentPositionMove(this.currentPosition);
-            noteService.removeOnPosition(
-              operateNotesPage,
-              this.currentPosition
-            );
-            removedLanes.forEach(obj =>
-              noteService.add(
-                operateNotesPage,
-                obj.lane,
-                this.currentPosition,
-                obj.isFreeze
-              )
-            );
-            this.displayPageScore(operateNotesPage);
+            const delta = this.isReverse ? divisor : -divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(false)();
+            this.displayPageScore(this.page);
             break;
           }
         }
@@ -498,28 +368,16 @@ export default Vue.extend({
             this.displayPageScore(this.page);
             break;
           case "Space": // ArrowUpと同様
-            this.currentPosition += this.divisor;
-            if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
-            else this.currentPositionMove(this.currentPosition);
+            positionLineMove(true)();
             break;
           case "ArrowUp":
-            this.currentPosition += this.divisor;
-            if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
-            else this.currentPositionMove(this.currentPosition);
+            positionLineMove(true)();
             break;
           case "KeyB": // ArrowDownと同様
-            this.currentPosition -= this.divisor;
-            if (this.currentPosition < 0) {
-              if (this.page === 1) this.currentPosition = 0;
-              else this.pageMinus(1, this.currentPosition + verticalSizeNum);
-            } else this.currentPositionMove(this.currentPosition);
+            positionLineMove(false)();
             break;
           case "ArrowDown":
-            this.currentPosition -= this.divisor;
-            if (this.currentPosition < 0) {
-              if (this.page === 1) this.currentPosition = 0;
-              else this.pageMinus(1, this.currentPosition + verticalSizeNum);
-            } else this.currentPositionMove(this.currentPosition);
+            positionLineMove(false)();
             break;
           case "ArrowLeft":
             if (e.shiftKey) this.pageMinus(5);
@@ -563,9 +421,7 @@ export default Vue.extend({
                 noteService.draw(possiblyLane, position, isFreeze);
               }
 
-              this.currentPosition += this.divisor;
-              if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
-              else this.currentPositionMove(this.currentPosition);
+              this.currentPositionIncrease();
             }
             break;
           }
@@ -601,6 +457,7 @@ export default Vue.extend({
       this.scoreData,
       this.keyConfig,
       this.keyKind,
+      this.isReverse,
       this.stage,
       this.notesLayer
     );
@@ -608,6 +465,7 @@ export default Vue.extend({
     this.speedPieceService = new SpeedPieceService(
       this.scoreData,
       this.editorWidth,
+      this.isReverse,
       this.stage,
       this.notesLayer
     );
@@ -619,8 +477,18 @@ export default Vue.extend({
       this.displayPageScore
     );
 
+    this.currentPositionService = new CurrentPositionService(
+      this.scoreData,
+      this.timing,
+      this.editorWidth,
+      this.isReverse,
+      this.stage,
+      this.currentPositionLayer,
+      position => (this.currentPosition = position)
+    );
+
     this.baseLayerDraw();
-    this.currentPositionDraw();
+    this.currentPositionService.draw(0, 1);
     this.pageMove(1);
     this.displayPageScore(1);
   },

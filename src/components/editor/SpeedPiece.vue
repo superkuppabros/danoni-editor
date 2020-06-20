@@ -4,13 +4,14 @@
     step="0.01"
     class="editor-speed-piece"
     v-model="inputValue"
-    :style="{ top: 397 - position + 'px' }"
+    :style="{ top: top + 'px' }"
   />
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
 import { SpeedType } from "../../model/Speed";
+import toPx from "./helper/toPx";
 export default Vue.extend({
   name: "SpeedPiece",
   model: {
@@ -18,11 +19,15 @@ export default Vue.extend({
     event: "changeSpeed"
   },
   props: {
+    isReverse: Boolean,
     position: Number,
     propValue: Number,
     type: { type: String as PropType<SpeedType> }
   },
   computed: {
+    top(): number {
+      return toPx(this.position, this.isReverse) + 15;
+    },
     inputValue: {
       get(): number {
         return this.propValue;

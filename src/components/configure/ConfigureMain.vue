@@ -3,8 +3,7 @@
     <div id="configure-title">
       <h2>Configure</h2>
     </div>
-    <hr />
-    <h3 id="configure-context-title">Key Config</h3>
+    <h3 class="configure-context-title">Key Config</h3>
     <div id="configure-uploader">
       <configure-uploader
         :msg="confTitle"
@@ -12,6 +11,7 @@
       ></configure-uploader>
       <div class="start-btn btn-gray" @click="resetConf">RESET</div>
     </div>
+    <configure-design></configure-design>
     <div id="start-go-next">
       <router-link
         :to="{
@@ -28,15 +28,17 @@
 <script lang="ts">
 import Vue from "vue";
 import ConfigureUploader from "./ConfigureUploader.vue";
+import ConfigureDesign from "./ConfigureDesign.vue";
 
 export default Vue.extend({
   name: "ConfigureMain",
   components: {
-    ConfigureUploader
+    ConfigureUploader,
+    ConfigureDesign
   },
   data() {
     return {
-      confTitle: "コンフィグファイルをドロップ"
+      confTitle: "ファイルをドロップ"
     };
   },
   methods: {
