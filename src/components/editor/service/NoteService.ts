@@ -7,7 +7,8 @@ import {
   noteColors,
   noteWidth,
   editorHeight,
-  noteHeight
+  noteHeight,
+  verticalSizeNum
 } from "../EditorConstant";
 
 export class NoteService {
@@ -108,5 +109,27 @@ export class NoteService {
       }
     }
     return removedLanes;
+  }
+
+  // 行をずらす
+  shift(page: number, currentPosition: number, delta: number): void {
+    let newPosition = currentPosition + delta;
+    let newPage = page;
+    if (newPosition < 0) {
+      if (page === 1) return;
+      else {
+        newPage--;
+        newPosition += verticalSizeNum;
+      }
+    } else if (newPosition >= verticalSizeNum) {
+      newPage++;
+      newPosition -= verticalSizeNum;
+    }
+
+    const removedLanes = this.removeOnPosition(page, currentPosition);
+    this.removeOnPosition(newPage, newPosition);
+    removedLanes.forEach(obj =>
+      this.add(newPage, obj.lane, newPosition, obj.isFreeze)
+    );
   }
 }
