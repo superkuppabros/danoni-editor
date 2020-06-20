@@ -12,6 +12,7 @@
       v-model="speed.value"
       :position="speed.position"
       :type="speed.type"
+      :isReverse="isReverse"
     ></speed-piece>
   </div>
 </template>
@@ -51,6 +52,7 @@ type DataType = {
   keyNum: number;
   page: number;
   editorWidth: number;
+  isReverse: boolean;
   musicTimer: number | null;
   musicService: MusicService;
   copyScoreStore: PageScore;
@@ -83,6 +85,9 @@ export default Vue.extend({
     const keyConfig = createCustomKeyConfig();
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
+    const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
+    console.log(isReverseStr);
+    const isReverse: boolean = JSON.parse(isReverseStr);
 
     return {
       currentPosition: 0,
@@ -91,6 +96,7 @@ export default Vue.extend({
       keyKind,
       page: 1,
       keyNum,
+      isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicService: new MusicService(audio),
       musicTimer: null,
@@ -269,13 +275,13 @@ export default Vue.extend({
     },
 
     // 現在位置の上下移動
-    currentPositionRaise() {
+    currentPositionIncrease() {
       this.currentPosition += this.divisor;
       if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
       else this.currentPositionService.move(this.currentPosition, this.page);
     },
 
-    currentPositionLower() {
+    currentPositionDecrese() {
       this.currentPosition -= this.divisor;
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
@@ -292,6 +298,12 @@ export default Vue.extend({
       const page = this.page;
       const currentPosition = this.currentPosition;
       const divisor = this.divisor;
+
+      const positionLineMove = (isRaise: boolean) => {
+        return isRaise === this.isReverse
+          ? this.currentPositionDecrese
+          : this.currentPositionIncrease;
+      };
 
       if (e.ctrlKey) {
         switch (e.code) {
@@ -326,14 +338,16 @@ export default Vue.extend({
             pageScoreService.paste(page);
             break;
           case "ArrowUp": {
-            noteService.shift(page, currentPosition, divisor);
-            this.currentPositionRaise();
+            const delta = this.isReverse ? -divisor : divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(true)();
             this.displayPageScore(this.page);
             break;
           }
           case "ArrowDown": {
-            noteService.shift(page, currentPosition, -divisor);
-            this.currentPositionLower();
+            const delta = this.isReverse ? divisor : -divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(false)();
             this.displayPageScore(this.page);
             break;
           }
@@ -355,16 +369,16 @@ export default Vue.extend({
             this.displayPageScore(this.page);
             break;
           case "Space": // ArrowUpと同様
-            this.currentPositionRaise();
+            positionLineMove(true)();
             break;
           case "ArrowUp":
-            this.currentPositionRaise();
+            positionLineMove(true)();
             break;
           case "KeyB": // ArrowDownと同様
-            this.currentPositionLower();
+            positionLineMove(false)();
             break;
           case "ArrowDown":
-            this.currentPositionLower();
+            positionLineMove(false)();
             break;
           case "ArrowLeft":
             if (e.shiftKey) this.pageMinus(5);
@@ -408,7 +422,7 @@ export default Vue.extend({
                 noteService.draw(possiblyLane, position, isFreeze);
               }
 
-              this.currentPositionRaise();
+              this.currentPositionIncrease();
             }
             break;
           }
@@ -444,6 +458,7 @@ export default Vue.extend({
       this.scoreData,
       this.keyConfig,
       this.keyKind,
+      this.isReverse,
       this.stage,
       this.notesLayer
     );
@@ -451,6 +466,7 @@ export default Vue.extend({
     this.speedPieceService = new SpeedPieceService(
       this.scoreData,
       this.editorWidth,
+      this.isReverse,
       this.stage,
       this.notesLayer
     );
@@ -466,6 +482,7 @@ export default Vue.extend({
       this.scoreData,
       this.timing,
       this.editorWidth,
+      this.isReverse,
       this.stage,
       this.currentPositionLayer,
       position => (this.currentPosition = position)

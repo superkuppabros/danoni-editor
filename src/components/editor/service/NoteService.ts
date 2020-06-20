@@ -6,16 +6,17 @@ import {
   freezeColors,
   noteColors,
   noteWidth,
-  editorHeight,
   noteHeight,
   verticalSizeNum
 } from "../EditorConstant";
+import toPx from "../helper/toPx";
 
 export class NoteService {
   constructor(
     private scoreData: ScoreData,
     private keyConfig: CustomKeyConfig,
     private keyKind: CustomKeyKind,
+    private isReverse: boolean,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer
   ) {}
@@ -69,7 +70,7 @@ export class NoteService {
 
     const note = new Konva.Rect({
       x: lane * noteWidth,
-      y: editorHeight - position - noteHeight / 2,
+      y: toPx(position, this.isReverse) - noteHeight / 2,
       width: noteWidth,
       height: noteHeight,
       fill: color,

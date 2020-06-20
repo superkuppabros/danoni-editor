@@ -1,12 +1,13 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { editorHeight } from "../EditorConstant";
 import { SpeedType } from "@/model/Speed";
+import toPx from "../helper/toPx";
 
 export class SpeedPieceService {
   constructor(
     private scoreData: ScoreData,
     private editorWidth: number,
+    private isReverse: boolean,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer
   ) {}
@@ -47,7 +48,7 @@ export class SpeedPieceService {
       rotation: 30,
       fill: color,
       x: this.editorWidth + radius,
-      y: editorHeight - position,
+      y: toPx(position, this.isReverse),
       id: `speed-${position}`
     });
 

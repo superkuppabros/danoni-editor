@@ -7,12 +7,14 @@ import {
   secondsToTimeStr
 } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
+import toPx from "../helper/toPx";
 
 export class CurrentPositionService {
   constructor(
     private scoreData: ScoreData,
     private timing: Timing,
     private editorWidth: number,
+    private isReverse: boolean,
     private stage: Konva.Stage,
     private currentPositionLayer: Konva.Layer,
     private changeCurrentPosition: (newPos: number) => void
@@ -24,13 +26,14 @@ export class CurrentPositionService {
     const currentPositionLayer = this.currentPositionLayer;
 
     const color = "#d8d800";
+    const yValue = toPx(position, this.isReverse);
 
     const maybeLine = currentPositionLayer.findOne("#currentPositionLine");
     const line: Konva.Line =
       maybeLine instanceof Konva.Line
-        ? maybeLine.y(editorHeight - position)
+        ? maybeLine.y(yValue)
         : new Konva.Line({
-            y: editorHeight - position,
+            y: yValue,
             points: [0, 0, this.editorWidth, 0],
             stroke: color,
             strokeWidth: 1.75,
@@ -43,14 +46,14 @@ export class CurrentPositionService {
     );
     const triangle: Konva.RegularPolygon =
       maybeTriangle instanceof Konva.RegularPolygon
-        ? maybeTriangle.y(editorHeight - position)
+        ? maybeTriangle.y(yValue)
         : new Konva.RegularPolygon({
             sides: 3,
             radius,
             rotation: -30,
             fill: color,
             x: -radius,
-            y: editorHeight - position,
+            y: yValue,
             id: `currentPositionTriangle`
           });
 
@@ -76,9 +79,7 @@ export class CurrentPositionService {
     const maybeText = currentPositionLayer.findOne("#currentPositionText");
     const text: Konva.Text =
       maybeText instanceof Konva.Text
-        ? maybeText
-            .y(editorHeight - position - textHeight / 2)
-            .text(displayedText)
+        ? maybeText.y(yValue - textHeight / 2).text(displayedText)
         : new Konva.Text({
             width: textWidth,
             height: textHeight,
@@ -87,7 +88,7 @@ export class CurrentPositionService {
             fontSize: textHeight / 2,
             align: "center",
             x: -canvasMarginHorizontal + 2,
-            y: editorHeight - position - textHeight / 2,
+            y: yValue - textHeight / 2,
             id: `currentPositionText`
           });
 
@@ -109,9 +110,9 @@ export class CurrentPositionService {
     const node = currentPositionLayer.findOne("#musicPosition");
     const currentPositionLine: Konva.Line =
       node instanceof Konva.Line
-        ? node.y(editorHeight)
+        ? node.y(toPx(0, this.isReverse))
         : new Konva.Line({
-            y: editorHeight,
+            y: toPx(0, this.isReverse),
             points: [0, 0, this.editorWidth, 0],
             stroke: "#8000ff",
             strokeWidth: 1.75,
@@ -125,7 +126,7 @@ export class CurrentPositionService {
       node: currentPositionLine,
       duration: (duration * 4) / 5 / 1000, // 10拍中の8拍で上まで到達する
       x: 0,
-      y: 0
+      y: toPx(editorHeight, this.isReverse)
     });
 
     setTimeout(() => {
