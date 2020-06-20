@@ -257,21 +257,42 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 #configure-title {
   padding-top: 10px;
-  color:white;
+  border: solid linen;
+  border-width: 0 0 1px 0;
 }
 
-#configure-context-title {
-  margin: 10px auto;
+.configure-context-title {
+  margin: 5px auto;
   color: salmon
 }
 
 #configure-uploader {
   display: flex;
   justify-content: space-evenly;
-  margin-bottom: 20px;
+  padding: 10px 0;
+  border: solid linen;
+  border-width: 0 0 1px 0;
+}
+
+#configure-droparea {
+  height: 30px;
+  padding: 15px;
 }
 
 #configure-conf-select {
   width: 250px;
+  height: 100%;
   margin-left: 40px;
+}
+
+.configure-design-item {
+  display: flex;
+  justify-content: space-around;
+  font-size: 18px;
+  padding: 0 50px;
+  margin: 10px 0;
+}
+
+.configure-radio {
+  margin: 0 10px;
 }
