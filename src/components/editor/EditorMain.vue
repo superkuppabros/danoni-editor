@@ -86,7 +86,6 @@ export default Vue.extend({
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
-    console.log(isReverseStr);
     const isReverse: boolean = JSON.parse(isReverseStr);
 
     return {

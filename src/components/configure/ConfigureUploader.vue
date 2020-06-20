@@ -7,11 +7,19 @@
     <div
       uk-form-custom
       class="uk-placeholder uk-text-center uk-margin-remove-bottom uk-form-width-medium"
+      id="configure-droparea"
     >
-      <input type="file" ref="input" @change="loadFile" />
-      <span uk-icon="icon: upload"></span>
-      <span class="uk-text-middle"> {{ msg }} </span>
-      <span class="uk-text-middle uk-link">参照</span>
+      <input
+        type="file"
+        id="configure-droparea-input"
+        ref="input"
+        @change="loadFile"
+      />
+      <div id="configure-droparea-text">
+        <span uk-icon="icon: upload"></span>
+        <span class="uk-text-middle">{{ msg }}</span>
+        <span class="uk-text-middle uk-link">参照</span>
+      </div>
     </div>
   </div>
 </template>
