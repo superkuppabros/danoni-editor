@@ -33,13 +33,26 @@
             name: 'editor',
             path: 'editor',
             params: {
+              scoreData: localSaveDataStr,
+              musicUrl: musicUrl,
+              key: selectedKey
+            }
+          }"
+          class="start-btn btn-blue"
+          >REVIVAL</router-link
+        >
+        <router-link
+          :to="{
+            name: 'editor',
+            path: 'editor',
+            params: {
               scoreData: scoreDataStr,
               musicUrl: musicUrl,
               key: selectedKey
             }
           }"
           class="start-btn btn-red"
-          >NEXT</router-link
+          >START</router-link
         >
       </div>
 
@@ -87,6 +100,10 @@ export default Vue.extend({
       const keys = Object.keys(keyConfig) as CustomKeyKind[];
       keys.sort((a, b) => keyConfig[a].id - keyConfig[b].id);
       return keys;
+    },
+
+    localSaveDataStr(): string {
+      return localStorage.getItem("saveData") ?? "";
     }
   },
   methods: {
