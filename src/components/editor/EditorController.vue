@@ -208,6 +208,9 @@ export default Vue.extend({
       const data: string = converter.convert(this.scoreData, postfix);
       const message = "譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
+
+      // ローカルストレージに現在のデータを保存
+      localStorage.setItem("saveData", converter.save(this.scoreData));
     },
     save(): void {
       const converter = this.scoreConvertService;
