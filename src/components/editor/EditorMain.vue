@@ -81,7 +81,9 @@ export default Vue.extend({
   },
   components: { SpeedPiece },
   data(): DataType {
-    const keyKind = this.selectedKey as CustomKeyKind;
+    const scoreData = this.loadScoreData;
+    const keyKind = (scoreData.keyKind || this.selectedKey) as CustomKeyKind;
+    scoreData.keyKind = keyKind;
     const keyConfig = createCustomKeyConfig();
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
@@ -90,7 +92,7 @@ export default Vue.extend({
 
     return {
       currentPosition: 0,
-      scoreData: this.loadScoreData,
+      scoreData,
       divisor: 24,
       keyKind,
       page: 1,
