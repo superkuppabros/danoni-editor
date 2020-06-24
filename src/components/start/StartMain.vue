@@ -34,9 +34,9 @@
             path: 'editor',
             params: {
               scoreData: scoreDataStr,
-              musicUrl: musicUrl
-            },
-            query: { key: selectedKey }
+              musicUrl: musicUrl,
+              key: selectedKey
+            }
           }"
           class="start-btn btn-red"
           >NEXT</router-link
@@ -122,6 +122,9 @@ export default Vue.extend({
         reader.readAsText(file);
       }
     }
+  },
+  mounted() {
+    sessionStorage.removeItem("keyKind");
   }
 });
 </script>

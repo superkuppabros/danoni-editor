@@ -30,7 +30,7 @@ export default new Router({
         return {
           loadScoreDataStr: routes.params.scoreData,
           loadMusicUrl: routes.params.musicUrl,
-          selectedKey: (routes.query.key || "7") as CustomKeyKind
+          selectedKey: (routes.params.key || "7") as CustomKeyKind
         };
       }
     },

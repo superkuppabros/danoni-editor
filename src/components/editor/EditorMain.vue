@@ -82,8 +82,12 @@ export default Vue.extend({
   components: { SpeedPiece },
   data(): DataType {
     const scoreData = this.loadScoreData;
-    const keyKind = (scoreData.keyKind || this.selectedKey) as CustomKeyKind;
+    const storedKeyKind = sessionStorage.getItem("keyKind");
+    const keyKind = (scoreData.keyKind ||
+      storedKeyKind ||
+      this.selectedKey) as CustomKeyKind;
     scoreData.keyKind = keyKind;
+    sessionStorage.setItem("keyKind", keyKind); // 更新してもkeyがデフォルトに戻らないようにするため
     const keyConfig = createCustomKeyConfig();
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
