@@ -75,7 +75,7 @@ export default Vue.extend({
     return {
       keyConfig,
       musicTitle: "楽曲ファイルをドロップ",
-      scoreTitle: "譜面ファイルをドロップ",
+      scoreTitle: "セーブファイルをドロップ",
       selectedKey: "5",
       musicUrl: null,
       scoreDataStr: null

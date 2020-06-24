@@ -1,12 +1,12 @@
 <template>
   <div
-    id="start-music-select"
+    class="start-uploader"
     @dragover.prevent="ondragover"
     @drop.prevent="ondrop"
   >
     <div
       uk-form-custom
-      class="uk-placeholder uk-text-center uk-margin-remove-bottom"
+      class="uk-placeholder uk-text-center uk-margin-remove-bottom start-droparea"
     >
       <input type="file" ref="input" @change="loadFile" />
       <span uk-icon="icon: upload"></span>

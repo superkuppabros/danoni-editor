@@ -205,10 +205,15 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   border-bottom: solid 1px linen;
 }
 
-#start-music-select,
-#start-score-select {
+.start-uploader {
   margin-top: 15px;
   margin-bottom: 15px;
+}
+
+.start-droparea.uk-placeholder {
+  height: 35px;
+  width: 255px;
+  padding: 25px;
 }
 
 #start-go-next {
