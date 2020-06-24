@@ -1,7 +1,9 @@
 import { Timing } from "./Timing";
 import { PageScore, DefaultPageScore } from "./PageScore";
+import { CustomKeyKind } from "./KeyKind";
 
 export interface ScoreData {
+  keyKind?: CustomKeyKind;
   blankFrame: number;
   timings: Timing[];
   scoreNumber?: number;
