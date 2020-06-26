@@ -11,7 +11,11 @@ export interface ScoreData {
 }
 
 export class DefaultScoreData implements ScoreData {
-  constructor(private keyNum: number) {}
+  scores: PageScore[];
+
+  constructor(keyNum: number) {
+    this.scores = [new DefaultPageScore(keyNum)];
+  }
 
   blankFrame = 200;
 
@@ -24,6 +28,4 @@ export class DefaultScoreData implements ScoreData {
   ];
 
   scoreNumber = 1;
-
-  scores: PageScore[] = [new DefaultPageScore(this.keyNum)];
 }

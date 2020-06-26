@@ -7,9 +7,13 @@ export interface PageScore {
 }
 
 export class DefaultPageScore implements PageScore {
-  constructor(private keyNum: number) {}
+  notes: number[][];
+  freezes: number[][];
 
-  notes = new Array(this.keyNum).fill([]).map(() => []);
-  freezes = new Array(this.keyNum).fill([]).map(() => []);
+  constructor(keyNum: number) {
+    this.notes = new Array(keyNum).fill([]).map(() => []);
+    this.freezes = new Array(keyNum).fill([]).map(() => []);
+  }
+
   speeds = [];
 }
