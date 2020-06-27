@@ -33,4 +33,31 @@ export class PageScoreService {
     this.scoreData.scores.splice(page - 1, 1, pageScore);
     this.displayPageScore(page);
   }
+
+  // ページ追加
+  add(page: number) {
+    const pageScore = _.cloneDeep(this.copyScoreStore);
+    this.scoreData.scores.splice(page - 1, 0, pageScore);
+
+    const timings = this.scoreData.timings;
+    this.scoreData.timings = timings.map(timing => {
+      if (timing.label > page) timing.label++;
+      return timing;
+    });
+
+    this.displayPageScore(page);
+  }
+
+  // ページ削除
+  delete(page: number) {
+    this.copy(page);
+    this.scoreData.scores.splice(page - 1, 1);
+
+    const timings = this.scoreData.timings;
+    this.scoreData.timings = timings.map(timing => {
+      if (timing.label > page) timing.label--;
+      return timing;
+    });
+    this.displayPageScore(page);
+  }
 }

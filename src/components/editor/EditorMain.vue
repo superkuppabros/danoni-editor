@@ -334,12 +334,14 @@ export default Vue.extend({
             this.changeDivisor(quarterInterval / 8);
             break;
           case "KeyX":
-            pageScoreService.cut(page);
+            if (e.shiftKey) pageScoreService.delete(page);
+            else pageScoreService.cut(page);
             break;
           case "KeyC":
             pageScoreService.copy(page);
             break;
           case "KeyV":
+            if (e.shiftKey) pageScoreService.add(page);
             pageScoreService.paste(page);
             break;
           case "ArrowUp": {
