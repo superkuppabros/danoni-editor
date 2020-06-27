@@ -12,7 +12,6 @@ import toPx from "../helper/toPx";
 export class CurrentPositionService {
   constructor(
     private scoreData: ScoreData,
-    private timing: Timing,
     private editorWidth: number,
     private isReverse: boolean,
     private stage: Konva.Stage,
@@ -21,7 +20,7 @@ export class CurrentPositionService {
   ) {}
 
   // 現在位置の描画
-  draw(position: number, page: number): void {
+  draw(position: number, page: number, timing: Timing): void {
     const stage = this.stage;
     const currentPositionLayer = this.currentPositionLayer;
 
@@ -57,7 +56,6 @@ export class CurrentPositionService {
             id: `currentPositionTriangle`
           });
 
-    const timing = this.timing;
     const blankFrame = this.scoreData.blankFrame;
     const currentFrame =
       positionToFrame(timing, page, position, blankFrame) < 100000
@@ -97,9 +95,9 @@ export class CurrentPositionService {
   }
 
   // 現在位置の移動
-  move(position: number, page: number): void {
+  move(position: number, page: number, timing: Timing): void {
     this.changeCurrentPosition(position);
-    this.draw(position, page);
+    this.draw(position, page, timing);
   }
 
   // 再生位置の移動アニメーション

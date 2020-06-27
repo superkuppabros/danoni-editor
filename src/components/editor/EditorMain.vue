@@ -256,15 +256,15 @@ export default Vue.extend({
         this.playMusicLoop(this.timing);
       }
 
-      this.currentPositionService.draw(this.currentPosition, page);
+      this.currentPositionService.draw(this.currentPosition, page, this.timing);
     },
     pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
-      this.currentPositionService.move(position, this.page);
+      this.currentPositionService.move(position, this.page, this.timing);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
-      this.currentPositionService.move(0, this.page);
+      this.currentPositionService.move(0, this.page, this.timing);
     },
 
     // 移動間隔変更
@@ -273,7 +273,8 @@ export default Vue.extend({
       if (this.currentPosition % divisor !== 0) {
         this.currentPositionService.move(
           Math.floor(this.currentPosition / divisor) * divisor,
-          this.page
+          this.page,
+          this.timing
         );
       }
       this.baseLayerDraw();
@@ -283,7 +284,12 @@ export default Vue.extend({
     currentPositionIncrease() {
       this.currentPosition += this.divisor;
       if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
-      else this.currentPositionService.move(this.currentPosition, this.page);
+      else
+        this.currentPositionService.move(
+          this.currentPosition,
+          this.page,
+          this.timing
+        );
     },
 
     currentPositionDecrese() {
@@ -291,7 +297,12 @@ export default Vue.extend({
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
         else this.pageMinus(1, this.currentPosition + verticalSizeNum);
-      } else this.currentPositionService.move(this.currentPosition, this.page);
+      } else
+        this.currentPositionService.move(
+          this.currentPosition,
+          this.page,
+          this.timing
+        );
     },
 
     // キーを押したときの挙動
@@ -487,7 +498,6 @@ export default Vue.extend({
 
     this.currentPositionService = new CurrentPositionService(
       this.scoreData,
-      this.timing,
       this.editorWidth,
       this.isReverse,
       this.stage,
@@ -496,7 +506,7 @@ export default Vue.extend({
     );
 
     this.baseLayerDraw();
-    this.currentPositionService.draw(0, 1);
+    this.currentPositionService.draw(0, 1, this.timing);
     this.pageMove(1);
     this.displayPageScore(1);
   },
