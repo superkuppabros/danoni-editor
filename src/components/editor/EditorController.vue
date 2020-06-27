@@ -94,6 +94,16 @@
         <div class="menu-output-btn btn-red" @click="convert">GO!</div>
       </div>
     </div>
+    <router-link
+      class="uk-modal-close-default editor-close"
+      type="button"
+      href="../"
+      uk-close
+      :to="{
+        name: 'start',
+        path: '/'
+      }"
+    ></router-link>
   </div>
 </template>
 

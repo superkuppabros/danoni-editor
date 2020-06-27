@@ -188,6 +188,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   width: 106px;
 }
 
+.uk-modal-close-default.editor-close {
+  top: 0;
+  right: 0;
+}
+
 /* スタート画面 */
 #start-container {
   width: 500px;
