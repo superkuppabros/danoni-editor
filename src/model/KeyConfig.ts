@@ -5,7 +5,6 @@ export type KeyConfig = {
     id: number;
     num: number;
     keys: string[];
-    chars?: string[];
     alternativeKeys: string[];
     noteNames: string[];
     freezeNames: string[];
@@ -18,7 +17,6 @@ export type CustomKeyConfig = {
     id: number;
     num: number;
     keys: string[];
-    chars?: string[];
     alternativeKeys: string[];
     noteNames: string[];
     freezeNames: string[];
@@ -31,7 +29,6 @@ export const DefaultKeyConfig: KeyConfig = {
     id: 1,
     num: 5,
     keys: ["KeyJ", "KeyK", "KeyI", "KeyL", "KeyG"],
-    chars: ["J", "K", "I", "L", "G"],
     alternativeKeys: ["KeyS", "KeyD", "KeyE", "KeyF", "KeyH"],
     noteNames: [
       "left_data",
@@ -54,7 +51,6 @@ export const DefaultKeyConfig: KeyConfig = {
     id: 2,
     num: 7,
     keys: ["KeyS", "KeyD", "KeyF", "KeyG", "KeyJ", "KeyK", "KeyL"],
-    chars: ["S", "D", "F", "G", "J", "K", "L"],
     alternativeKeys: ["", "", "", "KeyH", "", "", ""],
     noteNames: [
       "left_data",
@@ -80,9 +76,8 @@ export const DefaultKeyConfig: KeyConfig = {
   "7i": {
     id: 3,
     num: 7,
-    keys: ["KeyZ", "KeyX", "KeyC", "KeyJ", "KeyK", "KeyI", "KeyL"],
-    chars: ["Z", "X", "C", "J", "K", "I", "L"],
-    alternativeKeys: ["KeyS", "KeyD", "KeyF", "", "", "KeyO", ""],
+    keys: ["KeyS", "KeyD", "KeyF", "KeyJ", "KeyK", "KeyI", "KeyL"],
+    alternativeKeys: ["KeyZ", "KeyX", "KeyC", "", "", "KeyO", ""],
     noteNames: [
       "left_data",
       "leftdia_data",
@@ -108,7 +103,6 @@ export const DefaultKeyConfig: KeyConfig = {
     id: 4,
     num: 8,
     keys: ["KeyS", "KeyD", "KeyF", "KeyG", "KeyJ", "KeyK", "KeyL", "Semicolon"],
-    chars: ["S", "D", "F", "G", "J", "K", "L", "+"],
     alternativeKeys: ["", "", "", "KeyH", "", "", "", ""],
     noteNames: [
       "left_data",
@@ -147,7 +141,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "KeyL"
     ],
-    chars: ["S", "D", "E", "F", "G", "J", "K", "I", "L"],
     alternativeKeys: ["", "", "KeyR", "", "KeyH", "", "", "KeyO", ""],
     noteNames: [
       "left_data",
@@ -188,7 +181,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyL",
       "Semicolon"
     ],
-    chars: ["A", "S", "D", "F", "G", "J", "K", "L", "+"],
     alternativeKeys: ["", "", "", "", "KeyH", "", "", "", ""],
     noteNames: [
       "left_data",
@@ -229,7 +221,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "KeyL"
     ],
-    chars: ["A", "S", "D", "F", "G", "J", "K", "I", "L"],
     alternativeKeys: ["", "", "", "", "KeyH", "", "", "KeyO", ""],
     noteNames: [
       "left_data",
@@ -273,7 +264,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyO"
     ],
     alternativeKeys: ["", "", "", "KeyH", "", "", "", "", "", "Digit9", ""],
-    chars: ["S", "D", "F", "G", "J", "K", "L", "U", "I", "8", "O"],
     noteNames: [
       "left_data",
       "leftdia_data",
@@ -319,7 +309,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyK",
       "KeyL"
     ],
-    chars: ["W", "E", "3", "R", "S", "D", "F", "G", "J", "K", "L"],
     alternativeKeys: ["", "", "Digit4", "", "", "", "", "KeyH", "", "", ""],
     noteNames: [
       "sleft_data",
@@ -366,7 +355,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyY",
       "Digit0"
     ],
-    chars: ["S", "D", "F", "G", "J", "K", "L", "2", "T", "Y", "0"],
     alternativeKeys: [
       "",
       "",
@@ -425,7 +413,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "KeyL"
     ],
-    chars: ["S", "C", "D", "E", "F", "G", "J", "M", "K", "I", "L"],
     alternativeKeys: [
       "",
       "KeyX",
@@ -485,7 +472,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO"
     ],
-    chars: ["G", "N", "J", "M", "K", "<", "L", ">", "U", "I", "8", "O"],
     alternativeKeys: ["KeyH", "", "", "", "", "", "", "", "", "", "Digit9", ""],
     noteNames: [
       "oni_data",
@@ -536,7 +522,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO"
     ],
-    chars: ["A", "S", "D", "F", "G", "J", "K", "L", "+", "U", "I", "8", "O"],
     alternativeKeys: [
       "",
       "",
@@ -603,22 +588,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO",
       "KeyP"
-    ],
-    chars: [
-      "G",
-      "N",
-      "J",
-      "M",
-      "K",
-      "<",
-      "L",
-      ">",
-      "Y",
-      "U",
-      "I",
-      "8",
-      "O",
-      "P"
     ],
     alternativeKeys: [
       "KeyH",
@@ -690,22 +659,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO"
     ],
-    chars: [
-      "Z",
-      "X",
-      "C",
-      "S",
-      "D",
-      "F",
-      "G",
-      "J",
-      "K",
-      "L",
-      "U",
-      "I",
-      "8",
-      "O"
-    ],
     alternativeKeys: [
       "",
       "",
@@ -776,23 +729,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "Digit8",
       "KeyO"
-    ],
-    chars: [
-      "W",
-      "E",
-      "3",
-      "R",
-      "S",
-      "D",
-      "F",
-      "G",
-      "J",
-      "K",
-      "L",
-      "U",
-      "I",
-      "8",
-      "O"
     ],
     alternativeKeys: [
       "",
@@ -868,24 +804,6 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "Digit8",
       "KeyO"
-    ],
-    chars: [
-      "Z",
-      "X",
-      "C",
-      "A",
-      "S",
-      "D",
-      "F",
-      "G",
-      "J",
-      "K",
-      "L",
-      "+",
-      "U",
-      "I",
-      "8",
-      "O"
     ],
     alternativeKeys: [
       "",
@@ -963,27 +881,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyK",
       "Comma",
       "KeyL",
-      "Period",
-      "Semicolon"
-    ],
-    chars: [
-      "A",
-      "Z",
-      "S",
-      "X",
-      "D",
-      "C",
-      "F",
-      "V",
-      "G",
-      "N",
-      "J",
-      "M",
-      "K",
-      "<",
-      "L",
-      ">",
-      "+"
+      "Period"
     ],
     alternativeKeys: ["", "", "", "", "", "", "", "", "KeyH"],
     noteNames: [

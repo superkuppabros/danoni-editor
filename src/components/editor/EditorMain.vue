@@ -29,7 +29,6 @@ import {
   editorHeight,
   verticalSizeNum,
   quarterInterval,
-  noteColors,
   laneColors,
   canvasMarginHorizontal,
   canvasMarginVertical
@@ -167,33 +166,6 @@ export default Vue.extend({
         strokeWidth: 1
       });
       baseLayer.add(rect);
-
-      // 入力キーの表示
-      for (let lane = 0; lane < keyNum; lane++) {
-        const xPos = (lane + 1) * noteWidth;
-
-        const keyConfig = this.keyConfig[this.keyKind];
-        const colorGroup = keyConfig.colorGroup;
-        const color = noteColors[colorGroup[lane]];
-
-        const chars = keyConfig.chars;
-
-        if (chars) {
-          const charStr = chars[lane];
-
-          const keyText = new Konva.Text({
-            x: xPos - noteWidth,
-            y: editorHeight + 5,
-            width: noteWidth,
-            align: "center",
-            verticalAlign: "middle",
-            text: charStr,
-            fontSize: 11,
-            fill: color
-          });
-          baseLayer.add(keyText);
-        }
-      }
 
       stage.add(baseLayer);
       stage.add(notesLayer);
