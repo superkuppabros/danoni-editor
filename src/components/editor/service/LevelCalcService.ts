@@ -40,11 +40,11 @@ export class LevelCalcService {
       );
     });
 
-    flattenData.frzStartData.sort();
-    flattenData.frzEndData.sort();
+    flattenData.frzStartData.sort((a, b) => a - b);
+    flattenData.frzEndData.sort((a, b) => a - b);
     flattenData.allScorebook = _.flattenDeep(
       noteFrames.concat(flattenData.frzStartData)
-    ).sort();
+    ).sort((a, b) => a - b);
 
     return flattenData;
   }
@@ -56,7 +56,7 @@ export class LevelCalcService {
     for (let i = 0; i < keyNum; i++) {
       const frames = noteFrames[i]
         .concat(freezeFrames[i].filter((_value, index) => index % 2 == 0))
-        .sort();
+        .sort((a, b) => a - b);
       laneContinuous += frames.reduce((acc, value, index) => {
         const continuousFrame = 10; // 縦連補正のフレーム範囲
         const diff = index !== 0 ? value - frames[index - 1] : continuousFrame;
@@ -90,6 +90,8 @@ export class LevelCalcService {
     };
 
     uniqueScorebook.forEach((frame, index) => {
+      const nextFrame = uniqueScorebook[index + 1];
+
       const decreaseFrzNum = frzEndData.filter(f => f < frame).length;
       currentFrzNum -= decreaseFrzNum;
       frzEndData.splice(0, decreaseFrzNum);
@@ -105,21 +107,23 @@ export class LevelCalcService {
           );
         if (hitsNum >= 2 && currentFrzNum === 0) {
           const doubleAdj =
-            40 /
-            ((frame - uniqueScorebook[index - 1]) *
-              (uniqueScorebook[index + 1] - frame));
+            40 / ((frame - uniqueScorebook[index - 1]) * (nextFrame - frame));
           scoreDataInfo.double += doubleAdj;
         }
+
+        const increaseFrzNum = frzStartData.filter(f => f === frame).length;
+        currentFrzNum += increaseFrzNum;
+        frzStartData.splice(0, increaseFrzNum);
+
+        const exDecreaseFrzNum = frzEndData.filter(f => f < nextFrame).length;
+        currentFrzNum -= exDecreaseFrzNum;
+        frzEndData.splice(0, exDecreaseFrzNum);
+
         if (currentFrzNum < 2) {
-          const singleAdj =
-            2 / ((2 - currentFrzNum) * (uniqueScorebook[index + 1] - frame));
+          const singleAdj = 2 / ((2 - currentFrzNum) * (nextFrame - frame));
           scoreDataInfo.single += singleAdj;
         }
       }
-
-      const increaseFrzNum = frzStartData.filter(f => f === frame).length;
-      currentFrzNum += increaseFrzNum;
-      frzStartData.splice(0, increaseFrzNum);
     });
     return scoreDataInfo;
   }
@@ -157,7 +161,7 @@ export class LevelCalcService {
 
   countNotes(noteFrames: number[][], freezeFrames: number[][]) {
     const notesCountArr = noteFrames.map(notes => notes.length);
-    const freezesCountArr = freezeFrames.map(freezes => freezes.length);
+    const freezesCountArr = freezeFrames.map(freezes => freezes.length / 2);
     return { notesCountArr, freezesCountArr };
   }
 

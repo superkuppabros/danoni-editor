@@ -5,7 +5,7 @@
       :load-score-data="scoreData"
       :load-music-url="loadMusicUrl"
       :key-config="keyConfig"
-      :selected-key="keyKind"
+      :key-kind="keyKind"
       :timing="timing"
       :prop-score-number="scoreNumber"
       :music-volume="musicVolume"
@@ -146,18 +146,27 @@ export default Vue.extend({
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
-    const keyKind = this.selectedKey as CustomKeyKind;
-    const keyNum = keyConfig[keyKind].num;
+
     let scoreData;
+    const storedKeyKind = sessionStorage.getItem("keyKind");
+
+    const selectedKeyKind = (storedKeyKind ||
+      this.selectedKey) as CustomKeyKind;
+    const selectedKeyNum = keyConfig[selectedKeyKind].num;
     try {
       //TODO: 譜面データのチェッカーを作る
-      if (!this.loadScoreDataStr) scoreData = new DefaultScoreData(keyNum);
-      else
+      if (!this.loadScoreDataStr) {
+        scoreData = new DefaultScoreData(selectedKeyNum);
+      } else
         scoreData = (JSON.parse(this.loadScoreDataStr) as unknown) as ScoreData;
     } catch {
       alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
-      scoreData = new DefaultScoreData(keyNum);
+      scoreData = new DefaultScoreData(selectedKeyNum);
     }
+
+    const keyKind = (scoreData.keyKind || selectedKeyKind) as CustomKeyKind;
+    scoreData.keyKind = keyKind;
+    sessionStorage.setItem("keyKind", keyKind); // 更新してもkeyがデフォルトに戻らないようにするため
 
     return {
       pageNum: 1,

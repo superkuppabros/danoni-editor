@@ -11,6 +11,7 @@ export interface ScoreData {
 }
 
 export class DefaultScoreData implements ScoreData {
+  keyKind?: CustomKeyKind;
   scores: PageScore[];
 
   constructor(keyNum: number) {

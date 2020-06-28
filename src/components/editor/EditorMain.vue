@@ -49,7 +49,6 @@ type DataType = {
   currentPosition: number;
   scoreData: ScoreData;
   divisor: number;
-  keyKind: CustomKeyKind;
   keyNum: number;
   page: number;
   editorWidth: number;
@@ -74,7 +73,7 @@ export default Vue.extend({
     loadScoreData: { type: Object as PropType<ScoreData> },
     loadMusicUrl: String,
     keyConfig: { type: Object as PropType<CustomKeyConfig> },
-    selectedKey: String,
+    keyKind: { type: String as PropType<CustomKeyKind> },
     timing: { type: Object as PropType<Timing> },
     propScoreNumber: Number,
     musicVolume: Number,
@@ -83,13 +82,8 @@ export default Vue.extend({
   components: { SpeedPiece },
   data(): DataType {
     const scoreData = this.loadScoreData;
-    const storedKeyKind = sessionStorage.getItem("keyKind");
-    const keyKind = (scoreData.keyKind ||
-      storedKeyKind ||
-      this.selectedKey) as CustomKeyKind;
-    scoreData.keyKind = keyKind;
-    sessionStorage.setItem("keyKind", keyKind); // 更新してもkeyがデフォルトに戻らないようにするため
     const keyConfig = createCustomKeyConfig();
+    const keyKind = this.keyKind;
     const keyNum = keyConfig[keyKind].num;
     const audio = new Audio(this.loadMusicUrl);
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
@@ -99,7 +93,6 @@ export default Vue.extend({
       currentPosition: 0,
       scoreData,
       divisor: 24,
-      keyKind,
       page: 1,
       keyNum,
       isReverse,
