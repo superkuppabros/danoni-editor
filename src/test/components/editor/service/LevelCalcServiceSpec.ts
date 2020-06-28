@@ -34,7 +34,10 @@ describe("levelCalcService", () => {
       frzEndData: [220, 280]
     };
     const adjustValue = levelCalcService.calcAdjustValue(flattenData);
-    expect(adjustValue.single).toBeCloseTo(0.135);
+
+    // 240のフリーズ始点のみfreezeNum == 1として計算される
+
+    expect(adjustValue.single).toBeCloseTo(0.16);
     expect(adjustValue.double).toBeCloseTo(0.06);
     expect(adjustValue.overTriple).toBe(1);
   });
@@ -48,8 +51,10 @@ describe("levelCalcService", () => {
       [310, 320, 325, 330, 340, 350]
     ];
     const freezeFrames = [[200, 220], [240, 280], [], [], []];
-    console.log(levelCalcService.calcLevel(noteFrames, freezeFrames));
-    //tool says 3.29* but this says 3.27
+    // 実際のツール値
+    expect(
+      levelCalcService.calcLevel(noteFrames, freezeFrames).level
+    ).toBeCloseTo(3.29, 1);
   });
 
   it("countNotes", () => {
@@ -57,7 +62,7 @@ describe("levelCalcService", () => {
     const freezeFrames = [[], [], [], [305, 333], []];
     const expectedValue = {
       notesCountArr: [4, 2, 0, 1, 0],
-      freezesCountArr: [0, 0, 0, 2, 0]
+      freezesCountArr: [0, 0, 0, 1, 0]
     };
     expect(levelCalcService.countNotes(noteFrames, freezeFrames)).toStrictEqual(
       expectedValue
