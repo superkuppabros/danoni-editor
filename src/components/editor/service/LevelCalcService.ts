@@ -16,6 +16,7 @@ export type ScoreDataInfo = {
   single: number;
   double: number;
   overTriple: number;
+  overTripleFrame: number[];
   laneContinuous: number;
 };
 
@@ -86,6 +87,7 @@ export class LevelCalcService {
       single: 0,
       double: 0,
       overTriple: 0,
+      overTripleFrame: [],
       laneContinuous: 0
     };
 
@@ -100,11 +102,13 @@ export class LevelCalcService {
 
       if (index !== uniqueScorebook.length - 1 && index !== 0) {
         const hitsNum = allScorebook.filter(f => f === frame).length;
-        if (hitsNum + currentFrzNum > 2)
+        if (hitsNum + currentFrzNum > 2) {
           scoreDataInfo.overTriple += Math.min(
             hitsNum,
             hitsNum + currentFrzNum - 2
           );
+          scoreDataInfo.overTripleFrame.push(frame);
+        }
         if (hitsNum >= 2 && currentFrzNum === 0) {
           const doubleAdj =
             40 / ((frame - uniqueScorebook[index - 1]) * (nextFrame - frame));
@@ -184,13 +188,17 @@ export class LevelCalcService {
       totalfreezes}(${totalNotes} + ${totalfreezes})`;
     const notesStr = `通常ノーツ: (${arrowsCount.notesCountArr.join("/")})`;
     const freezesStr = `氷矢: (${arrowsCount.freezesCountArr.join("/")})`;
+    const overTripleFrameStr = `3押し位置: (${scoreDataInfo.overTripleFrame.join(
+      "/"
+    )})`;
 
     const dataInfoStr = `${levelStr}
 ${doubleStr}
 ${continuousStr}
 ${arrowNumStr}
 ${notesStr}
-${freezesStr}`;
+${freezesStr}
+${overTripleFrameStr}`;
     return dataInfoStr;
   }
 }
