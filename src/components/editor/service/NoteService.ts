@@ -124,7 +124,6 @@ export class NoteService {
 
     if (startParity === 1) laneFreezes.unshift(0);
     laneFreezes.push(verticalSizeNum);
-    if (lane == 6) console.log(laneFreezes);
 
     const fills = notesLayer.find(`.freeze-fill-${lane}`);
     fills.each(node => node.destroy());
@@ -133,7 +132,6 @@ export class NoteService {
       const freezeStart = laneFreezes.shift() as number;
       const freezeEnd = laneFreezes.shift() ?? verticalSizeNum;
       const height = freezeEnd - freezeStart;
-      if (lane == 6) console.log(freezeStart, freezeEnd);
       const opacity = 0.3;
 
       const fillFreeze = new Konva.Rect({
@@ -143,7 +141,7 @@ export class NoteService {
           toPx(freezeEnd, this.isReverse)
         ),
         width: noteWidth,
-        height: height,
+        height,
         opacity,
         fill: color,
         name: `freeze-fill-${lane}`,
