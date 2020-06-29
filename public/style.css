@@ -219,6 +219,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   height: 35px;
   width: 255px;
   padding: 25px;
+  line-height: 35px;
 }
 
 #start-go-next {
@@ -298,12 +299,23 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .configure-design-item {
   display: flex;
-  justify-content: space-around;
+  justify-content: left;
   font-size: 18px;
-  padding: 0 50px;
+  padding: 0 40px;
   margin: 10px 0;
 }
 
+.configure-options {
+  display: flex;
+}
+
+.configure-design-text {
+  width: 150px;
+  text-align: left;
+}
+
 .configure-radio {
-  margin: 0 10px;
+  display: flex;
+  margin-left: 10px;
+  width: 110px;
 }

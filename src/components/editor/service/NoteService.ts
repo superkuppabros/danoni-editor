@@ -23,6 +23,9 @@ export class NoteService {
   ) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
+  private isHighlightedFreeze: string = JSON.parse(
+    localStorage.getItem("isHighlightedFreeze") ?? "true"
+  );
 
   // ノーツの有無の判定
   hasNote(
@@ -103,6 +106,7 @@ export class NoteService {
 
   // フリーズの塗りつぶし描画
   fillFreeze(page: number, lane: number) {
+    if (!this.isHighlightedFreeze) return false;
     const stage = this.stage;
     const notesLayer = this.notesLayer;
 
