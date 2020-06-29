@@ -253,6 +253,7 @@ export default Vue.extend({
         laneArr.forEach(position => {
           noteService.draw(lane, position, true);
         });
+        noteService.fillFreeze(this.page, lane);
       });
       pageScore.speeds.forEach(speed => {
         speedPieceService.draw(speed.position, speed.type);
@@ -454,11 +455,9 @@ export default Vue.extend({
 
             if (possiblyLane >= 0) {
               if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.remove(page, possiblyLane, position);
-                noteService.clear(possiblyLane, position);
+                noteService.removeOne(page, possiblyLane, position);
               } else {
-                noteService.add(page, possiblyLane, position, isFreeze);
-                noteService.draw(possiblyLane, position, isFreeze);
+                noteService.addOne(page, possiblyLane, position, isFreeze);
               }
 
               this.currentPositionIncrease();
