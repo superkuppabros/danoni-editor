@@ -529,6 +529,9 @@ export default Vue.extend({
     this.currentPositionService.draw(0, 1, this.timing);
     this.pageMove(1);
     this.displayPageScore(1);
+
+    // オートフォーカス
+    if(this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus()
   },
 
   watch: {
