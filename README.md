@@ -13,6 +13,14 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 2.7.3
+
+#### 変更点
+
+- UIの一部修正
+  - 入力間隔の表示
+  - 起動時に自動的にフォーカスさせるように
+
 ### ver 2.7.2
 
 #### 機能追加
