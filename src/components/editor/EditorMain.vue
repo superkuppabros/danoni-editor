@@ -14,6 +14,9 @@
       :type="speed.type"
       :isReverse="isReverse"
     ></speed-piece>
+    <div id="editor-mode-text">
+      入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)
+    </div>
   </div>
 </template>
 
@@ -42,7 +45,7 @@ import { SpeedPieceService } from "./service/SpeedPieceService";
 import { PageScoreService } from "./service/PageScoreService";
 import { CurrentPositionService } from "./service/CurrentPositionService";
 import SpeedPiece from "./SpeedPiece.vue";
-import { positionToSeconds } from "./helper/Calculator";
+import { positionToSeconds, positionToFrame } from "./helper/Calculator";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
@@ -469,6 +472,22 @@ export default Vue.extend({
     }
   },
 
+  computed: {
+    mode(): number {
+      return (quarterInterval / this.divisor) * 4;
+    },
+
+    moveIntervalFrame(): number {
+      return (
+        Math.round(
+          (positionToFrame(this.timing, this.page, this.divisor) -
+            positionToFrame(this.timing, this.page, 0)) *
+            100
+        ) / 100
+      );
+    }
+  },
+
   mounted(): void {
     const stage = new Konva.Stage({
       x: canvasMarginHorizontal,
@@ -531,7 +550,7 @@ export default Vue.extend({
     this.displayPageScore(1);
 
     // オートフォーカス
-    if(this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus()
+    if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
   },
 
   watch: {
