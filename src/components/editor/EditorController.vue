@@ -119,6 +119,7 @@ import { CustomKeyKind } from "../../model/KeyKind";
 import { CustomKeyConfig } from "../../model/KeyConfig";
 import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
+import { DefaultPageScore } from "@/model/PageScore";
 
 type DataType = {
   pageNum: number;
@@ -159,6 +160,9 @@ export default Vue.extend({
         scoreData = new DefaultScoreData(selectedKeyNum);
       } else
         scoreData = (JSON.parse(this.loadScoreDataStr) as unknown) as ScoreData;
+      if (scoreData.scores.length === 0) {
+        scoreData.scores.push(new DefaultPageScore(selectedKeyNum));
+      }
     } catch {
       alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
       scoreData = new DefaultScoreData(selectedKeyNum);
