@@ -1,10 +1,18 @@
 export class MusicService {
+  private context: AudioContext = new AudioContext();
+  private gainNode: GainNode;
+
   constructor(private audio: HTMLAudioElement) {
     audio.load();
+    const track = this.context.createMediaElementSource(audio);
+    const gainNode = this.context.createGain();
+    track.connect(gainNode);
+    gainNode.connect(this.context.destination);
+    this.gainNode = gainNode;
   }
 
   play(startTime: number, musicVolume: number, musicRate: number): void {
-    this.audio.volume = musicVolume;
+    this.gainNode.gain.value = musicVolume;
     this.audio.playbackRate = musicRate;
 
     const duration = this.audio.duration;
