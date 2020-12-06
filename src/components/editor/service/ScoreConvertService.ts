@@ -98,6 +98,25 @@ export class ScoreConvertService {
     return outputData;
   }
 
+  private makeEasySave(scoreData: ScoreData): string {
+    const keyKind: string = scoreData.keyKind as string;
+    const blankFrame: number = scoreData.blankFrame;
+    const labels: number[] = scoreData.timings.map(timing => timing.label);
+    const startNumbers: number[] = scoreData.timings.map(
+      timing => timing.startNum
+    );
+    const bpms: number[] = scoreData.timings.map(timing => timing.bpm);
+
+    const easySave =
+      `|keyKind=${keyKind}` +
+      `|blankFrame=${blankFrame}` +
+      `|label=${labels.join(",")}` +
+      `|startNumber=${startNumbers.join(",")}` +
+      `|bpm=${bpms.join(",")}|`;
+
+    return easySave;
+  }
+
   convert(scoreData: ScoreData, scorePostfix = ""): string {
     const frameScores = this.toFrameData(scoreData);
     const data = this.framesToOutputData(frameScores);
@@ -124,15 +143,18 @@ export class ScoreConvertService {
     const speedStr =
       "speed_data=" +
       data.speeds.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|";
+      "|".replace(/_/g, `${scorePostfix}_`);
     const boostStr =
       "boost_data=" +
       data.boosts.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|";
+      "|".replace(/_/g, `${scorePostfix}_`);
 
-    return `
-${noteStr + freezeStr}
-|${speedStr + boostStr}`.replace(/_/g, `${scorePostfix}_`);
+    const easySave = this.makeEasySave(scoreData);
+
+    return `${noteStr + freezeStr}
+|${speedStr + boostStr}
+${easySave}
+`;
   }
 
   cutLastDefault(scoreData: ScoreData): ScoreData {

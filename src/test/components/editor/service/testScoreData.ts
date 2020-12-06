@@ -1,6 +1,7 @@
 import { ScoreData } from "@/model/ScoreData";
 
 export const testScoreData: ScoreData = {
+  keyKind: "5",
   blankFrame: 200,
   timings: [
     {
