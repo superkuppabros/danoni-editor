@@ -106,13 +106,15 @@ export class ScoreConvertService {
       timing => timing.startNum
     );
     const bpms: number[] = scoreData.timings.map(timing => timing.bpm);
+    const scoreNumber = scoreData.scoreNumber || 1
 
     const easySave =
       `|keyKind=${keyKind}` +
       `|blankFrame=${blankFrame}` +
       `|label=${labels.join(",")}` +
       `|startNumber=${startNumbers.join(",")}` +
-      `|bpm=${bpms.join(",")}|`;
+      `|bpm=${bpms.join(",")}` +
+      `|scoreNumber=${scoreNumber}|`;
 
     return easySave;
   }
