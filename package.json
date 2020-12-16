@@ -6,7 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "jest --maxWorkers=2",
+    "test-unit": "jest --maxWorkers=2 --watch"
   },
   "dependencies": {
     "konva": "^6.0.0",
