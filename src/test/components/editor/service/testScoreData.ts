@@ -1,4 +1,5 @@
 import { ScoreData } from "@/model/ScoreData";
+import { cloneDeep } from "lodash";
 
 export const testScoreData: ScoreData = {
   keyKind: "5",
@@ -37,6 +38,12 @@ export const testScoreData: ScoreData = {
     }
   ]
 };
+
+export const test2ScoreData: ScoreData = (() => {
+  const scoreData = cloneDeep(testScoreData);
+  scoreData.scoreNumber = 2;
+  return scoreData;
+})();
 
 export const testDosData = `|left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
 |speed_data=360,1.1,440,0.7|boost_data=400,0.8|

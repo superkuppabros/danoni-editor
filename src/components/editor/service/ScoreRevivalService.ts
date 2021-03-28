@@ -13,9 +13,17 @@ export class ScoreRevivalService {
   private delimiter = "|";
 
   dosConvert(dosData: string): ScoreData | null {
+    const regRes = /scoreNumber=(\d+)/.exec(dosData);
+    const extractedScoreNumber: string = regRes ? regRes[1] : "1";
+    const regExp = RegExp(extractedScoreNumber + "_", "g");
+
     const splitArray = compact(
-      dosData.replace(/\n/g, "").split(this.delimiter)
+      dosData
+        .replace(regExp, "_")
+        .replace(/\n/g, "")
+        .split(this.delimiter)
     );
+
     const dict: { [name: string]: string } = fromPairs(
       splitArray.map(elem => elem.split("="))
     );
