@@ -20,6 +20,7 @@ export class ScoreRevivalService {
     const splitArray = compact(
       dosData
         .replace(regExp, "_")
+        .replace(/\|es_/g, "|")
         .replace(/\n/g, "")
         .split(this.delimiter)
     );

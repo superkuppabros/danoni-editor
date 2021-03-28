@@ -109,12 +109,12 @@ export class ScoreConvertService {
     const scoreNumber = scoreData.scoreNumber || 1;
 
     const easySave =
-      `|keyKind=${keyKind}` +
-      `|blankFrame=${blankFrame}` +
-      `|label=${labels.join(",")}` +
-      `|startNumber=${startNumbers.join(",")}` +
-      `|bpm=${bpms.join(",")}` +
-      `|scoreNumber=${scoreNumber}|`;
+      `|es_keyKind=${keyKind}` +
+      `|es_blankFrame=${blankFrame}` +
+      `|es_label=${labels.join(",")}` +
+      `|es_startNumber=${startNumbers.join(",")}` +
+      `|es_bpm=${bpms.join(",")}` +
+      `|es_scoreNumber=${scoreNumber}|`;
 
     return easySave;
   }
