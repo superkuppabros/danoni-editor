@@ -20,10 +20,19 @@ describe("Calculator", () => {
   });
 
   it("frame -> page, positionへの変換が出来る", () => {
-    expect(frameToPagePosition(timing, 300, 100)).toStrictEqual({page: 1, position: 0});
-    expect(frameToPagePosition(timing, 360, 0)).toStrictEqual({page: 2, position: 0});
-    expect(frameToPagePosition(timing, 480, 40)).toStrictEqual({page: 2, position: 192});
-  })
+    expect(frameToPagePosition(timing, 300, 100)).toStrictEqual({
+      page: 1,
+      position: 0
+    });
+    expect(frameToPagePosition(timing, 360, 0)).toStrictEqual({
+      page: 2,
+      position: 0
+    });
+    expect(frameToPagePosition(timing, 480, 40)).toStrictEqual({
+      page: 2,
+      position: 192
+    });
+  });
 
   it("position -> secondsへの変換が出来る", () => {
     expect(positionToSeconds(timing, 1, 0, 100)).toBe(5);

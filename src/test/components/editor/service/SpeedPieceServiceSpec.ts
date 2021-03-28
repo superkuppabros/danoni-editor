@@ -1,5 +1,5 @@
 import { ScoreData } from "@/model/ScoreData";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import Konva from "konva";
 import { testScoreData } from "./testScoreData";
 import { SpeedPieceService } from "@/components/editor/service/SpeedPieceService";
@@ -16,13 +16,13 @@ describe("speedPieceService", () => {
     new SpeedPieceService(scoreData, editorWidth, isReverse, stage, layer);
 
   it("速度変化コマの有無が判定できる", () => {
-    const speedPieceService = createNoteService(_.cloneDeep(scoreData));
+    const speedPieceService = createNoteService(cloneDeep(scoreData));
     expect(speedPieceService.hasSpeedPiece(1, 0)).toBe(false);
     expect(speedPieceService.hasSpeedPiece(2, 0)).toBe(true);
   });
 
   it("速度変化コマの追加ができる", () => {
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     const speedPieceService = createNoteService(copiedScoreData);
     speedPieceService.add(1, 0, "speed");
     const expectedSpeed: Speed = {
@@ -34,7 +34,7 @@ describe("speedPieceService", () => {
   });
 
   it("ノーツの削除ができる", () => {
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     const speedPieceService = createNoteService(copiedScoreData);
     speedPieceService.remove(2, 0);
     speedPieceService.remove(2, 96);

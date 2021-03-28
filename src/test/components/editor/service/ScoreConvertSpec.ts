@@ -5,7 +5,7 @@ import {
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
 import { testDosData, testScoreData } from "./testScoreData";
 
@@ -48,7 +48,7 @@ describe("scoreConvertService", () => {
   });
 
   it("譜面データの後ろの空白が削除されている", () => {
-    const scoreDataWithDefault = _.cloneDeep(scoreData);
+    const scoreDataWithDefault = cloneDeep(scoreData);
     scoreDataWithDefault.scores.push(
       new DefaultPageScore(keyNum),
       new DefaultPageScore(keyNum)

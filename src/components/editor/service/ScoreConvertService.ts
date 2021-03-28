@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { cloneDeep, isEqual } from "lodash";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { CustomKeyKind } from "@/model/KeyKind";
@@ -56,7 +56,7 @@ export class ScoreConvertService {
           freezesArr.sort((a, b) => a - b).map(calculateFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
-          const newSpeed: Speed = _.cloneDeep(speed);
+          const newSpeed: Speed = cloneDeep(speed);
           newSpeed.position = calculateFrame(speed.position);
           return newSpeed;
         });
@@ -106,7 +106,7 @@ export class ScoreConvertService {
       timing => timing.startNum
     );
     const bpms: number[] = scoreData.timings.map(timing => timing.bpm);
-    const scoreNumber = scoreData.scoreNumber || 1
+    const scoreNumber = scoreData.scoreNumber || 1;
 
     const easySave =
       `|keyKind=${keyKind}` +
@@ -161,10 +161,10 @@ ${easySave}
 
   cutLastDefault(scoreData: ScoreData): ScoreData {
     const len = scoreData.scores.length;
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     let i = len - 1;
     while (i >= 0) {
-      if (_.isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
+      if (isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
         copiedScoreData.scores.pop();
         i--;
       } else break;
@@ -185,7 +185,7 @@ ${easySave}
     // Todo: ノーツを置く位置を変更できるようにする
     const pushQuartersLane = 0;
 
-    const newScoreData = this.cutLastDefault(_.cloneDeep(scoreData));
+    const newScoreData = this.cutLastDefault(cloneDeep(scoreData));
 
     for (let i = 0; i < pushQuartersPageNum; i++) {
       const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);

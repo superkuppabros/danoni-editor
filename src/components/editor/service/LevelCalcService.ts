@@ -3,7 +3,7 @@
  * cf.) https://github.com/cwtickle/danoniplus/blob/v15.1.3/js/danoni_main.js#L1400-L1594
  */
 
-import _ from "lodash";
+import { flattenDeep, cloneDeep, sum, uniq } from "lodash";
 
 export type FlattenData = {
   allScorebook: number[];
@@ -43,7 +43,7 @@ export class LevelCalcService {
 
     flattenData.frzStartData.sort((a, b) => a - b);
     flattenData.frzEndData.sort((a, b) => a - b);
-    flattenData.allScorebook = _.flattenDeep(
+    flattenData.allScorebook = flattenDeep(
       noteFrames.concat(flattenData.frzStartData)
     ).sort((a, b) => a - b);
 
@@ -73,7 +73,7 @@ export class LevelCalcService {
 
   // 補正値の計算
   calcAdjustValue(flattenData: FlattenData): ScoreDataInfo {
-    const data = _.cloneDeep(flattenData);
+    const data = cloneDeep(flattenData);
     const allScorebook = data.allScorebook;
     const frzStartData = data.frzStartData;
     const frzEndData = data.frzEndData;
@@ -81,7 +81,7 @@ export class LevelCalcService {
     allScorebook.unshift(allScorebook[0] - 100);
     allScorebook.push(allScorebook[allScorebook.length - 1] + 100);
     let currentFrzNum = 0;
-    const uniqueScorebook = _.uniq(allScorebook);
+    const uniqueScorebook = uniq(allScorebook);
     const scoreDataInfo: ScoreDataInfo = {
       level: 0,
       single: 0,
@@ -182,8 +182,8 @@ export class LevelCalcService {
     const continuousStr = `縦連補正: ${scoreDataInfo.laneContinuous}`;
 
     const arrowsCount = this.countNotes(noteFrames, freezeFrames);
-    const totalNotes = _.sum(arrowsCount.notesCountArr);
-    const totalfreezes = _.sum(arrowsCount.freezesCountArr);
+    const totalNotes = sum(arrowsCount.notesCountArr);
+    const totalfreezes = sum(arrowsCount.freezesCountArr);
     const arrowNumStr = `矢印数: ${totalNotes +
       totalfreezes}(${totalNotes} + ${totalfreezes})`;
     const notesStr = `通常ノーツ: (${arrowsCount.notesCountArr.join("/")})`;
