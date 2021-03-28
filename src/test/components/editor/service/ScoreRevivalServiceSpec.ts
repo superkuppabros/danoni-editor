@@ -1,13 +1,21 @@
 import { ScoreRevivalService } from "@/components/editor/service/ScoreRevivalService";
 import { DefaultKeyConfig } from "@/model/KeyConfig";
-import { testDosData } from "./testScoreData";
+import { testDosData, testScoreData } from "./testScoreData";
 
 describe("dosConvert", () => {
   it("正しくscoreDataに変換できる", () => {
-    const keyKind = "5";
     const keyConfig = DefaultKeyConfig;
-    const scoreRevivalService = new ScoreRevivalService(keyKind, keyConfig);
+    const scoreRevivalService = new ScoreRevivalService(keyConfig);
 
-    console.log(scoreRevivalService.dosConvert(testDosData));
+    const scoreData = scoreRevivalService.dosConvert(testDosData);
+    expect(scoreData).toStrictEqual(testScoreData);
+  });
+
+  it("不正なデータならnullが返る", () => {
+    const keyConfig = DefaultKeyConfig;
+    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+
+    const scoreData = scoreRevivalService.dosConvert("|aaa|bbb|");
+    expect(scoreData).toBe(null);
   });
 });

@@ -1,21 +1,18 @@
 import { compact, fromPairs } from "lodash";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { Timing } from "@/model/Timing";
-import { CustomKeyKind, KeyKind } from "@/model/KeyKind";
-import { DefaultScoreData, ScoreData } from "@/model/ScoreData";
+import { KeyKind } from "@/model/KeyKind";
+import { ScoreData } from "@/model/ScoreData";
 import { frameToPagePosition } from "../helper/Calculator";
 import { Speed, SpeedType } from "@/model/Speed";
 import { PageScore } from "@/model/PageScore";
 
 export class ScoreRevivalService {
-  constructor(
-    private defaultKeyKind: CustomKeyKind,
-    private keyConfig: CustomKeyConfig
-  ) {}
+  constructor(private keyConfig: CustomKeyConfig) {}
 
   private delimiter = "|";
 
-  dosConvert(dosData: string): ScoreData {
+  dosConvert(dosData: string): ScoreData | null {
     const splitArray = compact(
       dosData.replace(/\n/g, "").split(this.delimiter)
     );
@@ -50,7 +47,7 @@ export class ScoreRevivalService {
       };
       return this.calcScoreData(dict, timings, scoreData);
     } catch {
-      return new DefaultScoreData(this.keyConfig[this.defaultKeyKind].num);
+      return null;
     }
   }
 
