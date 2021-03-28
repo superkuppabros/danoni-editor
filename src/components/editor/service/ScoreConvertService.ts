@@ -126,30 +126,36 @@ export class ScoreConvertService {
     data.speeds.sort((a, b) => a.position - b.position);
     data.boosts.sort((a, b) => a.position - b.position);
 
-    const noteStr = data.notes.reduce(
-      (str, notesArr, laneNum) =>
-        `${str}${
-          this.keyConfig[this.keyKind].noteNames[laneNum]
-        }=${notesArr.join(",")}|`,
-      "|"
-    );
+    const noteStr = data.notes
+      .reduce(
+        (str, notesArr, laneNum) =>
+          `${str}${
+            this.keyConfig[this.keyKind].noteNames[laneNum]
+          }=${notesArr.join(",")}|`,
+        "|"
+      )
+      .replace(/_/g, `${scorePostfix}_`);
 
-    const freezeStr = data.freezes.reduce(
-      (str, freezesArr, laneNum) =>
-        `${str}${
-          this.keyConfig[this.keyKind].freezeNames[laneNum]
-        }=${freezesArr.join(",")}|`,
-      ""
-    );
+    const freezeStr = data.freezes
+      .reduce(
+        (str, freezesArr, laneNum) =>
+          `${str}${
+            this.keyConfig[this.keyKind].freezeNames[laneNum]
+          }=${freezesArr.join(",")}|`,
+        ""
+      )
+      .replace(/_/g, `${scorePostfix}_`);
 
-    const speedStr =
+    const speedStr = (
       "speed_data=" +
       data.speeds.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|".replace(/_/g, `${scorePostfix}_`);
-    const boostStr =
+      "|"
+    ).replace(/_/g, `${scorePostfix}_`);
+    const boostStr = (
       "boost_data=" +
       data.boosts.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|".replace(/_/g, `${scorePostfix}_`);
+      "|"
+    ).replace(/_/g, `${scorePostfix}_`);
 
     const easySave = this.makeEasySave(scoreData);
 

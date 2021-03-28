@@ -42,3 +42,8 @@ export const testDosData = `|left_data=200|down_data=360,380|up_data=240,400|rig
 |speed_data=360,1.1,440,0.7|boost_data=400,0.8|
 |keyKind=5|blankFrame=200|label=1,3|startNumber=0,240|bpm=180,120|scoreNumber=1|
 `;
+
+export const test2DosData = `|left2_data=200|down2_data=360,380|up2_data=240,400|right2_data=|space2_data=440,500|frzLeft2_data=|frzDown2_data=|frzUp2_data=|frzRight2_data=280,360|frzSpace2_data=|
+|speed2_data=360,1.1,440,0.7|boost2_data=400,0.8|
+|keyKind=5|blankFrame=200|label=1,3|startNumber=0,240|bpm=180,120|scoreNumber=2|
+`;

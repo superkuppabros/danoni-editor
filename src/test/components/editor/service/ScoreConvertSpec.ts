@@ -7,7 +7,7 @@ import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
-import { testDosData, testScoreData } from "./testScoreData";
+import { test2DosData, testDosData, testScoreData } from "./testScoreData";
 
 describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
@@ -45,6 +45,12 @@ describe("scoreConvertService", () => {
 
   it("dosの出力が正しく出来る", () => {
     expect(scoreConverter.convert(scoreData)).toBe(testDosData);
+  });
+
+  it("2譜面目でも正しく出力出来る", () => {
+    const scoreData2 = cloneDeep(scoreData);
+    scoreData2.scoreNumber = 2;
+    expect(scoreConverter.convert(scoreData2, "2")).toBe(test2DosData);
   });
 
   it("譜面データの後ろの空白が削除されている", () => {
