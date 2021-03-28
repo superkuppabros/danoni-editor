@@ -37,3 +37,8 @@ export const testScoreData: ScoreData = {
     }
   ]
 };
+
+export const testDosData: string = `|left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
+|speed_data=360,1.1,440,0.7|boost_data=400,0.8|
+|keyKind=5|blankFrame=200|label=1,3|startNumber=0,240|bpm=180,120|scoreNumber=1|
+`;

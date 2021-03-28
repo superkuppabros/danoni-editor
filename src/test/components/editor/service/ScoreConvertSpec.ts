@@ -7,7 +7,7 @@ import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
 import _ from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
-import { testScoreData } from "./testScoreData";
+import { testDosData, testScoreData } from "./testScoreData";
 
 describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
@@ -44,11 +44,7 @@ describe("scoreConvertService", () => {
   });
 
   it("dosの出力が正しく出来る", () => {
-    const expectedData = `|left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
-|speed_data=360,1.1,440,0.7|boost_data=400,0.8|
-|keyKind=5|blankFrame=200|label=1,3|startNumber=0,240|bpm=180,120|scoreNumber=1|
-`;
-    expect(scoreConverter.convert(scoreData)).toBe(expectedData);
+    expect(scoreConverter.convert(scoreData)).toBe(testDosData);
   });
 
   it("譜面データの後ろの空白が削除されている", () => {

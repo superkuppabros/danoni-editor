@@ -15,6 +15,20 @@ export function positionToFrame(
   return startFrame + position * framePerPosition;
 }
 
+export function frameToPagePosition(
+  timing: Timing,
+  frame: number,
+  blankFrame: number
+): {page: number, position: number} {
+  const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
+
+  const rawPosition = Math.round((frame - blankFrame - timing.startNum) / framePerPosition)
+  const page = Math.floor(rawPosition / verticalSizeNum) + timing.label
+  const position = rawPosition % verticalSizeNum
+  
+  return {page, position}
+}
+
 export function positionToSeconds(
   timing: Timing,
   page: number,
