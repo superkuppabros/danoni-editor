@@ -7,6 +7,10 @@ import Icons from "uikit/dist/js/uikit-icons";
 import "uikit/dist/css/uikit.min.css";
 import "uikit/dist/css/uikit-core.min.css";
 
+import sourceMapSupport from "source-map-support";
+
+sourceMapSupport.install();
+
 UIkit.use(Icons);
 
 Vue.config.productionTip = false;
