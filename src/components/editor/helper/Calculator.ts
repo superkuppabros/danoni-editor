@@ -25,8 +25,13 @@ export function frameToPagePosition(
   const rawPosition = Math.round(
     (frame - blankFrame - timing.startNum) / framePerPosition
   );
-  const page = Math.floor(rawPosition / verticalSizeNum) + timing.label;
-  const position = rawPosition % verticalSizeNum;
+  // 小数の誤差補正、奇数のノーツが補正されてしまうが多いケースをカバーしにいく
+  let adjustedPosition: number = rawPosition;
+  if (rawPosition % 4 == 1) adjustedPosition = rawPosition - 1;
+  else if (rawPosition % 4 == 3) adjustedPosition = rawPosition + 1;
+
+  const page = Math.floor(adjustedPosition / verticalSizeNum) + timing.label;
+  const position = adjustedPosition % verticalSizeNum;
 
   return { page, position };
 }
