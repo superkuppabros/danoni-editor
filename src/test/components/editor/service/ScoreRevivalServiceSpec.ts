@@ -31,4 +31,6 @@ describe("dosConvert", () => {
     const scoreData = scoreRevivalService.dosConvert("|aaa|bbb|");
     expect(scoreData).toBe(null);
   });
+
+  // ToDo: 古いDosファイルからも変換出来るテストケース
 });

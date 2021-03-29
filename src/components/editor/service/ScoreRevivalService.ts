@@ -20,15 +20,17 @@ export class ScoreRevivalService {
     const splitArray = compact(
       dosData
         .replace(regExp, "_")
+        .replace(/&/g, "|")
         .replace(/\|es_/g, "|")
         .replace(/\n/g, "")
         .split(this.delimiter)
     );
 
-    const dict: { [name: string]: string } = fromPairs(
+    const rawDict: { [name: string]: string } = fromPairs(
       splitArray.map(elem => elem.split("="))
     );
     try {
+      const dict = this.fromOldCWToNewCW(rawDict);
       const keyKind: string = dict["keyKind"];
       const blankFrame: number = parseInt(dict["blankFrame"]);
       const labels: number[] = dict["label"]
@@ -70,7 +72,10 @@ export class ScoreRevivalService {
 
     const noteNames: string[] = this.keyConfig[keyKind].noteNames;
     const freezeNames: string[] = this.keyConfig[keyKind].freezeNames;
-    const speedChangeNames: string[] = ["speed_data", "boost_data"];
+    const speedChangeNames: string[] =
+      "speed_data" in dict
+        ? ["speed_data", "boost_data"]
+        : ["speed_change", "boost_data"];
 
     const [noteFrames, freezeFrames, speedChangeFrames]: number[][][] = [
       noteNames,
@@ -144,8 +149,10 @@ export class ScoreRevivalService {
         frame,
         blankFrame
       );
+      const page = pagePosition.page;
       const position = pagePosition.position;
-      speedsArr[pagePosition.page - 1].push({ position, value, type });
+      if (page >= 1 && position >= 0)
+        speedsArr[page - 1].push({ position, value, type });
     });
 
     const pageScores: PageScore[] = new Array(maxPage).fill({}).map((_, i) => {
@@ -193,10 +200,47 @@ export class ScoreRevivalService {
           frame,
           blankFrame
         );
-        arr[pagePosition.page - 1][lane].push(pagePosition.position);
+        const page = pagePosition.page;
+        const position = pagePosition.position;
+        if (page >= 1 && position >= 0) arr[page - 1][lane].push(position);
       });
     });
 
     return arr;
+  }
+
+  private fromOldCWToNewCW(dict: {
+    [name: string]: string;
+  }): { [name: string]: string } {
+    try {
+      const difData: string[] = dict["difData"].split(",");
+      const firstNum: number[] = dict["first_num"]
+        .split(",")
+        .map((x: string) => Number(x));
+      const habaNum: number[] = dict["haba_num"]
+        .split(",")
+        .map((x: string) => Number(x));
+      const habaPageNum: number[] = dict["haba_page_num"]
+        .split(",")
+        .map((x: string) => Number(x));
+      dict.keyKind = difData[0];
+      dict.blankFrame = "200";
+      let counter = 0; // ページの端数をカウント
+      dict.label = habaPageNum
+        .map(x => x * 2 + 1)
+        .map((x, i) => {
+          if (i != 0 && habaPageNum[i] - habaPageNum[i - 1]) counter++;
+          return Math.ceil(x + counter);
+        })
+        .join(",");
+      dict.startNumber = firstNum.map(x => x - 200).join(",");
+      dict.bpm = habaNum.map(x => 1800 / x).join(",");
+      const dictKeys = Object.keys(dict).join(",");
+      const regRes = /(\d+)_/.exec(dictKeys);
+      dict.scoreNumber = regRes ? regRes[1] : "1";
+      return dict;
+    } catch {
+      return dict;
+    }
   }
 }
