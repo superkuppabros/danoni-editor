@@ -13,6 +13,12 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 2.8.1
+
+#### 機能改善
+
+- 今までCtrlと同時に押す必要があったショートカットのうち、入力に不要なキーはCtrlなしでも同等の機能を使えるように
+
 ### ver 2.8.0
 
 #### 機能追加
