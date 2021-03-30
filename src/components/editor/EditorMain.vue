@@ -346,7 +346,7 @@ export default Vue.extend({
           : this.currentPositionIncrease;
       };
 
-      if (e.ctrlKey) {
+      const withCtrlAction = (e: KeyboardEvent) => {
         switch (e.code) {
           case "Digit1":
             this.changeDivisor(quarterInterval);
@@ -395,6 +395,10 @@ export default Vue.extend({
             break;
           }
         }
+      };
+
+      if (e.ctrlKey) {
+        withCtrlAction(e);
       } else {
         switch (e.code) {
           case "Enter": {
@@ -464,6 +468,8 @@ export default Vue.extend({
               }
 
               this.currentPositionIncrease();
+            } else {
+              withCtrlAction(e);
             }
             break;
           }
