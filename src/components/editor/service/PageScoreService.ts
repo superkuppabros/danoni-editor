@@ -1,6 +1,6 @@
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import { ScoreData } from "@/model/ScoreData";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 
 export class PageScoreService {
   constructor(
@@ -12,7 +12,7 @@ export class PageScoreService {
 
   // ページコピー
   copy(page: number) {
-    const pageScore = _.cloneDeep(this.scoreData.scores[page - 1]);
+    const pageScore = cloneDeep(this.scoreData.scores[page - 1]);
     this.copyScoreStore = pageScore;
   }
 
@@ -29,14 +29,14 @@ export class PageScoreService {
 
   // ページ貼り付け
   paste(page: number) {
-    const pageScore = _.cloneDeep(this.copyScoreStore);
+    const pageScore = cloneDeep(this.copyScoreStore);
     this.scoreData.scores.splice(page - 1, 1, pageScore);
     this.displayPageScore(page);
   }
 
   // ページ追加
   add(page: number) {
-    const pageScore = _.cloneDeep(this.copyScoreStore);
+    const pageScore = cloneDeep(this.copyScoreStore);
     this.scoreData.scores.splice(page - 1, 0, pageScore);
 
     const timings = this.scoreData.timings;

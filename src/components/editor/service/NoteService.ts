@@ -10,7 +10,7 @@ import {
   verticalSizeNum
 } from "../EditorConstant";
 import toPx from "../helper/toPx";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 
 export class NoteService {
   constructor(
@@ -113,7 +113,7 @@ export class NoteService {
     const colorGroup = this.keyConfig[this.keyKind].colorGroup;
     const color = freezeColors[colorGroup[lane]];
 
-    const laneFreezes = _.cloneDeep(
+    const laneFreezes: number[] = cloneDeep(
       this.scoreData.scores[page - 1].freezes[lane]
     ).sort((a, b) => a - b);
 

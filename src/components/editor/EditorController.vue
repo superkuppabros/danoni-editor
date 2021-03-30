@@ -120,6 +120,7 @@ import { CustomKeyConfig } from "../../model/KeyConfig";
 import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 import { DefaultPageScore } from "@/model/PageScore";
+import { ScoreRevivalService } from "./service/ScoreRevivalService";
 
 type DataType = {
   pageNum: number;
@@ -148,16 +149,24 @@ export default Vue.extend({
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
 
-    let scoreData;
+    let scoreData: ScoreData;
     const storedKeyKind = sessionStorage.getItem("keyKind");
 
     const selectedKeyKind = (storedKeyKind ||
       this.selectedKey) as CustomKeyKind;
     const selectedKeyNum = keyConfig[selectedKeyKind].num;
+
+    const scoreRevivalService = new ScoreRevivalService(keyConfig);
     try {
       //TODO: 譜面データのチェッカーを作る
       if (!this.loadScoreDataStr) {
         scoreData = new DefaultScoreData(selectedKeyNum);
+      } else if (
+        scoreRevivalService.dosConvert(this.loadScoreDataStr) != null
+      ) {
+        scoreData = scoreRevivalService.dosConvert(
+          this.loadScoreDataStr
+        ) as ScoreData;
       } else
         scoreData = (JSON.parse(this.loadScoreDataStr) as unknown) as ScoreData;
       if (scoreData.scores.length === 0) {

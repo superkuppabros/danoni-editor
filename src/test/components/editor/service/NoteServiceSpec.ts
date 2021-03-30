@@ -1,7 +1,7 @@
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import Konva from "konva";
 import { NoteService } from "@/components/editor/service/NoteService";
 import { testScoreData } from "./testScoreData";
@@ -18,7 +18,7 @@ describe("noteService", () => {
     new NoteService(scoreData, keyConfig, keyKind, isReverse, stage, layer);
 
   it("ノーツの有無が判定できる", () => {
-    const noteService = createNoteService(_.cloneDeep(scoreData));
+    const noteService = createNoteService(cloneDeep(scoreData));
     expect(noteService.hasNote(1, 0, 0)).toStrictEqual({
       exists: true,
       isFreeze: false
@@ -34,7 +34,7 @@ describe("noteService", () => {
   });
 
   it("ノーツの追加ができる", () => {
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     const noteService = createNoteService(copiedScoreData);
     noteService.add(1, 0, 192, false);
     noteService.add(1, 1, 0, true);
@@ -43,7 +43,7 @@ describe("noteService", () => {
   });
 
   it("ノーツの削除ができる", () => {
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     const noteService = createNoteService(copiedScoreData);
     noteService.remove(2, 1, 0);
     noteService.remove(1, 3, 192);
@@ -52,7 +52,7 @@ describe("noteService", () => {
   });
 
   it("行の削除ができる", () => {
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     const noteService = createNoteService(copiedScoreData);
     noteService.removeOnPosition(2, 0);
     expect(copiedScoreData.scores[1].notes[1]).toStrictEqual([48]);

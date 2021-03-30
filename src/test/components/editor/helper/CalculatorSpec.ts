@@ -1,5 +1,6 @@
 import { Timing } from "@/model/Timing";
 import {
+  frameToPagePosition,
   positionToFrame,
   positionToSeconds,
   secondsToTimeStr
@@ -16,6 +17,21 @@ describe("Calculator", () => {
     expect(positionToFrame(timing, 1, 0, 100)).toBe(300);
     expect(positionToFrame(timing, 2, 0, 0)).toBe(360);
     expect(positionToFrame(timing, 2, 192, 40)).toBe(480);
+  });
+
+  it("frame -> page, positionへの変換が出来る", () => {
+    expect(frameToPagePosition(timing, 300, 100)).toStrictEqual({
+      page: 1,
+      position: 0
+    });
+    expect(frameToPagePosition(timing, 360, 0)).toStrictEqual({
+      page: 2,
+      position: 0
+    });
+    expect(frameToPagePosition(timing, 480, 40)).toStrictEqual({
+      page: 2,
+      position: 192
+    });
   });
 
   it("position -> secondsへの変換が出来る", () => {

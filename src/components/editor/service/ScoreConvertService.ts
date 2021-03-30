@@ -1,4 +1,4 @@
-import _ from "lodash";
+import { cloneDeep, isEqual } from "lodash";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { CustomKeyKind } from "@/model/KeyKind";
@@ -56,7 +56,7 @@ export class ScoreConvertService {
           freezesArr.sort((a, b) => a - b).map(calculateFrame)
         );
         const speedsNoteFrames = pageScore.speeds.map(speed => {
-          const newSpeed: Speed = _.cloneDeep(speed);
+          const newSpeed: Speed = cloneDeep(speed);
           newSpeed.position = calculateFrame(speed.position);
           return newSpeed;
         });
@@ -98,6 +98,27 @@ export class ScoreConvertService {
     return outputData;
   }
 
+  private makeEasySave(scoreData: ScoreData): string {
+    const keyKind: string = scoreData.keyKind as string;
+    const blankFrame: number = scoreData.blankFrame;
+    const labels: number[] = scoreData.timings.map(timing => timing.label);
+    const startNumbers: number[] = scoreData.timings.map(
+      timing => timing.startNum
+    );
+    const bpms: number[] = scoreData.timings.map(timing => timing.bpm);
+    const scoreNumber = scoreData.scoreNumber || 1;
+
+    const easySave =
+      `|es_keyKind=${keyKind}` +
+      `|es_blankFrame=${blankFrame}` +
+      `|es_label=${labels.join(",")}` +
+      `|es_startNumber=${startNumbers.join(",")}` +
+      `|es_bpm=${bpms.join(",")}` +
+      `|es_scoreNumber=${scoreNumber}|`;
+
+    return easySave;
+  }
+
   convert(scoreData: ScoreData, scorePostfix = ""): string {
     const frameScores = this.toFrameData(scoreData);
     const data = this.framesToOutputData(frameScores);
@@ -105,42 +126,51 @@ export class ScoreConvertService {
     data.speeds.sort((a, b) => a.position - b.position);
     data.boosts.sort((a, b) => a.position - b.position);
 
-    const noteStr = data.notes.reduce(
-      (str, notesArr, laneNum) =>
-        `${str}${
-          this.keyConfig[this.keyKind].noteNames[laneNum]
-        }=${notesArr.join(",")}|`,
-      "|"
-    );
+    const noteStr = data.notes
+      .reduce(
+        (str, notesArr, laneNum) =>
+          `${str}${
+            this.keyConfig[this.keyKind].noteNames[laneNum]
+          }=${notesArr.join(",")}|`,
+        "|"
+      )
+      .replace(/_/g, `${scorePostfix}_`);
 
-    const freezeStr = data.freezes.reduce(
-      (str, freezesArr, laneNum) =>
-        `${str}${
-          this.keyConfig[this.keyKind].freezeNames[laneNum]
-        }=${freezesArr.join(",")}|`,
-      ""
-    );
+    const freezeStr = data.freezes
+      .reduce(
+        (str, freezesArr, laneNum) =>
+          `${str}${
+            this.keyConfig[this.keyKind].freezeNames[laneNum]
+          }=${freezesArr.join(",")}|`,
+        ""
+      )
+      .replace(/_/g, `${scorePostfix}_`);
 
-    const speedStr =
+    const speedStr = (
       "speed_data=" +
       data.speeds.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|";
-    const boostStr =
+      "|"
+    ).replace(/_/g, `${scorePostfix}_`);
+    const boostStr = (
       "boost_data=" +
       data.boosts.map(speed => `${speed.position},${speed.value}`).join(",") +
-      "|";
+      "|"
+    ).replace(/_/g, `${scorePostfix}_`);
 
-    return `
-${noteStr + freezeStr}
-|${speedStr + boostStr}`.replace(/_/g, `${scorePostfix}_`);
+    const easySave = this.makeEasySave(scoreData);
+
+    return `${noteStr + freezeStr}
+|${speedStr + boostStr}
+${easySave}
+`;
   }
 
   cutLastDefault(scoreData: ScoreData): ScoreData {
     const len = scoreData.scores.length;
-    const copiedScoreData = _.cloneDeep(scoreData);
+    const copiedScoreData = cloneDeep(scoreData);
     let i = len - 1;
     while (i >= 0) {
-      if (_.isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
+      if (isEqual(copiedScoreData.scores[i], this.defaultPageScore)) {
         copiedScoreData.scores.pop();
         i--;
       } else break;
@@ -161,7 +191,7 @@ ${noteStr + freezeStr}
     // Todo: ノーツを置く位置を変更できるようにする
     const pushQuartersLane = 0;
 
-    const newScoreData = this.cutLastDefault(_.cloneDeep(scoreData));
+    const newScoreData = this.cutLastDefault(cloneDeep(scoreData));
 
     for (let i = 0; i < pushQuartersPageNum; i++) {
       const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
