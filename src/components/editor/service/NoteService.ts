@@ -11,6 +11,7 @@ import {
 } from "../EditorConstant";
 import toPx from "../helper/toPx";
 import { cloneDeep } from "lodash";
+import { Operation } from "@/model/OperationQueue";
 
 export class NoteService {
   constructor(
@@ -19,7 +20,8 @@ export class NoteService {
     private keyKind: CustomKeyKind,
     private isReverse: boolean,
     private stage: Konva.Stage,
-    private notesLayer: Konva.Layer
+    private notesLayer: Konva.Layer,
+    private operationQueue: Operation[]
   ) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
@@ -95,6 +97,13 @@ export class NoteService {
     this.add(page, lane, position, isFreeze);
     this.draw(lane, position, isFreeze);
     if (isFreeze) this.fillFreeze(page, lane);
+    this.operationQueue.push({
+      type: "ADD_NOTE",
+      page,
+      position,
+      lane,
+      isFreeze
+    });
   }
 
   // 1ノーツを削除してクリア
@@ -102,6 +111,16 @@ export class NoteService {
     this.remove(page, lane, position);
     this.clear(lane, position);
     this.fillFreeze(page, lane);
+
+    const { exists, isFreeze } = this.hasNote(page, lane, position);
+    if (exists)
+      this.operationQueue.push({
+        type: "REMOVE_NOTE",
+        page,
+        position,
+        lane,
+        isFreeze
+      });
   }
 
   // フリーズの塗りつぶし描画
@@ -153,15 +172,9 @@ export class NoteService {
   }
 
   // 行削除
-  removeOnPosition(
-    page: number,
-    position: number
-  ): {
-    lane: number;
-    isFreeze: boolean;
-  }[] {
+  removeLanes(page: number, position: number): NoteOnPosition[] {
     const keyNum = this.keyNum;
-    const removedLanes = [];
+    const removedLanes: NoteOnPosition[] = [];
     for (let lane = 0; lane < keyNum; lane++) {
       const noteStatus = this.hasNote(page, lane, position);
       if (noteStatus.exists) {
@@ -173,6 +186,27 @@ export class NoteService {
       }
     }
     return removedLanes;
+  }
+
+  removeOnPosition(page: number, position: number): void {
+    const removedLanes = this.removeLanes(page, position);
+    this.operationQueue.push({
+      type: "REMOVE_ON_POSITION",
+      page,
+      position,
+      removedLanes
+    });
+  }
+
+  // 行追加
+  addOnPosition(
+    page: number,
+    currentPosition: number,
+    notesOnPosition: NoteOnPosition[]
+  ) {
+    notesOnPosition.forEach(obj =>
+      this.add(page, obj.lane, currentPosition, obj.isFreeze)
+    );
   }
 
   // 行をずらす
@@ -190,10 +224,23 @@ export class NoteService {
       newPosition -= verticalSizeNum;
     }
 
-    const removedLanes = this.removeOnPosition(page, currentPosition);
-    this.removeOnPosition(newPage, newPosition);
-    removedLanes.forEach(obj =>
-      this.add(newPage, obj.lane, newPosition, obj.isFreeze)
-    );
+    const movedLanes = this.removeLanes(page, currentPosition);
+    const originalLanes = this.removeLanes(newPage, newPosition);
+    this.addOnPosition(newPage, newPosition, movedLanes);
+
+    this.operationQueue.push({
+      type: "SHIFT",
+      page,
+      position: currentPosition,
+      newPage,
+      newPosition,
+      movedLanes,
+      originalLanes
+    });
   }
 }
+
+export type NoteOnPosition = {
+  lane: number;
+  isFreeze: boolean;
+};

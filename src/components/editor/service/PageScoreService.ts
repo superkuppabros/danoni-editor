@@ -1,3 +1,4 @@
+import { Operation } from "@/model/OperationQueue";
 import { PageScore, DefaultPageScore } from "@/model/PageScore";
 import { ScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
@@ -7,7 +8,8 @@ export class PageScoreService {
     private scoreData: ScoreData,
     private copyScoreStore: PageScore,
     private keyNum: number,
-    private displayPageScore: (page: number) => void
+    private displayPageScore: (page: number) => void,
+    private operationQueue: Operation[]
   ) {}
 
   // ページコピー
@@ -16,9 +18,8 @@ export class PageScoreService {
     this.copyScoreStore = pageScore;
   }
 
-  // ページカット
-  cut(page: number) {
-    this.copy(page);
+  // ページクリア
+  clear(page: number) {
     this.scoreData.scores.splice(
       page - 1,
       1,
@@ -27,16 +28,36 @@ export class PageScoreService {
     this.displayPageScore(page);
   }
 
-  // ページ貼り付け
-  paste(page: number) {
-    const pageScore = cloneDeep(this.copyScoreStore);
+  // ページカット
+  cut(page: number) {
+    this.copy(page);
+    this.clear(page);
+
+    const copyScoreStore = cloneDeep(this.copyScoreStore);
+    this.operationQueue.push({
+      type: "CUT",
+      page,
+      copyScoreStore
+    });
+  }
+
+  // ページにノーツを転写する
+  write(page: number, pageScore: PageScore) {
     this.scoreData.scores.splice(page - 1, 1, pageScore);
     this.displayPageScore(page);
   }
 
-  // ページ追加
-  add(page: number) {
-    const pageScore = cloneDeep(this.copyScoreStore);
+  // ページ貼り付け
+  paste(page: number, pageScore = cloneDeep(this.copyScoreStore)) {
+    this.write(page, pageScore);
+    this.operationQueue.push({
+      type: "PASTE",
+      page
+    });
+  }
+
+  // ページ追加(操作のみ)
+  insert(page: number, pageScore: PageScore) {
     this.scoreData.scores.splice(page - 1, 0, pageScore);
 
     const timings = this.scoreData.timings;
@@ -48,9 +69,17 @@ export class PageScoreService {
     this.displayPageScore(page);
   }
 
-  // ページ削除
-  delete(page: number) {
-    this.copy(page);
+  // ページ追加
+  add(page: number, pageScore = cloneDeep(this.copyScoreStore)) {
+    this.insert(page, pageScore);
+    this.operationQueue.push({
+      type: "ADD_PAGE",
+      page
+    });
+  }
+
+  // ページ削除(操作のみ)
+  remove(page: number) {
     this.scoreData.scores.splice(page - 1, 1);
 
     const timings = this.scoreData.timings;
@@ -59,5 +88,18 @@ export class PageScoreService {
       return timing;
     });
     this.displayPageScore(page);
+  }
+
+  // ページ削除
+  delete(page: number) {
+    this.copy(page);
+    this.remove(page);
+
+    const copyScoreStore = cloneDeep(this.copyScoreStore);
+    this.operationQueue.push({
+      type: "REMOVE_PAGE",
+      page,
+      copyScoreStore
+    });
   }
 }

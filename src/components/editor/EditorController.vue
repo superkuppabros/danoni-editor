@@ -12,6 +12,7 @@
       :music-rate="musicRate"
       @page-minus="pageMinus"
       @page-plus="pagePlus"
+      @page-jump="pageJump"
     ></editor-main>
     <editor-option
       :scoreNumber.sync="scoreNumber"
@@ -200,6 +201,9 @@ export default Vue.extend({
     },
     pagePlus(n: number): void {
       this.pageNum += n;
+    },
+    pageJump(page: number): void {
+      this.pageNum = page;
     },
     labelMinus(n: number): void {
       this.labelNum = Math.max(1, this.labelNum - n);

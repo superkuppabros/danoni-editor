@@ -5,6 +5,7 @@ import { cloneDeep } from "lodash";
 import Konva from "konva";
 import { NoteService } from "@/components/editor/service/NoteService";
 import { testScoreData } from "./testScoreData";
+import { Operation } from "@/model/OperationQueue";
 
 describe("noteService", () => {
   const keyKind: KeyKind = "5";
@@ -12,10 +13,19 @@ describe("noteService", () => {
   const isReverse = true;
   const stage = ("dummyStage" as unknown) as Konva.Stage;
   const layer = ("dummyLayer" as unknown) as Konva.Layer;
+  const operationQueue: Operation[] = [];
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
-    new NoteService(scoreData, keyConfig, keyKind, isReverse, stage, layer);
+    new NoteService(
+      scoreData,
+      keyConfig,
+      keyKind,
+      isReverse,
+      stage,
+      layer,
+      operationQueue
+    );
 
   it("ノーツの有無が判定できる", () => {
     const noteService = createNoteService(cloneDeep(scoreData));
