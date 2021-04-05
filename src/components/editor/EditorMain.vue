@@ -346,29 +346,8 @@ export default Vue.extend({
           : this.currentPositionIncrease;
       };
 
-      const withCtrlAction = (e: KeyboardEvent) => {
+      const mustCtrlAction = (e: KeyboardEvent) => {
         switch (e.code) {
-          case "Digit1":
-            this.changeDivisor(quarterInterval);
-            break;
-          case "Digit2":
-            this.changeDivisor(quarterInterval / 2);
-            break;
-          case "Digit3":
-            this.changeDivisor(quarterInterval / 4);
-            break;
-          case "Digit4":
-            this.changeDivisor(quarterInterval / 3);
-            break;
-          case "Digit5":
-            this.changeDivisor(quarterInterval / 6);
-            break;
-          case "Digit6":
-            this.changeDivisor(quarterInterval / 12);
-            break;
-          case "Digit7":
-            this.changeDivisor(quarterInterval / 8);
-            break;
           case "KeyX":
             if (e.shiftKey) pageScoreService.delete(page);
             else pageScoreService.cut(page);
@@ -397,7 +376,34 @@ export default Vue.extend({
         }
       };
 
+      const withCtrlAction = (e: KeyboardEvent) => {
+        switch (e.code) {
+          case "Digit1":
+            this.changeDivisor(quarterInterval);
+            break;
+          case "Digit2":
+            this.changeDivisor(quarterInterval / 2);
+            break;
+          case "Digit3":
+            this.changeDivisor(quarterInterval / 4);
+            break;
+          case "Digit4":
+            this.changeDivisor(quarterInterval / 3);
+            break;
+          case "Digit5":
+            this.changeDivisor(quarterInterval / 6);
+            break;
+          case "Digit6":
+            this.changeDivisor(quarterInterval / 12);
+            break;
+          case "Digit7":
+            this.changeDivisor(quarterInterval / 8);
+            break;
+        }
+      };
+
       if (e.ctrlKey) {
+        mustCtrlAction(e);
         withCtrlAction(e);
       } else {
         switch (e.code) {
