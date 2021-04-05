@@ -40,12 +40,14 @@ import {
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
 import { SpeedType } from "../../model/Speed";
+import { Operation } from "../../model/OperationQueue";
 import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
 import { PageScoreService } from "./service/PageScoreService";
 import { CurrentPositionService } from "./service/CurrentPositionService";
 import SpeedPiece from "./SpeedPiece.vue";
 import { positionToSeconds, positionToFrame } from "./helper/Calculator";
+import { undo } from "./helper/undo";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 type DataType = {
@@ -59,6 +61,7 @@ type DataType = {
   musicTimer: number | null;
   musicService: MusicService;
   copyScoreStore: PageScore;
+  operationQueue: Operation[];
   currentPositionService: CurrentPositionService;
   noteService?: NoteService;
   speedPieceService?: SpeedPieceService;
@@ -91,6 +94,7 @@ export default Vue.extend({
     const audio = new Audio(this.loadMusicUrl);
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const operationQueue: Operation[] = [];
 
     return {
       currentPosition: 0,
@@ -102,6 +106,7 @@ export default Vue.extend({
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicService: new MusicService(audio),
       musicTimer: null,
+      operationQueue,
       copyScoreStore: new DefaultPageScore(keyNum),
       currentPositionService: (undefined as unknown) as CurrentPositionService
     };
@@ -266,6 +271,7 @@ export default Vue.extend({
     // ページ遷移
     pageMove(page: number): void {
       this.page = page;
+      this.$emit("page-jump", page);
 
       // 今いるページ + 1までの範囲でemptyのページを初期化する
       if (!this.scoreData.scores[page]) this.scoreData.scores.length = page + 1;
@@ -346,6 +352,54 @@ export default Vue.extend({
           : this.currentPositionIncrease;
       };
 
+      const mustCtrlAction = (e: KeyboardEvent) => {
+        switch (e.code) {
+          case "KeyX":
+            if (e.shiftKey) pageScoreService.delete(page);
+            else pageScoreService.cut(page);
+            break;
+          case "KeyC":
+            pageScoreService.copy(page);
+            break;
+          case "KeyV":
+            if (e.shiftKey) pageScoreService.add(page);
+            else pageScoreService.paste(page);
+            break;
+          case "KeyZ": {
+            const { undoPage, undoPosition } = undo(
+              this.operationQueue,
+              noteService,
+              pageScoreService
+            );
+            const targetPage = undoPage != undefined ? undoPage : page;
+            const targetPosition =
+              undoPosition != undefined ? undoPosition : currentPosition;
+            this.pageMove(targetPage);
+            this.currentPositionService.move(
+              targetPosition,
+              targetPage,
+              this.timing
+            );
+            this.displayPageScore(targetPage);
+            break;
+          }
+          case "ArrowUp": {
+            const delta = this.isReverse ? -divisor : divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(true)();
+            this.displayPageScore(this.page);
+            break;
+          }
+          case "ArrowDown": {
+            const delta = this.isReverse ? divisor : -divisor;
+            noteService.shift(page, currentPosition, delta);
+            positionLineMove(false)();
+            this.displayPageScore(this.page);
+            break;
+          }
+        }
+      };
+
       const withCtrlAction = (e: KeyboardEvent) => {
         switch (e.code) {
           case "Digit1":
@@ -369,35 +423,11 @@ export default Vue.extend({
           case "Digit7":
             this.changeDivisor(quarterInterval / 8);
             break;
-          case "KeyX":
-            if (e.shiftKey) pageScoreService.delete(page);
-            else pageScoreService.cut(page);
-            break;
-          case "KeyC":
-            pageScoreService.copy(page);
-            break;
-          case "KeyV":
-            if (e.shiftKey) pageScoreService.add(page);
-            pageScoreService.paste(page);
-            break;
-          case "ArrowUp": {
-            const delta = this.isReverse ? -divisor : divisor;
-            noteService.shift(page, currentPosition, delta);
-            positionLineMove(true)();
-            this.displayPageScore(this.page);
-            break;
-          }
-          case "ArrowDown": {
-            const delta = this.isReverse ? divisor : -divisor;
-            noteService.shift(page, currentPosition, delta);
-            positionLineMove(false)();
-            this.displayPageScore(this.page);
-            break;
-          }
         }
       };
 
       if (e.ctrlKey) {
+        mustCtrlAction(e);
         withCtrlAction(e);
       } else {
         switch (e.code) {
@@ -523,7 +553,8 @@ export default Vue.extend({
       this.keyKind,
       this.isReverse,
       this.stage,
-      this.notesLayer
+      this.notesLayer,
+      this.operationQueue
     );
 
     this.speedPieceService = new SpeedPieceService(
@@ -538,7 +569,8 @@ export default Vue.extend({
       this.scoreData,
       this.copyScoreStore,
       this.keyNum,
-      this.displayPageScore
+      this.displayPageScore,
+      this.operationQueue
     );
 
     this.currentPositionService = new CurrentPositionService(
