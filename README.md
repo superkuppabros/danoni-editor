@@ -13,6 +13,16 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 2.8.2
+
+#### 機能追加
+
+- `Ctrl` + `Z` で1つ前の操作に戻れるように
+
+#### 機能改善
+
+- カット、ペーストなど画面を書き換える可能性のあるコマンドはCtrlキーを必須に
+
 ### ver 2.8.1
 
 #### 機能改善

@@ -56,7 +56,7 @@
         >
       </div>
 
-      <div id="start-version">ver 2.8.1 created by SKB</div>
+      <div id="start-version">ver 2.8.2 created by SKB</div>
     </div>
   </div>
 </template>
