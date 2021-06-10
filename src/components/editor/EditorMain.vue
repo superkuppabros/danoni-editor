@@ -591,6 +591,11 @@ export default Vue.extend({
     if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
   },
 
+  beforeDestroy(): void {
+    // 画面終了時に音楽を止める
+    if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
+  },
+
   watch: {
     pageNum(newPage: number): void {
       this.pageMove(newPage);
