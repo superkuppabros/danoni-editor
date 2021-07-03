@@ -28,19 +28,7 @@
           class="start-btn btn-orange"
           >CONFIG</router-link
         >
-        <router-link
-          :to="{
-            name: 'editor',
-            path: 'editor',
-            params: {
-              scoreData: localSaveDataStr,
-              musicUrl: musicUrl,
-              key: selectedKey
-            }
-          }"
-          class="start-btn btn-blue"
-          >REVIVAL</router-link
-        >
+        <div class="start-btn btn-blue" @click="onClickLoad">LOAD</div>
         <router-link
           :to="{
             name: 'editor',
@@ -137,6 +125,44 @@ export default Vue.extend({
           }
         };
         reader.readAsText(file);
+      }
+    },
+    moveToEditor(scoreData: string, musicUrl: string, key: string) {
+      this.$router.push({
+        name: "editor",
+        path: "editor",
+        params: { scoreData, musicUrl, key }
+      });
+    },
+    async loadData(keyPhrase: string) {
+      const apiUrl = `https://asia-northeast1-danoni-editor-backend.cloudfunctions.net/getSaveData?keyPhrase=${keyPhrase}`;
+      const response = await fetch(apiUrl);
+      const json = await response.json();
+      return JSON.stringify(json.data || "");
+    },
+    async onClickLoad(): Promise<void> {
+      const keyPhrase = window.prompt(
+        "キーフレーズを入力して下さい。(無入力の場合は最後に出力した譜面データを表示します。)"
+      );
+      if (keyPhrase === null) return;
+      else if (keyPhrase === "")
+        this.moveToEditor(
+          this.localSaveDataStr,
+          this.musicUrl || "",
+          this.selectedKey
+        );
+      else {
+        try {
+          const save = await this.loadData(keyPhrase);
+          // 前後のクオートを消す、クオートのエスケープを剥がす
+          const scoreData = save
+            .replaceAll('\\"', '"')
+            .slice(1)
+            .slice(0, -1);
+          this.moveToEditor(scoreData, this.musicUrl || "", this.selectedKey);
+        } catch {
+          alert("セーブデータの取得が出来ませんでした。");
+        }
       }
     }
   },
