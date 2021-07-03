@@ -248,11 +248,34 @@ export default Vue.extend({
       // ローカルストレージに現在のデータを保存
       localStorage.setItem("saveData", converter.save(this.scoreData));
     },
-    save(): void {
+    async save(): Promise<void> {
+      const keyPhrase = window.prompt(
+        "キーフレーズを入力して下さい。(無入力の場合はセーブデータをクリップボードにコピーします。)"
+      );
+      if (keyPhrase) {
+        await this.onlineSave(keyPhrase);
+        const message = "セーブデータをオンラインにセーブしました！";
+        alert(message);
+      } else if (keyPhrase === "") {
+        this.localSave();
+      }
+    },
+    localSave(): void {
       const converter = this.scoreConvertService;
       const data: string = converter.save(this.scoreData);
       const message = "セーブデータをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
+    },
+    async onlineSave(keyPhrase: string): Promise<void> {
+      const converter = this.scoreConvertService;
+      const data: string = converter.save(this.scoreData);
+
+      const xhr = new XMLHttpRequest();
+      const apiUrl =
+        "https://asia-northeast1-danoni-editor-backend.cloudfunctions.net/addSaveData";
+      xhr.open("POST", apiUrl);
+      xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+      xhr.send(JSON.stringify({ keyPhrase, data }));
     },
     convertWithQuarters(): void {
       // NOTE: scoreNoを増やしたことによる暫定処置
