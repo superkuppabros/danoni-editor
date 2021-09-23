@@ -13,6 +13,12 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 3.0.1
+
+#### バグ修正
+
+- 23keyの制作画面下部に使用キーが表示されていなかった問題を修正
+
 ### ver 3.0.0
 
 #### 機能追加

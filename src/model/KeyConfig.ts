@@ -1055,7 +1055,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit8",
       "KeyO"
     ],
-    chars:[
+    chars: [
       "W",
       "E",
       "3",
