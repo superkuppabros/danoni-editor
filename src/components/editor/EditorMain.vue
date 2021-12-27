@@ -323,7 +323,7 @@ export default Vue.extend({
         );
     },
 
-    currentPositionDecrese() {
+    currentPositionDecrease() {
       this.currentPosition -= this.divisor;
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
@@ -348,7 +348,7 @@ export default Vue.extend({
 
       const positionLineMove = (isRaise: boolean) => {
         return isRaise === this.isReverse
-          ? this.currentPositionDecrese
+          ? this.currentPositionDecrease
           : this.currentPositionIncrease;
       };
 
@@ -445,14 +445,14 @@ export default Vue.extend({
             noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
             break;
-          case "Space": // ArrowUpと同様
-            positionLineMove(true)();
+          case "Space": // 通常、リバースともに正方向に進む
+            this.currentPositionIncrease();
             break;
           case "ArrowUp":
             positionLineMove(true)();
             break;
-          case "KeyB": // ArrowDownと同様
-            positionLineMove(false)();
+          case "KeyB": // 通常、リバースともに負方向に進む
+            this.currentPositionDecrease();
             break;
           case "ArrowDown":
             positionLineMove(false)();
