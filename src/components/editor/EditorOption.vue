@@ -67,6 +67,7 @@ export default Vue.extend({
         return this.musicVolume;
       },
       set(musicVolume: string) {
+        localStorage.setItem("musicVolume", musicVolume);
         const value = Number(musicVolume);
         this.$emit("update:musicVolume", value);
       }
