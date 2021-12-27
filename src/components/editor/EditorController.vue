@@ -19,6 +19,7 @@
       :musicVolume.sync="musicVolume"
       :musicRate.sync="musicRate"
     ></editor-option>
+    <editor-save @save="save"></editor-save>
     <div id="editor-menu">
       <div id="menu-page" class="menu-item-container">
         <div class="menu-move-header">
@@ -88,7 +89,9 @@
         <div class="menu-output-btn btn-gray" @click="convertWithQuarters">
           TEST
         </div>
-        <div class="menu-output-btn btn-blue" @click="save">SAVE</div>
+        <div class="menu-output-btn btn-blue" href="#editor-save" uk-toggle>
+          SAVE
+        </div>
         <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">
           CALC
         </div>
@@ -122,6 +125,7 @@ import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 import { DefaultPageScore } from "@/model/PageScore";
 import { ScoreRevivalService } from "./service/ScoreRevivalService";
+import EditorSave from "./EditorSave.vue";
 
 type DataType = {
   pageNum: number;
@@ -140,7 +144,8 @@ export default Vue.extend({
   name: "EditorController",
   components: {
     EditorMain,
-    EditorOption
+    EditorOption,
+    EditorSave
   },
   props: {
     selectedKey: String,
@@ -248,10 +253,7 @@ export default Vue.extend({
       // ローカルストレージに現在のデータを保存
       localStorage.setItem("saveData", converter.save(this.scoreData));
     },
-    async save(): Promise<void> {
-      const keyPhrase = window.prompt(
-        "キーフレーズを入力して下さい。(無入力の場合はセーブデータをクリップボードにコピーします。)"
-      );
+    async save(keyPhrase: string): Promise<void> {
       if (keyPhrase) {
         await this.onlineSave(keyPhrase);
         const message = "セーブデータをオンラインにセーブしました！";

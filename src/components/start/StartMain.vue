@@ -1,5 +1,6 @@
 <template>
   <div id="start-container">
+    <start-load @load="load"></start-load>
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
       <start-uploader
@@ -28,7 +29,7 @@
           class="start-btn btn-orange"
           >CONFIG</router-link
         >
-        <div class="start-btn btn-blue" @click="onClickLoad">LOAD</div>
+        <div class="start-btn btn-blue" href="#start-load" uk-toggle>LOAD</div>
         <router-link
           :to="{
             name: 'editor',
@@ -55,6 +56,7 @@ import StartUploader from "./StartUploader.vue";
 import { CustomKeyKind } from "@/model/KeyKind";
 import { CustomKeyConfig } from "../../model/KeyConfig";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
+import StartLoad from "./StartLoad.vue";
 
 type DataType = {
   keyConfig: CustomKeyConfig;
@@ -68,7 +70,8 @@ type DataType = {
 export default Vue.extend({
   name: "StartMain",
   components: {
-    StartUploader
+    StartUploader,
+    StartLoad
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
@@ -140,10 +143,7 @@ export default Vue.extend({
       const json = await response.json();
       return JSON.stringify(json.data || "");
     },
-    async onClickLoad(): Promise<void> {
-      const keyPhrase = window.prompt(
-        "キーフレーズを入力して下さい。(無入力の場合は最後に出力した譜面データを表示します。)"
-      );
+    async load(keyPhrase: string): Promise<void> {
       if (keyPhrase === null) return;
       else if (keyPhrase === "")
         this.moveToEditor(

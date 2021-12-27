@@ -182,18 +182,50 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   text-decoration-line: none;
 }
 
-#editor-option {
+#editor-option, #editor-save {
   position: absolute;
   width: 300px;
-  height: 434px;
+  height: 430px;
   top: 100px;
   background-color: rgba(245, 228, 159, 0.9);
   border-radius: 2px;
 }
 
+#editor-save {
+  background-color: rgba(103, 197, 255, 0.9);
+}
+
 .option-item-container {
   margin: 4px auto 0 auto;
   width: 106px;
+}
+
+.save-item-container {
+  margin: auto;
+  margin-bottom: 10px;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+.save-txt {
+  font-size: 12px;
+  width: 100%;
+}
+
+.save-output-btn {
+  width: 40%;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  margin: 10px;
+  border-radius: 3px;
+  transition: 0.4s;
+}
+
+.save-output-btn:hover {
+  color: white;
+  cursor: pointer;
 }
 
 .uk-modal-close-default.editor-close {
@@ -205,6 +237,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 #start-container {
   width: 500px;
   height: 400px;
+  position: relative;
   margin: auto;
   background-color: aquamarine;
   font-family: "Segoe UI", "Yu Gothic", sans-serif;
@@ -254,6 +287,15 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   color: white;
   cursor: pointer;
   text-decoration: none;
+}
+
+#start-load {
+  position: absolute;
+  width: 300px;
+  height: 400px;
+  top: 100px;
+  background-color: rgba(103, 197, 255, 0.9);
+  border-radius: 2px;
 }
 
 #start-key-selector {
