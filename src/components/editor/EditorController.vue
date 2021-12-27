@@ -190,7 +190,7 @@ export default Vue.extend({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
-      musicVolume: 1.0,
+      musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig)
     };
