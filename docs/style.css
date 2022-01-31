@@ -338,7 +338,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 #configure-droparea {
   height: 30px;
-  padding: 15px;
+  padding: 8px;
 }
 
 #configure-conf-select {
@@ -350,7 +350,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 .configure-design-item {
   display: flex;
   justify-content: left;
-  font-size: 18px;
+  font-size: 16px;
   padding: 0 40px;
   margin: 10px 0;
 }
@@ -368,4 +368,9 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   display: flex;
   margin-left: 10px;
   width: 110px;
+}
+
+.configure-design-text-long {
+  width: 280px;
+  text-align: left;
 }
