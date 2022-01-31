@@ -70,6 +70,9 @@ type DataType = {
   baseLayer?: Konva.Layer;
   notesLayer?: Konva.Layer;
   currentPositionLayer?: Konva.Layer;
+  previousPosition: number;
+  previousPage: number;
+  previousDate: Date;
 };
 
 export default Vue.extend({
@@ -108,7 +111,10 @@ export default Vue.extend({
       musicTimer: null,
       operationQueue,
       copyScoreStore: new DefaultPageScore(keyNum),
-      currentPositionService: (undefined as unknown) as CurrentPositionService
+      currentPositionService: (undefined as unknown) as CurrentPositionService,
+      previousPosition: 0,
+      previousPage: 1,
+      previousDate: new Date(0)
     };
   },
   methods: {
@@ -487,17 +493,45 @@ export default Vue.extend({
               this.keyConfig[this.keyKind].alternativeKeys.indexOf(e.code)
             );
             const isFreeze = e.shiftKey;
-            const page = this.page;
-            const position = this.currentPosition;
+
+            let page = this.page;
+            let position = this.currentPosition;
+            let isSimultaneous = false;
 
             if (possiblyLane >= 0) {
-              if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, possiblyLane, position);
+              // 一定時間内に押されたときは直前の位置にノートを追加/削除する
+              const now = new Date();
+              const threshold: number = JSON.parse(
+                localStorage.getItem("simultaneousThreshold") ?? "30"
+              );
+
+              if (now.getTime() - this.previousDate.getTime() <= threshold) {
+                page = this.previousPage;
+                position = this.previousPosition;
+                isSimultaneous = true;
               } else {
-                noteService.addOne(page, possiblyLane, position, isFreeze);
+                this.previousDate = now;
               }
 
-              this.currentPositionIncrease();
+              // ノートの追加/削除
+              if (noteService.hasNote(page, possiblyLane, position).exists) {
+                noteService.removeOne(page, this.page, possiblyLane, position);
+              } else {
+                noteService.addOne(
+                  page,
+                  this.page,
+                  possiblyLane,
+                  position,
+                  isFreeze
+                );
+              }
+
+              // 同時押しのときはカーソルを進めない
+              if (!isSimultaneous) {
+                this.currentPositionIncrease();
+                this.previousPage = page;
+                this.previousPosition = position;
+              }
             } else {
               withCtrlAction(e);
             }

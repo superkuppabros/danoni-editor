@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 class="configure-context-title">Design</h3>
+    <h3 class="configure-context-title">Options</h3>
 
     <div class="configure-design-item">
       <div class="configure-design-text">Direction:</div>
@@ -58,6 +58,21 @@
         </div>
       </div>
     </div>
+    <div class="configure-design-item">
+      <div class="configure-design-text-long">
+        Simultaneous Threshold(msec):
+      </div>
+      <div class="configure-options">
+        <input
+          type="number"
+          min="-1"
+          max="1000"
+          step="1"
+          class="uk-input uk-form-small"
+          v-model.number="simultaneousThreshold"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -66,6 +81,21 @@ import Vue from "vue";
 
 export default Vue.extend({
   name: "ConfigureDesign",
+  data() {
+    return {
+      simultaneousThreshold: 0
+    };
+  },
+  mounted() {
+    this.simultaneousThreshold = JSON.parse(
+      localStorage.getItem("simultaneousThreshold") ?? "30"
+    );
+  },
+  watch: {
+    simultaneousThreshold(newValue) {
+      localStorage.setItem("simultaneousThreshold", JSON.stringify(newValue));
+    }
+  },
   computed: {
     isReverse: {
       get(): boolean {

@@ -93,10 +93,18 @@ export class NoteService {
   }
 
   // 1ノーツを追加して描画
-  addOne(page: number, lane: number, position: number, isFreeze: boolean) {
+  addOne(
+    page: number,
+    displayPage: number,
+    lane: number,
+    position: number,
+    isFreeze: boolean
+  ) {
     this.add(page, lane, position, isFreeze);
-    this.draw(lane, position, isFreeze);
-    if (isFreeze) this.fillFreeze(page, lane);
+    if (page === displayPage) {
+      this.draw(lane, position, isFreeze);
+    }
+    if (isFreeze) this.fillFreeze(displayPage, lane);
     this.operationQueue.push({
       type: "ADD_NOTE",
       page,
@@ -107,11 +115,12 @@ export class NoteService {
   }
 
   // 1ノーツを削除してクリア
-  removeOne(page: number, lane: number, position: number) {
+  removeOne(page: number, displayPage: number, lane: number, position: number) {
     this.remove(page, lane, position);
-    this.clear(lane, position);
-    this.fillFreeze(page, lane);
-
+    if (page === displayPage) {
+      this.clear(lane, position);
+    }
+    this.fillFreeze(displayPage, lane);
     const { exists, isFreeze } = this.hasNote(page, lane, position);
     if (exists)
       this.operationQueue.push({
