@@ -13,6 +13,12 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 3.1.2
+
+#### バグ修正
+
+- ページ終端で同時押し入力できないことがある問題の修正 ( thanks: @suzme )
+
 ### ver 3.1.1
 
 #### 機能改善
