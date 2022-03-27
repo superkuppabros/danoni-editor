@@ -320,13 +320,18 @@ export default Vue.extend({
     // 現在位置の上下移動
     currentPositionIncrease() {
       this.currentPosition += this.divisor;
-      if (this.currentPosition >= verticalSizeNum) this.pagePlus(1);
-      else
+      const threshold: number = JSON.parse(
+        localStorage.getItem("simultaneousThreshold") ?? "30"
+      );
+      if (this.currentPosition >= verticalSizeNum) {
+        setTimeout(() => this.pagePlus(1), threshold);
+      } else {
         this.currentPositionService.move(
           this.currentPosition,
           this.page,
           this.timing
         );
+      }
     },
 
     currentPositionDecrease() {
