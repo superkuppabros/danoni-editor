@@ -17,7 +17,7 @@ Google Chrome にて動作を確認しています。
 
 #### 機能改善
 
-- 同時にキー入力した場合に同レーンに配置されるように (thanks: @suzme)
+- 同時にキー入力した場合に同行に配置されるように ( thanks: @suzme )
   - CONFIGの`simultaneous threshold`で許容ms範囲を変更できます(-1で無効)
 
 ### ver 3.1.0
