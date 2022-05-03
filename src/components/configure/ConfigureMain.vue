@@ -26,11 +26,11 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import ConfigureUploader from "./ConfigureUploader.vue";
 import ConfigureDesign from "./ConfigureDesign.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ConfigureMain",
   components: {
     ConfigureUploader,

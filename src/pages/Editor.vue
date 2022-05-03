@@ -9,18 +9,18 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import EditorController from "@/components/editor/EditorController.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Editor",
   components: {
     EditorController
   },
   props: {
-    loadScoreDataStr: String,
-    loadMusicUrl: String,
-    selectedKey: String
+    loadScoreDataStr: { type: String, required: true },
+    loadMusicUrl: { type: String, required: true },
+    selectedKey: { type: String, required: true }
   },
   beforeRouteLeave(to, from, next) {
     const answer = window.confirm("内容が消去されますがよろしいですか？");

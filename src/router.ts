@@ -1,13 +1,10 @@
-import Vue from "vue";
 import Editor from "./pages/Editor.vue";
 import Start from "./pages/Start.vue";
 import Configure from "./pages/Configure.vue";
-import Router from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { CustomKeyKind } from "./model/KeyKind";
 
-Vue.config.productionTip = false;
-
-Vue.use(Router);
+//Vue.config.productionTip = false;
 
 type PropsType = {
   loadScoreDataStr: string;
@@ -15,7 +12,8 @@ type PropsType = {
   selectedKey: CustomKeyKind;
 };
 
-export default new Router({
+export default createRouter({
+  history: createWebHashHistory(),
   routes: [
     {
       path: "/",
@@ -28,8 +26,8 @@ export default new Router({
       component: Editor,
       props(routes): PropsType {
         return {
-          loadScoreDataStr: routes.params.scoreData,
-          loadMusicUrl: routes.params.musicUrl,
+          loadScoreDataStr: routes.params.scoreData as string,
+          loadMusicUrl: routes.params.musicUrl as string,
           selectedKey: (routes.params.key || "7") as CustomKeyKind
         };
       }

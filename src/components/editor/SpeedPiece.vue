@@ -9,10 +9,10 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import { SpeedType } from "../../model/Speed";
 import toPx from "./helper/toPx";
-export default Vue.extend({
+export default defineComponent({
   name: "SpeedPiece",
   model: {
     prop: "propValue",
@@ -26,11 +26,11 @@ export default Vue.extend({
   },
   computed: {
     top(): number {
-      return toPx(this.position, this.isReverse) + 15;
+      return toPx(this.position || 0, this.isReverse) + 15;
     },
     inputValue: {
       get(): number {
-        return this.propValue;
+        return this.propValue || 1;
       },
       set(inputValue: string) {
         const value = Number(inputValue);

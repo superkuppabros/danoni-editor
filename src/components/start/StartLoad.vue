@@ -34,14 +34,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 type DataType = {
   keyPhrase: string;
   phraseHistory: string[];
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorOption",
   data(): DataType {
     const phraseHistory: string[] = JSON.parse(
@@ -65,7 +65,7 @@ export default Vue.extend({
   methods: {
     submitPhrase() {
       const keyPhrase = this.keyPhrase;
-      this.$emit("load", keyPhrase);
+      this.$emit("submitPhrase", keyPhrase);
     },
     resetForm() {
       this.keyPhrase = "";

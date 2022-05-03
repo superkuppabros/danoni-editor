@@ -1,4 +1,4 @@
-import Vue from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 import UIkit from "uikit";
@@ -7,15 +7,8 @@ import Icons from "uikit/dist/js/uikit-icons";
 import "uikit/dist/css/uikit.min.css";
 import "uikit/dist/css/uikit-core.min.css";
 
-import sourceMapSupport from "source-map-support";
-
-sourceMapSupport.install();
-
 UIkit.use(Icons);
 
-Vue.config.productionTip = false;
-
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount("#app");
+const app = createApp(App)
+app.use(router)
+app.mount("#app");

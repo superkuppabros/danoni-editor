@@ -15,9 +15,9 @@
       @page-jump="pageJump"
     ></editor-main>
     <editor-option
-      :scoreNumber.sync="scoreNumber"
-      :musicVolume.sync="musicVolume"
-      :musicRate.sync="musicRate"
+      v-model:scoreNumber="scoreNumber"
+      v-model:musicVolume="musicVolume"
+      v-model:musicRate="musicRate"
     ></editor-option>
     <editor-save @save="save"></editor-save>
     <div id="editor-menu">
@@ -112,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import EditorMain from "./EditorMain.vue";
 import EditorOption from "./EditorOption.vue";
 import { Timing } from "../../model/Timing";
@@ -140,7 +140,7 @@ type DataType = {
   scoreConvertService: ScoreConvertService;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorController",
   components: {
     EditorMain,

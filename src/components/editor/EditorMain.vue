@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import Konva from "konva";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
@@ -75,18 +75,18 @@ type DataType = {
   previousDate: Date;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorMain",
   props: {
     pageNum: Number,
-    loadScoreData: { type: Object as PropType<ScoreData> },
+    loadScoreData: { type: Object as PropType<ScoreData>, required: true },
     loadMusicUrl: String,
-    keyConfig: { type: Object as PropType<CustomKeyConfig> },
-    keyKind: { type: String as PropType<CustomKeyKind> },
-    timing: { type: Object as PropType<Timing> },
+    keyConfig: { type: Object as PropType<CustomKeyConfig>, required: true },
+    keyKind: { type: String as PropType<CustomKeyKind>, required: true },
+    timing: { type: Object as PropType<Timing>, required: true },
     propScoreNumber: Number,
-    musicVolume: Number,
-    musicRate: Number
+    musicVolume: { type: Number, required: true },
+    musicRate: { type: Number, required: true }
   },
   components: { SpeedPiece },
   data(): DataType {
@@ -222,7 +222,7 @@ export default Vue.extend({
         this.musicService.play(startTime, musicVolume, musicRate);
         this.currentPositionService.musicAnimate(playDuration);
         if (this.musicTimer) {
-          const timer: number = setTimeout(() => {
+          const timer: number = window.setTimeout(() => {
             this.musicService.pause();
             loop(startTime, endTime);
           }, playDuration);
@@ -591,8 +591,8 @@ export default Vue.extend({
       this.keyConfig,
       this.keyKind,
       this.isReverse,
-      this.stage,
-      this.notesLayer,
+      stage,
+      notesLayer,
       this.operationQueue
     );
 
@@ -600,8 +600,8 @@ export default Vue.extend({
       this.scoreData,
       this.editorWidth,
       this.isReverse,
-      this.stage,
-      this.notesLayer
+      stage,
+      notesLayer
     );
 
     this.pageScoreService = new PageScoreService(
@@ -616,8 +616,8 @@ export default Vue.extend({
       this.scoreData,
       this.editorWidth,
       this.isReverse,
-      this.stage,
-      this.currentPositionLayer,
+      stage,
+      currentPositionLayer,
       position => (this.currentPosition = position)
     );
 
@@ -630,7 +630,7 @@ export default Vue.extend({
     if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
   },
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     // 画面終了時に音楽を止める
     if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
   },

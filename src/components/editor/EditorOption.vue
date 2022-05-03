@@ -43,13 +43,13 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "EditorOption",
   props: {
-    scoreNumber: Number,
-    musicVolume: Number,
-    musicRate: Number
+    scoreNumber: { type: Number, required: true },
+    musicVolume: { type: Number, required: true },
+    musicRate: { type: Number, required: true }
   },
   computed: {
     inputScoreNumber: {

@@ -10,11 +10,7 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "jest"
-    ],
+    "baseUrl": "./",
     "paths": {
       "@/*": [
         "src/*"
@@ -34,5 +30,6 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

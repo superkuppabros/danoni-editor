@@ -1,6 +1,6 @@
 <template>
   <div id="start-container">
-    <start-load @load="load"></start-load>
+    <start-load @submitPhrase="load"></start-load>
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
       <start-uploader
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import StartUploader from "./StartUploader.vue";
 import { CustomKeyKind } from "@/model/KeyKind";
 import { CustomKeyConfig } from "../../model/KeyConfig";
@@ -63,11 +63,11 @@ type DataType = {
   musicTitle: string;
   scoreTitle: string;
   selectedKey: CustomKeyKind;
-  musicUrl: string | null;
-  scoreDataStr: string | null;
+  musicUrl: string;
+  scoreDataStr: string;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "StartMain",
   components: {
     StartUploader,
@@ -81,8 +81,8 @@ export default Vue.extend({
       musicTitle: "楽曲ファイルをドロップ",
       scoreTitle: "セーブファイルをドロップ",
       selectedKey: "5",
-      musicUrl: null,
-      scoreDataStr: null
+      musicUrl: "",
+      scoreDataStr: ""
     };
   },
   computed: {

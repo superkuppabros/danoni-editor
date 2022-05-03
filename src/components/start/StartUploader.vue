@@ -17,21 +17,19 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 type DataType = {
-  vue: Vue;
   file: File | null;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "StartUploader",
   props: {
     msg: String
   },
   data(): DataType {
     return {
-      vue: this,
       file: null
     };
   },

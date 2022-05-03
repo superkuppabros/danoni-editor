@@ -154,7 +154,7 @@ export class NoteService {
     laneFreezes.push(verticalSizeNum);
 
     const fills = notesLayer.find(`.freeze-fill-${lane}`);
-    fills.each(node => node.destroy());
+    fills.forEach(node => node.destroy());
 
     while (laneFreezes.length > 0) {
       const freezeStart = laneFreezes.shift() as number;
