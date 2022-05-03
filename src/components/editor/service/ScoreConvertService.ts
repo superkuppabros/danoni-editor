@@ -49,13 +49,13 @@ export class ScoreConvertService {
         const calculateFrame = (position: number) =>
           Math.round(positionToFrame(timing, pageNum, position, blankFrame));
 
-        const pageNoteFrames = pageScore.notes.map(notesArr =>
+        const pageNoteFrames = pageScore.notes.map((notesArr) =>
           notesArr.sort((a, b) => a - b).map(calculateFrame)
         );
-        const freezeNoteFrames = pageScore.freezes.map(freezesArr =>
+        const freezeNoteFrames = pageScore.freezes.map((freezesArr) =>
           freezesArr.sort((a, b) => a - b).map(calculateFrame)
         );
-        const speedsNoteFrames = pageScore.speeds.map(speed => {
+        const speedsNoteFrames = pageScore.speeds.map((speed) => {
           const newSpeed: Speed = cloneDeep(speed);
           newSpeed.position = calculateFrame(speed.position);
           return newSpeed;
@@ -63,7 +63,7 @@ export class ScoreConvertService {
         frameScores.push({
           notes: pageNoteFrames,
           freezes: freezeNoteFrames,
-          speeds: speedsNoteFrames
+          speeds: speedsNoteFrames,
         });
       }
     }
@@ -75,7 +75,7 @@ export class ScoreConvertService {
       notes: new Array(this.keyNum).fill([]).map(() => []),
       freezes: new Array(this.keyNum).fill([]).map(() => []),
       speeds: [],
-      boosts: []
+      boosts: [],
     };
 
     const outputData: OutputData = frameScores.reduce(
@@ -85,10 +85,10 @@ export class ScoreConvertService {
           data.freezes[i] = data.freezes[i].concat(currentPage.freezes[i]);
         }
         data.speeds = data.speeds.concat(
-          currentPage.speeds.filter(speed => speed.type === "speed")
+          currentPage.speeds.filter((speed) => speed.type === "speed")
         );
         data.boosts = data.boosts.concat(
-          currentPage.speeds.filter(speed => speed.type === "boost")
+          currentPage.speeds.filter((speed) => speed.type === "boost")
         );
         return data;
       },
@@ -101,11 +101,11 @@ export class ScoreConvertService {
   private makeEasySave(scoreData: ScoreData): string {
     const keyKind: string = scoreData.keyKind as string;
     const blankFrame: number = scoreData.blankFrame;
-    const labels: number[] = scoreData.timings.map(timing => timing.label);
+    const labels: number[] = scoreData.timings.map((timing) => timing.label);
     const startNumbers: number[] = scoreData.timings.map(
-      timing => timing.startNum
+      (timing) => timing.startNum
     );
-    const bpms: number[] = scoreData.timings.map(timing => timing.bpm);
+    const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
     const scoreNumber = scoreData.scoreNumber || 1;
 
     const easySave =
@@ -148,12 +148,12 @@ export class ScoreConvertService {
 
     const speedStr = (
       "speed_data=" +
-      data.speeds.map(speed => `${speed.position},${speed.value}`).join(",") +
+      data.speeds.map((speed) => `${speed.position},${speed.value}`).join(",") +
       "|"
     ).replace(/_/g, `${scorePostfix}_`);
     const boostStr = (
       "boost_data=" +
-      data.boosts.map(speed => `${speed.position},${speed.value}`).join(",") +
+      data.boosts.map((speed) => `${speed.position},${speed.value}`).join(",") +
       "|"
     ).replace(/_/g, `${scorePostfix}_`);
 

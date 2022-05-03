@@ -1,6 +1,6 @@
 import {
   ScoreConvertService,
-  FrameData
+  FrameData,
 } from "@/components/editor/service/ScoreConvertService";
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
@@ -11,7 +11,7 @@ import {
   test2DosData,
   test2ScoreData,
   testDosData,
-  testScoreData
+  testScoreData,
 } from "./testScoreData";
 
 describe("scoreConvertService", () => {
@@ -26,21 +26,21 @@ describe("scoreConvertService", () => {
       {
         notes: [[200], [], [240], [], []],
         freezes: [[], [], [], [280], []],
-        speeds: []
+        speeds: [],
       },
       {
         notes: [[], [360, 380], [400], [], []],
         freezes: [[], [], [], [360], []],
         speeds: [
           { position: 360, value: 1.1, type: "speed" },
-          { position: 400, value: 0.8, type: "boost" }
-        ]
+          { position: 400, value: 0.8, type: "boost" },
+        ],
       },
       {
         notes: [[], [], [], [], [440, 500]],
         freezes: [[], [], [], [], []],
-        speeds: [{ position: 440, value: 0.7, type: "speed" }]
-      }
+        speeds: [{ position: 440, value: 0.7, type: "speed" }],
+      },
     ];
 
     expect(scoreConverter.toFrameData(scoreData)).toStrictEqual(

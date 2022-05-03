@@ -7,7 +7,7 @@ import {
   noteColors,
   noteWidth,
   noteHeight,
-  verticalSizeNum
+  verticalSizeNum,
 } from "../EditorConstant";
 import toPx from "../helper/toPx";
 import { cloneDeep } from "lodash";
@@ -50,12 +50,12 @@ export class NoteService {
   // ノーツの削除
   remove(page: number, lane: number, position: number): void {
     const removedFreezes = this.scoreData.scores[page - 1].freezes[lane].filter(
-      pos => pos !== position
+      (pos) => pos !== position
     );
     this.scoreData.scores[page - 1].freezes.splice(lane, 1, removedFreezes);
 
     const removedNotes = this.scoreData.scores[page - 1].notes[lane].filter(
-      pos => pos !== position
+      (pos) => pos !== position
     );
     this.scoreData.scores[page - 1].notes.splice(lane, 1, removedNotes);
   }
@@ -76,7 +76,7 @@ export class NoteService {
       width: noteWidth,
       height: noteHeight,
       fill: color,
-      id: `note-${lane}-${position}`
+      id: `note-${lane}-${position}`,
     });
     notesLayer.add(note);
     stage.add(notesLayer);
@@ -110,7 +110,7 @@ export class NoteService {
       page,
       position,
       lane,
-      isFreeze
+      isFreeze,
     });
   }
 
@@ -128,7 +128,7 @@ export class NoteService {
         page,
         position,
         lane,
-        isFreeze
+        isFreeze,
       });
   }
 
@@ -154,7 +154,7 @@ export class NoteService {
     laneFreezes.push(verticalSizeNum);
 
     const fills = notesLayer.find(`.freeze-fill-${lane}`);
-    fills.forEach(node => node.destroy());
+    fills.forEach((node) => node.destroy());
 
     while (laneFreezes.length > 0) {
       const freezeStart = laneFreezes.shift() as number;
@@ -173,7 +173,7 @@ export class NoteService {
         opacity,
         fill: color,
         name: `freeze-fill-${lane}`,
-        id: `freeze-fill-${lane}-${freezeStart}`
+        id: `freeze-fill-${lane}-${freezeStart}`,
       });
       notesLayer.add(fillFreeze);
     }
@@ -190,7 +190,7 @@ export class NoteService {
         this.remove(page, lane, position);
         removedLanes.push({
           lane,
-          isFreeze: noteStatus.isFreeze
+          isFreeze: noteStatus.isFreeze,
         });
       }
     }
@@ -203,7 +203,7 @@ export class NoteService {
       type: "REMOVE_ON_POSITION",
       page,
       position,
-      removedLanes
+      removedLanes,
     });
   }
 
@@ -213,7 +213,7 @@ export class NoteService {
     currentPosition: number,
     notesOnPosition: NoteOnPosition[]
   ) {
-    notesOnPosition.forEach(obj =>
+    notesOnPosition.forEach((obj) =>
       this.add(page, obj.lane, currentPosition, obj.isFreeze)
     );
   }
@@ -244,7 +244,7 @@ export class NoteService {
       newPage,
       newPosition,
       movedLanes,
-      originalLanes
+      originalLanes,
     });
   }
 }

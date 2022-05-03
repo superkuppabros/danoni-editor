@@ -4,7 +4,7 @@ import {
   test2DosData,
   test2ScoreData,
   testDosData,
-  testScoreData
+  testScoreData,
 } from "./testScoreData";
 
 describe("dosConvert", () => {

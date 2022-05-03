@@ -7,7 +7,7 @@
     <div id="configure-uploader">
       <configure-uploader
         :msg="confTitle"
-        @fileRecieve="onConfFileRecieve"
+        @file-recieve="onConfFileRecieve"
       ></configure-uploader>
       <div class="start-btn btn-gray" @click="resetConf">RESET</div>
     </div>
@@ -16,7 +16,7 @@
       <router-link
         :to="{
           name: 'start',
-          path: '/'
+          path: '/',
         }"
         class="start-btn btn-blue"
         >BACK</router-link
@@ -34,11 +34,11 @@ export default defineComponent({
   name: "ConfigureMain",
   components: {
     ConfigureUploader,
-    ConfigureDesign
+    ConfigureDesign,
   },
   data() {
     return {
-      confTitle: "ファイルをドロップ"
+      confTitle: "ファイルをドロップ",
     };
   },
   methods: {
@@ -69,7 +69,7 @@ export default defineComponent({
       const storage = localStorage;
       storage.removeItem("customKeyConfig");
       alert("キー設定をリセットしました。");
-    }
-  }
+    },
+  },
 });
 </script>

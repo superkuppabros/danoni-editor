@@ -9,6 +9,6 @@ import "uikit/dist/css/uikit-core.min.css";
 
 UIkit.use(Icons);
 
-const app = createApp(App)
-app.use(router)
+const app = createApp(App);
+app.use(router);
 app.mount("#app");

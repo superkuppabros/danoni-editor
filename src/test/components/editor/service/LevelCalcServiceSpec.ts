@@ -1,6 +1,6 @@
 import {
   LevelCalcService,
-  FlattenData
+  FlattenData,
 } from "@/components/editor/service/LevelCalcService";
 
 describe("levelCalcService", () => {
@@ -11,7 +11,7 @@ describe("levelCalcService", () => {
     const expectedData: FlattenData = {
       allScorebook: [200, 200, 240, 240, 260, 280, 280],
       frzStartData: [200, 240, 260],
-      frzEndData: [220, 260, 290]
+      frzEndData: [220, 260, 290],
     };
     expect(
       levelCalcService["calcFlattenData"](noteFrames, freezeFrames)
@@ -31,7 +31,7 @@ describe("levelCalcService", () => {
     const flattenData: FlattenData = {
       allScorebook: [200, 200, 240, 240, 240, 260, 300],
       frzStartData: [200, 240],
-      frzEndData: [220, 280]
+      frzEndData: [220, 280],
     };
     const adjustValue = levelCalcService.calcAdjustValue(flattenData);
 
@@ -48,7 +48,7 @@ describe("levelCalcService", () => {
       [350],
       [240, 350],
       [200, 240, 260, 300],
-      [310, 320, 325, 330, 340, 350]
+      [310, 320, 325, 330, 340, 350],
     ];
     const freezeFrames = [[200, 220], [240, 280], [], [], []];
     // 実際のツール値
@@ -62,7 +62,7 @@ describe("levelCalcService", () => {
     const freezeFrames = [[], [], [], [305, 333], []];
     const expectedValue = {
       notesCountArr: [4, 2, 0, 1, 0],
-      freezesCountArr: [0, 0, 0, 1, 0]
+      freezesCountArr: [0, 0, 0, 1, 0],
     };
     expect(levelCalcService.countNotes(noteFrames, freezeFrames)).toStrictEqual(
       expectedValue

@@ -11,7 +11,7 @@ import ConfigureMain from "@/components/configure/ConfigureMain.vue";
 export default defineComponent({
   name: "Configure",
   components: {
-    ConfigureMain
-  }
+    ConfigureMain,
+  },
 });
 </script>

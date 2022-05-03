@@ -24,8 +24,8 @@ export class DefaultScoreData implements ScoreData {
     {
       label: 1,
       startNum: 0,
-      bpm: 140
-    }
+      bpm: 140,
+    },
   ];
 
   scoreNumber = 1;

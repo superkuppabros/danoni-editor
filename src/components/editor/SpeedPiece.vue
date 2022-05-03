@@ -1,9 +1,9 @@
 <template>
   <input
+    v-model="inputValue"
     type="number"
     step="0.01"
     class="editor-speed-piece"
-    v-model="inputValue"
     :style="{ top: top + 'px' }"
   />
 </template>
@@ -16,14 +16,15 @@ export default defineComponent({
   name: "SpeedPiece",
   model: {
     prop: "propValue",
-    event: "changeSpeed"
+    event: "changeSpeed",
   },
   props: {
-    isReverse: Boolean,
-    position: Number,
-    propValue: Number,
-    type: { type: String as PropType<SpeedType> }
+    isReverse: { type: Boolean, required: true },
+    position: { type: Number, required: true },
+    propValue: { type: Number, default: 1 },
+    type: { type: String as PropType<SpeedType>, required: true },
   },
+  emits: ["changeSpeed"],
   computed: {
     top(): number {
       return toPx(this.position || 0, this.isReverse) + 15;
@@ -35,8 +36,8 @@ export default defineComponent({
       set(inputValue: string) {
         const value = Number(inputValue);
         this.$emit("changeSpeed", value);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 </script>

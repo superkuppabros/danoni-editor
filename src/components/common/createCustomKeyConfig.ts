@@ -1,7 +1,7 @@
 import {
   KeyConfig,
   CustomKeyConfig,
-  DefaultKeyConfig
+  DefaultKeyConfig,
 } from "@/model/KeyConfig";
 
 export function createCustomKeyConfig(): CustomKeyConfig {

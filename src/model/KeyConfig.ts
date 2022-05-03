@@ -38,16 +38,16 @@ export const DefaultKeyConfig: KeyConfig = {
       "down_data",
       "up_data",
       "right_data",
-      "space_data"
+      "space_data",
     ],
     freezeNames: [
       "frzLeft_data",
       "frzDown_data",
       "frzUp_data",
       "frzRight_data",
-      "frzSpace_data"
+      "frzSpace_data",
     ],
-    colorGroup: [0, 0, 0, 0, 2]
+    colorGroup: [0, 0, 0, 0, 2],
   },
 
   "7": {
@@ -63,7 +63,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "space_data",
       "up_data",
       "rightdia_data",
-      "right_data"
+      "right_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -72,9 +72,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzSpace_data",
       "frzUp_data",
       "frzRdia_data",
-      "frzRight_data"
+      "frzRight_data",
     ],
-    colorGroup: [0, 1, 0, 2, 0, 1, 0]
+    colorGroup: [0, 1, 0, 2, 0, 1, 0],
   },
 
   "7i": {
@@ -90,7 +90,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "space_data",
       "up_data",
       "rightdia_data",
-      "right_data"
+      "right_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -99,9 +99,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzSpace_data",
       "frzUp_data",
       "frzRdia_data",
-      "frzRight_data"
+      "frzRight_data",
     ],
-    colorGroup: [1, 1, 1, 0, 0, 0, 0]
+    colorGroup: [1, 1, 1, 0, 0, 0, 0],
   },
 
   "8": {
@@ -118,7 +118,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "up_data",
       "rightdia_data",
       "right_data",
-      "sleft_data"
+      "sleft_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -128,9 +128,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzUp_data",
       "frzRdia_data",
       "frzRight_data",
-      "sfrzLeft_data"
+      "sfrzLeft_data",
     ],
-    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2]
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2],
   },
 
   "9A": {
@@ -145,7 +145,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyJ",
       "KeyK",
       "KeyI",
-      "KeyL"
+      "KeyL",
     ],
     chars: ["S", "D", "E", "F", "G", "J", "K", "I", "L"],
     alternativeKeys: ["", "", "KeyR", "", "KeyH", "", "", "KeyO", ""],
@@ -158,7 +158,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -169,9 +169,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1]
+    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1],
   },
 
   "9B": {
@@ -186,7 +186,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyJ",
       "KeyK",
       "KeyL",
-      "Semicolon"
+      "Semicolon",
     ],
     chars: ["A", "S", "D", "F", "G", "J", "K", "L", "+"],
     alternativeKeys: ["", "", "", "", "KeyH", "", "", "", ""],
@@ -199,7 +199,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -210,9 +210,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [1, 0, 1, 0, 2, 0, 1, 0, 1]
+    colorGroup: [1, 0, 1, 0, 2, 0, 1, 0, 1],
   },
 
   "9i": {
@@ -227,7 +227,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyJ",
       "KeyK",
       "KeyI",
-      "KeyL"
+      "KeyL",
     ],
     chars: ["A", "S", "D", "F", "G", "J", "K", "I", "L"],
     alternativeKeys: ["", "", "", "", "KeyH", "", "", "KeyO", ""],
@@ -240,7 +240,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -251,9 +251,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [1, 0, 1, 0, 2, 3, 3, 3, 3]
+    colorGroup: [1, 0, 1, 0, 2, 3, 3, 3, 3],
   },
 
   "11": {
@@ -270,7 +270,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     alternativeKeys: ["", "", "", "KeyH", "", "", "", "", "", "Digit9", ""],
     chars: ["S", "D", "F", "G", "J", "K", "L", "U", "I", "8", "O"],
@@ -285,7 +285,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -298,9 +298,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3],
   },
 
   "11L": {
@@ -317,7 +317,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyG",
       "KeyJ",
       "KeyK",
-      "KeyL"
+      "KeyL",
     ],
     chars: ["W", "E", "3", "R", "S", "D", "F", "G", "J", "K", "L"],
     alternativeKeys: ["", "", "Digit4", "", "", "", "", "KeyH", "", "", ""],
@@ -332,7 +332,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "space_data",
       "up_data",
       "rightdia_data",
-      "right_data"
+      "right_data",
     ],
     freezeNames: [
       "sfrzLeft_data",
@@ -345,9 +345,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzSpace_data",
       "frzUp_data",
       "frzRdia_data",
-      "frzRight_data"
+      "frzRight_data",
     ],
-    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0]
+    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0],
   },
 
   "11W": {
@@ -364,7 +364,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit2",
       "KeyT",
       "KeyY",
-      "Digit0"
+      "Digit0",
     ],
     chars: ["S", "D", "F", "G", "J", "K", "L", "2", "T", "Y", "0"],
     alternativeKeys: [
@@ -378,7 +378,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Digit1",
       "",
       "",
-      "Minus"
+      "Minus",
     ],
     noteNames: [
       "left_data",
@@ -391,7 +391,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -404,9 +404,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2, 3, 3, 2]
+    colorGroup: [0, 1, 0, 2, 0, 1, 0, 2, 3, 3, 2],
   },
 
   "11i": {
@@ -423,7 +423,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyM",
       "KeyK",
       "KeyI",
-      "KeyL"
+      "KeyL",
     ],
     chars: ["S", "C", "D", "E", "F", "G", "J", "M", "K", "I", "L"],
     alternativeKeys: [
@@ -437,7 +437,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Comma",
       "",
       "KeyO",
-      ""
+      "",
     ],
     noteNames: [
       "left_data",
@@ -450,7 +450,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sdown_data",
       "siyo_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -463,9 +463,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzIyo_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [0, 0, 2, 0, 0, 2, 1, 1, 2, 1, 1]
+    colorGroup: [0, 0, 2, 0, 0, 2, 1, 1, 2, 1, 1],
   },
 
   "12": {
@@ -483,7 +483,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: ["G", "N", "J", "M", "K", "<", "L", ">", "U", "I", "8", "O"],
     alternativeKeys: ["KeyH", "", "", "", "", "", "", "", "", "", "Digit9", ""],
@@ -499,7 +499,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sleft_data",
       "sdown_data",
       "sup_data",
-      "sright_data"
+      "sright_data",
     ],
     freezeNames: [
       "foni_data",
@@ -513,9 +513,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzLeft_data",
       "sfrzDown_data",
       "sfrzUp_data",
-      "sfrzRight_data"
+      "sfrzRight_data",
     ],
-    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 3, 3, 3, 3]
+    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 3, 3, 3, 3],
   },
 
   "13": {
@@ -534,7 +534,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: ["A", "S", "D", "F", "G", "J", "K", "L", "+", "U", "I", "8", "O"],
     alternativeKeys: [
@@ -550,7 +550,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "",
       "Digit9",
-      ""
+      "",
     ],
     noteNames: [
       "left_data",
@@ -565,7 +565,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "tleft_data",
       "tdown_data",
       "tup_data",
-      "tright_data"
+      "tright_data",
     ],
     freezeNames: [
       "frzLeft_data",
@@ -580,9 +580,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "tfrzLeft_data",
       "tfrzDown_data",
       "tfrzUp_data",
-      "tfrzRight_data"
+      "tfrzRight_data",
     ],
-    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 3, 3, 3]
+    colorGroup: [0, 0, 0, 0, 2, 1, 1, 1, 1, 3, 3, 3, 3],
   },
 
   "14": {
@@ -602,7 +602,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyI",
       "Digit8",
       "KeyO",
-      "KeyP"
+      "KeyP",
     ],
     chars: [
       "G",
@@ -618,7 +618,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "I",
       "8",
       "O",
-      "P"
+      "P",
     ],
     alternativeKeys: [
       "KeyH",
@@ -634,7 +634,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "Digit9",
       "",
-      "BracketLeft"
+      "BracketLeft",
     ],
     noteNames: [
       "oni_data",
@@ -650,7 +650,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sdown_data",
       "sup_data",
       "sright_data",
-      "srightdia_data"
+      "srightdia_data",
     ],
     freezeNames: [
       "foni_data",
@@ -666,9 +666,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzDown_data",
       "sfrzUp_data",
       "sfrzRight_data",
-      "sfrzRdia_data"
+      "sfrzRdia_data",
     ],
-    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 2, 3, 3, 3, 3, 2]
+    colorGroup: [2, 0, 1, 0, 1, 0, 1, 0, 2, 3, 3, 3, 3, 2],
   },
 
   "14i": {
@@ -688,7 +688,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: [
       "Z",
@@ -704,7 +704,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "U",
       "I",
       "8",
-      "O"
+      "O",
     ],
     alternativeKeys: [
       "",
@@ -720,7 +720,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "",
       "Digit9",
-      ""
+      "",
     ],
     noteNames: [
       "gor_data",
@@ -736,7 +736,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "left_data",
       "down_data",
       "up_data",
-      "right_data"
+      "right_data",
     ],
     freezeNames: [
       "frzGor_data",
@@ -752,9 +752,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzLeft_data",
       "frzDown_data",
       "frzUp_data",
-      "frzRight_data"
+      "frzRight_data",
     ],
-    colorGroup: [2, 2, 2, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
+    colorGroup: [2, 2, 2, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3],
   },
 
   "15": {
@@ -775,7 +775,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: [
       "W",
@@ -792,7 +792,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "U",
       "I",
       "8",
-      "O"
+      "O",
     ],
     alternativeKeys: [
       "",
@@ -809,7 +809,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "",
       "Digit9",
-      ""
+      "",
     ],
     noteNames: [
       "sleft_data",
@@ -826,7 +826,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "tleft_data",
       "tdown_data",
       "tup_data",
-      "tright_data"
+      "tright_data",
     ],
     freezeNames: [
       "sfrzLeft_data",
@@ -843,9 +843,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "tfrzLeft_data",
       "tfrzDown_data",
       "tfrzUp_data",
-      "tfrzRight_data"
+      "tfrzRight_data",
     ],
-    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3]
+    colorGroup: [3, 3, 3, 3, 0, 1, 0, 2, 0, 1, 0, 3, 3, 3, 3],
   },
 
   "16i": {
@@ -867,7 +867,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: [
       "Z",
@@ -885,7 +885,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "U",
       "I",
       "8",
-      "O"
+      "O",
     ],
     alternativeKeys: [
       "",
@@ -903,7 +903,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "",
       "Digit9",
-      ""
+      "",
     ],
     noteNames: [
       "gor_data",
@@ -921,7 +921,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "left_data",
       "down_data",
       "up_data",
-      "right_data"
+      "right_data",
     ],
     freezeNames: [
       "frzGor_data",
@@ -939,9 +939,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "frzLeft_data",
       "frzDown_data",
       "frzUp_data",
-      "frzRight_data"
+      "frzRight_data",
     ],
-    colorGroup: [2, 2, 2, 1, 0, 1, 0, 2, 0, 1, 0, 1, 3, 3, 3, 3]
+    colorGroup: [2, 2, 2, 1, 0, 1, 0, 2, 0, 1, 0, 1, 3, 3, 3, 3],
   },
 
   "17": {
@@ -964,7 +964,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "Comma",
       "KeyL",
       "Period",
-      "Semicolon"
+      "Semicolon",
     ],
     chars: [
       "A",
@@ -983,7 +983,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "<",
       "L",
       ">",
-      "+"
+      "+",
     ],
     alternativeKeys: ["", "", "", "", "", "", "", "", "KeyH"],
     noteNames: [
@@ -1003,7 +1003,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "cup_data",
       "dup_data",
       "cright_data",
-      "dright_data"
+      "dright_data",
     ],
     freezeNames: [
       "afrzLeft_data",
@@ -1022,9 +1022,9 @@ export const DefaultKeyConfig: KeyConfig = {
       "cfrzUp_data",
       "dfrzUp_data",
       "cfrzRight_data",
-      "dfrzRight_data"
+      "dfrzRight_data",
     ],
-    colorGroup: [0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0]
+    colorGroup: [0, 1, 0, 1, 0, 1, 0, 1, 2, 1, 0, 1, 0, 1, 0, 1, 0],
   },
 
   "23": {
@@ -1053,7 +1053,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "KeyU",
       "KeyI",
       "Digit8",
-      "KeyO"
+      "KeyO",
     ],
     chars: [
       "W",
@@ -1078,7 +1078,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "U",
       "I",
       "8",
-      "O"
+      "O",
     ],
     alternativeKeys: [
       "",
@@ -1103,7 +1103,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "",
       "",
       "Digit9",
-      ""
+      "",
     ],
     noteNames: [
       "aleft_data",
@@ -1128,7 +1128,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "bleft_data",
       "bdown_data",
       "bup_data",
-      "bright_data"
+      "bright_data",
     ],
     freezeNames: [
       "afrzLeft_data",
@@ -1153,32 +1153,10 @@ export const DefaultKeyConfig: KeyConfig = {
       "bfrzLeft_data",
       "bfrzDown_data",
       "bfrzUp_data",
-      "bfrzRight_data"
+      "bfrzRight_data",
     ],
     colorGroup: [
-      3,
-      3,
-      3,
-      3,
-      0,
-      1,
-      0,
-      1,
-      0,
-      1,
-      0,
-      2,
-      0,
-      1,
-      0,
-      1,
-      0,
-      1,
-      0,
-      3,
-      3,
-      3,
-      3
-    ]
-  }
+      3, 3, 3, 3, 0, 1, 0, 1, 0, 1, 0, 2, 0, 1, 0, 1, 0, 1, 0, 3, 3, 3, 3,
+    ],
+  },
 };

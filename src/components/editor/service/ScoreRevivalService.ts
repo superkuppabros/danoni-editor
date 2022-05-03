@@ -27,7 +27,7 @@ export class ScoreRevivalService {
     );
 
     const rawDict: { [name: string]: string } = fromPairs(
-      splitArray.map(elem => elem.split("="))
+      splitArray.map((elem) => elem.split("="))
     );
     try {
       const dict = this.fromOldCWToNewCW(rawDict);
@@ -47,14 +47,14 @@ export class ScoreRevivalService {
       const timings: Timing[] = labels.map((label, index) => ({
         label,
         startNum: startNumbers[index],
-        bpm: bpms[index]
+        bpm: bpms[index],
       }));
       const scoreData: ScoreData = {
         keyKind,
         blankFrame,
         timings,
         scoreNumber,
-        scores: []
+        scores: [],
       };
       return this.calcScoreData(dict, timings, scoreData);
     } catch {
@@ -80,8 +80,8 @@ export class ScoreRevivalService {
     const [noteFrames, freezeFrames, speedChangeFrames]: number[][][] = [
       noteNames,
       freezeNames,
-      speedChangeNames
-    ].map(names =>
+      speedChangeNames,
+    ].map((names) =>
       names
         .map((keyNameWithNum: string) =>
           keyNameWithNum.replace(scoreNumber.toString(), "")
@@ -89,7 +89,7 @@ export class ScoreRevivalService {
         .map((keyName: string) =>
           dict[keyName]
             .split(",")
-            .filter(x => x)
+            .filter((x) => x)
             .map((x: string) => Number(x))
         )
     );
@@ -132,7 +132,7 @@ export class ScoreRevivalService {
       .sort((a, b) => a.frame - b.frame);
 
     const speedsArr: Speed[][] = new Array(maxPage).fill([]).map(() => []);
-    frameSpeeds.forEach(frameSpeed => {
+    frameSpeeds.forEach((frameSpeed) => {
       const frame = frameSpeed.frame;
       const value = frameSpeed.value;
       const type = frameSpeed.type;
@@ -159,7 +159,7 @@ export class ScoreRevivalService {
       return {
         notes: noteScores[i],
         freezes: freezeScores[i],
-        speeds: speedsArr[i]
+        speeds: speedsArr[i],
       };
     });
 
@@ -188,7 +188,7 @@ export class ScoreRevivalService {
 
     frames.forEach((laneFrames, lane) => {
       let labelCounter = 0;
-      laneFrames.forEach(frame => {
+      laneFrames.forEach((frame) => {
         while (
           labelCounter + 1 < timings.length &&
           frame >= timings[labelCounter + 1].startNum + blankFrame
@@ -209,9 +209,9 @@ export class ScoreRevivalService {
     return arr;
   }
 
-  private fromOldCWToNewCW(dict: {
+  private fromOldCWToNewCW(dict: { [name: string]: string }): {
     [name: string]: string;
-  }): { [name: string]: string } {
+  } {
     try {
       const difData: string[] = dict["difData"].split(",");
       const firstNum: number[] = dict["first_num"]
@@ -227,14 +227,14 @@ export class ScoreRevivalService {
       dict.blankFrame = "200";
       let counter = 0; // ページの端数をカウント
       dict.label = habaPageNum
-        .map(x => x * 2 + 1)
+        .map((x) => x * 2 + 1)
         .map((x, i) => {
           if (i != 0 && habaPageNum[i] - habaPageNum[i - 1]) counter++;
           return Math.ceil(x + counter);
         })
         .join(",");
-      dict.startNumber = firstNum.map(x => x - 200).join(",");
-      dict.bpm = habaNum.map(x => 1800 / x).join(",");
+      dict.startNumber = firstNum.map((x) => x - 200).join(",");
+      dict.bpm = habaNum.map((x) => 1800 / x).join(",");
       const dictKeys = Object.keys(dict).join(",");
       const regRes = /(\d+)_/.exec(dictKeys);
       dict.scoreNumber = regRes ? regRes[1] : "1";

@@ -11,7 +11,7 @@ import StartMain from "@/components/start/StartMain.vue";
 export default defineComponent({
   name: "Start",
   components: {
-    StartMain
-  }
+    StartMain,
+  },
 });
 </script>

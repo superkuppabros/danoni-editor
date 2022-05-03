@@ -11,8 +11,8 @@ describe("noteService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const isReverse = true;
-  const stage = ("dummyStage" as unknown) as Konva.Stage;
-  const layer = ("dummyLayer" as unknown) as Konva.Layer;
+  const stage = "dummyStage" as unknown as Konva.Stage;
+  const layer = "dummyLayer" as unknown as Konva.Layer;
   const operationQueue: Operation[] = [];
 
   const scoreData: ScoreData = testScoreData;
@@ -31,15 +31,15 @@ describe("noteService", () => {
     const noteService = createNoteService(cloneDeep(scoreData));
     expect(noteService.hasNote(1, 0, 0)).toStrictEqual({
       exists: true,
-      isFreeze: false
+      isFreeze: false,
     });
     expect(noteService.hasNote(2, 3, 0)).toStrictEqual({
       exists: true,
-      isFreeze: true
+      isFreeze: true,
     });
     expect(noteService.hasNote(1, 1, 0)).toStrictEqual({
       exists: false,
-      isFreeze: false
+      isFreeze: false,
     });
   });
 

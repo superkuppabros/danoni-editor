@@ -18,7 +18,7 @@ export default createRouter({
     {
       path: "/",
       name: "start",
-      component: Start
+      component: Start,
     },
     {
       path: "/editor",
@@ -28,14 +28,14 @@ export default createRouter({
         return {
           loadScoreDataStr: routes.params.scoreData as string,
           loadMusicUrl: routes.params.musicUrl as string,
-          selectedKey: (routes.params.key || "7") as CustomKeyKind
+          selectedKey: (routes.params.key || "7") as CustomKeyKind,
         };
-      }
+      },
     },
     {
       path: "/configure",
       name: "configure",
-      component: Configure
-    }
-  ]
+      component: Configure,
+    },
+  ],
 });

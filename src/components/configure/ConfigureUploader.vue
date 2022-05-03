@@ -5,14 +5,14 @@
     @drop.prevent="ondrop"
   >
     <div
+      id="configure-droparea"
       uk-form-custom
       class="uk-placeholder uk-text-center uk-margin-remove-bottom uk-form-width-medium"
-      id="configure-droparea"
     >
       <input
-        type="file"
         id="configure-droparea-input"
         ref="input"
+        type="file"
         @change="loadFile"
       />
       <div id="configure-droparea-text">
@@ -34,12 +34,22 @@ type DataType = {
 export default defineComponent({
   name: "ConfigureUploader",
   props: {
-    msg: String
+    msg: { type: String, required: true },
   },
+  emits: ["fileRecieve"],
   data(): DataType {
     return {
-      file: null
+      file: null,
     };
+  },
+  watch: {
+    file(newFile: File | null) {
+      if (!(newFile === null)) {
+        this.$emit("fileRecieve", newFile);
+      } else {
+        alert("ファイルが見つかりませんでした。");
+      }
+    },
   },
   methods: {
     ondragover(e: DragEvent): void {
@@ -60,16 +70,7 @@ export default defineComponent({
       } else {
         this.file = null;
       }
-    }
+    },
   },
-  watch: {
-    file(newFile: File | null) {
-      if (!(newFile === null)) {
-        this.$emit("fileRecieve", newFile);
-      } else {
-        alert("ファイルが見つかりませんでした。");
-      }
-    }
-  }
 });
 </script>

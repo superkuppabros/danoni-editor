@@ -4,7 +4,7 @@ import { editorHeight, canvasMarginHorizontal } from "../EditorConstant";
 import {
   positionToFrame,
   positionToSeconds,
-  secondsToTimeStr
+  secondsToTimeStr,
 } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
 import toPx from "../helper/toPx";
@@ -36,7 +36,7 @@ export class CurrentPositionService {
             points: [0, 0, this.editorWidth, 0],
             stroke: color,
             strokeWidth: 1.75,
-            id: "currentPositionLine"
+            id: "currentPositionLine",
           });
     const radius = 6;
 
@@ -53,7 +53,7 @@ export class CurrentPositionService {
             fill: color,
             x: -radius,
             y: yValue,
-            id: `currentPositionTriangle`
+            id: `currentPositionTriangle`,
           });
 
     const blankFrame = this.scoreData.blankFrame;
@@ -87,7 +87,7 @@ export class CurrentPositionService {
             align: "center",
             x: -canvasMarginHorizontal + 2,
             y: yValue - textHeight / 2,
-            id: `currentPositionText`
+            id: `currentPositionText`,
           });
 
     currentPositionLayer.add(line, triangle, text);
@@ -114,7 +114,7 @@ export class CurrentPositionService {
             points: [0, 0, this.editorWidth, 0],
             stroke: "#8000ff",
             strokeWidth: 1.75,
-            id: "musicPosition"
+            id: "musicPosition",
           });
 
     currentPositionLayer.add(currentPositionLine);
@@ -124,7 +124,7 @@ export class CurrentPositionService {
       node: currentPositionLine,
       duration: (duration * 4) / 5 / 1000, // 10拍中の8拍で上まで到達する
       x: 0,
-      y: toPx(editorHeight, this.isReverse)
+      y: toPx(editorHeight, this.isReverse),
     });
 
     setTimeout(() => {

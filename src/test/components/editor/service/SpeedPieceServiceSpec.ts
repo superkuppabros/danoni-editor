@@ -8,8 +8,8 @@ import { Speed } from "@/model/Speed";
 describe("speedPieceService", () => {
   const editorWidth = 150;
   const isReverse = true;
-  const stage = ("dummyStage" as unknown) as Konva.Stage;
-  const layer = ("dummyLayer" as unknown) as Konva.Layer;
+  const stage = "dummyStage" as unknown as Konva.Stage;
+  const layer = "dummyLayer" as unknown as Konva.Layer;
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
@@ -28,7 +28,7 @@ describe("speedPieceService", () => {
     const expectedSpeed: Speed = {
       position: 0,
       value: 1,
-      type: "speed"
+      type: "speed",
     };
     expect(copiedScoreData.scores[0].speeds).toStrictEqual([expectedSpeed]);
   });

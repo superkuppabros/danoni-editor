@@ -8,35 +8,35 @@ export const testScoreData: ScoreData = {
     {
       label: 1,
       startNum: 0,
-      bpm: 180
+      bpm: 180,
     },
     {
       label: 3,
       startNum: 240,
-      bpm: 120
-    }
+      bpm: 120,
+    },
   ],
   scoreNumber: 1,
   scores: [
     {
       notes: [[0], [], [96], [], []],
       freezes: [[], [], [], [192], []],
-      speeds: []
+      speeds: [],
     },
     {
       notes: [[], [0, 48], [96], [], []],
       freezes: [[], [], [], [0], []],
       speeds: [
         { position: 0, value: 1.1, type: "speed" },
-        { position: 96, value: 0.8, type: "boost" }
-      ]
+        { position: 96, value: 0.8, type: "boost" },
+      ],
     },
     {
       notes: [[], [], [], [], [0, 96]],
       freezes: [[], [], [], [], []],
-      speeds: [{ position: 0, value: 0.7, type: "speed" }]
-    }
-  ]
+      speeds: [{ position: 0, value: 0.7, type: "speed" }],
+    },
+  ],
 };
 
 export const test2ScoreData: ScoreData = (() => {

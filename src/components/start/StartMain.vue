@@ -1,30 +1,30 @@
 <template>
   <div id="start-container">
-    <start-load @submitPhrase="load"></start-load>
+    <start-load @submit-phrase="load"></start-load>
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
       <start-uploader
         :msg="musicTitle"
-        @fileRecieve="onMusicFileRecieve"
+        @file-recieve="onMusicFileRecieve"
       ></start-uploader>
       <start-uploader
         :msg="scoreTitle"
-        @fileRecieve="onScoreFileRecieve"
+        @file-recieve="onScoreFileRecieve"
       ></start-uploader>
       <div id="start-go-next">
         <select
           id="start-key-selector"
-          class="uk-select uk-form-width-medium"
           v-model="selectedKey"
+          class="uk-select uk-form-width-medium"
         >
-          <option v-for="keyKind in keyKinds" :key="keyKind">{{
-            keyKind
-          }}</option>
+          <option v-for="keyKind in keyKinds" :key="keyKind">
+            {{ keyKind }}
+          </option>
         </select>
         <router-link
           :to="{
             name: 'configure',
-            path: 'configure'
+            path: 'configure',
           }"
           class="start-btn btn-orange"
           >CONFIG</router-link
@@ -37,8 +37,8 @@
             params: {
               scoreData: scoreDataStr,
               musicUrl: musicUrl,
-              key: selectedKey
-            }
+              key: selectedKey,
+            },
           }"
           class="start-btn btn-red"
           >START</router-link
@@ -71,7 +71,7 @@ export default defineComponent({
   name: "StartMain",
   components: {
     StartUploader,
-    StartLoad
+    StartLoad,
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
@@ -82,7 +82,7 @@ export default defineComponent({
       scoreTitle: "セーブファイルをドロップ",
       selectedKey: "5",
       musicUrl: "",
-      scoreDataStr: ""
+      scoreDataStr: "",
     };
   },
   computed: {
@@ -95,7 +95,10 @@ export default defineComponent({
 
     localSaveDataStr(): string {
       return localStorage.getItem("saveData") ?? "";
-    }
+    },
+  },
+  mounted() {
+    sessionStorage.removeItem("keyKind");
   },
   methods: {
     onMusicFileRecieve(file: File) {
@@ -134,7 +137,7 @@ export default defineComponent({
       this.$router.push({
         name: "editor",
         path: "editor",
-        params: { scoreData, musicUrl, key }
+        params: { scoreData, musicUrl, key },
       });
     },
     async loadData(keyPhrase: string) {
@@ -155,19 +158,13 @@ export default defineComponent({
         try {
           const save = await this.loadData(keyPhrase);
           // 前後のクオートを消す、クオートのエスケープを剥がす
-          const scoreData = save
-            .replaceAll('\\"', '"')
-            .slice(1)
-            .slice(0, -1);
+          const scoreData = save.replaceAll('\\"', '"').slice(1).slice(0, -1);
           this.moveToEditor(scoreData, this.musicUrl || "", this.selectedKey);
         } catch {
           alert("セーブデータの取得が出来ませんでした。");
         }
       }
-    }
+    },
   },
-  mounted() {
-    sessionStorage.removeItem("keyKind");
-  }
 });
 </script>
