@@ -60,6 +60,6 @@ export function undo(
 
   return {
     undoPage: operation.page || 1,
-    undoPosition: operation.position || 0
+    undoPosition: operation.position || 0,
   };
 }

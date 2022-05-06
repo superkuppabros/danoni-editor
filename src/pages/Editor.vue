@@ -9,35 +9,35 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import EditorController from "@/components/editor/EditorController.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Editor",
   components: {
-    EditorController
-  },
-  props: {
-    loadScoreDataStr: String,
-    loadMusicUrl: String,
-    selectedKey: String
+    EditorController,
   },
   beforeRouteLeave(to, from, next) {
     const answer = window.confirm("内容が消去されますがよろしいですか？");
     if (answer) next();
     else next(false);
   },
-
-  methods: {
-    beforeunloadAlert(event: BeforeUnloadEvent) {
-      event.returnValue = "内容が消去されますがよろしいですか？";
-    }
+  props: {
+    loadScoreDataStr: { type: String, required: true },
+    loadMusicUrl: { type: String, required: true },
+    selectedKey: { type: String, required: true },
   },
   created() {
     window.addEventListener("beforeunload", this.beforeunloadAlert);
   },
-  destroyed() {
+  unmounted() {
     window.removeEventListener("beforeunload", this.beforeunloadAlert);
-  }
+  },
+
+  methods: {
+    beforeunloadAlert(event: BeforeUnloadEvent) {
+      event.returnValue = "内容が消去されますがよろしいですか？";
+    },
+  },
 });
 </script>

@@ -29,10 +29,10 @@ export class LevelCalcService {
     const flattenData: FlattenData = {
       allScorebook: [],
       frzStartData: [],
-      frzEndData: []
+      frzEndData: [],
     };
 
-    freezeFrames.forEach(laneFreezes => {
+    freezeFrames.forEach((laneFreezes) => {
       flattenData.frzStartData = flattenData.frzStartData.concat(
         laneFreezes.filter((value, index) => index % 2 == 0)
       );
@@ -88,20 +88,20 @@ export class LevelCalcService {
       double: 0,
       overTriple: 0,
       overTripleFrame: [],
-      laneContinuous: 0
+      laneContinuous: 0,
     };
 
     uniqueScorebook.forEach((frame, index) => {
       const nextFrame = uniqueScorebook[index + 1];
 
-      const decreaseFrzNum = frzEndData.filter(f => f < frame).length;
+      const decreaseFrzNum = frzEndData.filter((f) => f < frame).length;
       currentFrzNum -= decreaseFrzNum;
       frzEndData.splice(0, decreaseFrzNum);
 
       // 3押し以上でも同時押し補正や単体上昇は存在する
 
       if (index !== uniqueScorebook.length - 1 && index !== 0) {
-        const hitsNum = allScorebook.filter(f => f === frame).length;
+        const hitsNum = allScorebook.filter((f) => f === frame).length;
         if (hitsNum + currentFrzNum > 2) {
           scoreDataInfo.overTriple += Math.min(
             hitsNum,
@@ -115,11 +115,11 @@ export class LevelCalcService {
           scoreDataInfo.double += doubleAdj;
         }
 
-        const increaseFrzNum = frzStartData.filter(f => f === frame).length;
+        const increaseFrzNum = frzStartData.filter((f) => f === frame).length;
         currentFrzNum += increaseFrzNum;
         frzStartData.splice(0, increaseFrzNum);
 
-        const exDecreaseFrzNum = frzEndData.filter(f => f < nextFrame).length;
+        const exDecreaseFrzNum = frzEndData.filter((f) => f < nextFrame).length;
         currentFrzNum -= exDecreaseFrzNum;
         frzEndData.splice(0, exDecreaseFrzNum);
 
@@ -164,8 +164,8 @@ export class LevelCalcService {
   }
 
   countNotes(noteFrames: number[][], freezeFrames: number[][]) {
-    const notesCountArr = noteFrames.map(notes => notes.length);
-    const freezesCountArr = freezeFrames.map(freezes => freezes.length / 2);
+    const notesCountArr = noteFrames.map((notes) => notes.length);
+    const freezesCountArr = freezeFrames.map((freezes) => freezes.length / 2);
     return { notesCountArr, freezesCountArr };
   }
 
@@ -184,8 +184,9 @@ export class LevelCalcService {
     const arrowsCount = this.countNotes(noteFrames, freezeFrames);
     const totalNotes = sum(arrowsCount.notesCountArr);
     const totalfreezes = sum(arrowsCount.freezesCountArr);
-    const arrowNumStr = `矢印数: ${totalNotes +
-      totalfreezes}(${totalNotes} + ${totalfreezes})`;
+    const arrowNumStr = `矢印数: ${
+      totalNotes + totalfreezes
+    }(${totalNotes} + ${totalfreezes})`;
     const notesStr = `通常ノーツ: (${arrowsCount.notesCountArr.join("/")})`;
     const freezesStr = `氷矢: (${arrowsCount.freezesCountArr.join("/")})`;
     const overTripleFrameStr = `3押し位置: (${scoreDataInfo.overTripleFrame.join(

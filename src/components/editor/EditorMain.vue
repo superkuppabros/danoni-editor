@@ -12,7 +12,7 @@
       v-model="speed.value"
       :position="speed.position"
       :type="speed.type"
-      :isReverse="isReverse"
+      :is-reverse="isReverse"
     ></speed-piece>
     <div id="editor-mode-text">
       入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import { defineComponent, PropType } from "vue";
 import Konva from "konva";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
@@ -35,7 +35,7 @@ import {
   noteColors,
   laneColors,
   canvasMarginHorizontal,
-  canvasMarginVertical
+  canvasMarginVertical,
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
@@ -75,20 +75,21 @@ type DataType = {
   previousDate: Date;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorMain",
-  props: {
-    pageNum: Number,
-    loadScoreData: { type: Object as PropType<ScoreData> },
-    loadMusicUrl: String,
-    keyConfig: { type: Object as PropType<CustomKeyConfig> },
-    keyKind: { type: String as PropType<CustomKeyKind> },
-    timing: { type: Object as PropType<Timing> },
-    propScoreNumber: Number,
-    musicVolume: Number,
-    musicRate: Number
-  },
   components: { SpeedPiece },
+  props: {
+    pageNum: { type: Number, required: true },
+    loadScoreData: { type: Object as PropType<ScoreData>, required: true },
+    loadMusicUrl: { type: String, required: true },
+    keyConfig: { type: Object as PropType<CustomKeyConfig>, required: true },
+    keyKind: { type: String as PropType<CustomKeyKind>, required: true },
+    timing: { type: Object as PropType<Timing>, required: true },
+    propScoreNumber: { type: Number, required: true },
+    musicVolume: { type: Number, required: true },
+    musicRate: { type: Number, required: true },
+  },
+  emits: ["changeScoreData", "page-jump", "page-minus", "page-plus"],
   data(): DataType {
     const scoreData = this.loadScoreData;
     const keyConfig = createCustomKeyConfig();
@@ -111,11 +112,113 @@ export default Vue.extend({
       musicTimer: null,
       operationQueue,
       copyScoreStore: new DefaultPageScore(keyNum),
-      currentPositionService: (undefined as unknown) as CurrentPositionService,
+      currentPositionService: undefined as unknown as CurrentPositionService,
       previousPosition: 0,
       previousPage: 1,
-      previousDate: new Date(0)
+      previousDate: new Date(0),
     };
+  },
+
+  computed: {
+    mode(): number {
+      return (quarterInterval / this.divisor) * 4;
+    },
+
+    moveIntervalFrame(): number {
+      return (
+        Math.round(
+          (positionToFrame(this.timing, this.page, this.divisor) -
+            positionToFrame(this.timing, this.page, 0)) *
+            100
+        ) / 100
+      );
+    },
+  },
+
+  watch: {
+    pageNum(newPage: number): void {
+      this.pageMove(newPage);
+    },
+
+    scoreData(scoreData: ScoreData): void {
+      this.$emit("changeScoreData", scoreData);
+    },
+
+    propScoreNumber(scoreNumber: number) {
+      this.scoreData.scoreNumber = scoreNumber;
+    },
+  },
+
+  mounted(): void {
+    const stage = new Konva.Stage({
+      x: canvasMarginHorizontal,
+      y: canvasMarginVertical,
+      container: "canvas",
+      width: this.editorWidth + canvasMarginHorizontal * 2,
+      height: editorHeight + canvasMarginVertical * 2,
+    });
+    const baseLayer = new Konva.Layer({
+      container: "baseLayer",
+    });
+    const currentPositionLayer = new Konva.Layer({
+      container: "currentPositionLayer",
+    });
+    const notesLayer = new Konva.Layer({
+      container: "notesLayer",
+    });
+
+    this.stage = stage;
+    this.baseLayer = baseLayer;
+    this.currentPositionLayer = currentPositionLayer;
+    this.notesLayer = notesLayer;
+
+    this.noteService = new NoteService(
+      this.scoreData,
+      this.keyConfig,
+      this.keyKind,
+      this.isReverse,
+      stage,
+      notesLayer,
+      this.operationQueue
+    );
+
+    this.speedPieceService = new SpeedPieceService(
+      this.scoreData,
+      this.editorWidth,
+      this.isReverse,
+      stage,
+      notesLayer
+    );
+
+    this.pageScoreService = new PageScoreService(
+      this.scoreData,
+      this.copyScoreStore,
+      this.keyNum,
+      this.displayPageScore,
+      this.operationQueue
+    );
+
+    this.currentPositionService = new CurrentPositionService(
+      this.scoreData,
+      this.editorWidth,
+      this.isReverse,
+      stage,
+      currentPositionLayer,
+      (position) => (this.currentPosition = position)
+    );
+
+    this.baseLayerDraw();
+    this.currentPositionService.draw(0, 1, this.timing);
+    this.pageMove(1);
+    this.displayPageScore(1);
+
+    // オートフォーカス
+    if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
+  },
+
+  beforeUnmount(): void {
+    // 画面終了時に音楽を止める
+    if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
   },
   methods: {
     // ベースレイヤーの描画
@@ -143,14 +246,14 @@ export default Vue.extend({
           width: noteWidth,
           height: editorHeight,
           fill: color,
-          strokeWidth: 0
+          strokeWidth: 0,
         });
         baseLayer.add(filler);
 
         const line = new Konva.Line({
           points: [xPos, 0, xPos, editorHeight],
           stroke: "#969696",
-          strokeWidth: 0.5
+          strokeWidth: 0.5,
         });
         baseLayer.add(line);
       }
@@ -161,7 +264,7 @@ export default Vue.extend({
         const line = new Konva.Line({
           points: [0, yPos, editorWidth, yPos],
           stroke: "#969696",
-          strokeWidth: (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5
+          strokeWidth: (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5,
         });
         baseLayer.add(line);
       }
@@ -171,7 +274,7 @@ export default Vue.extend({
         width: editorWidth,
         height: editorHeight,
         stroke: "black",
-        strokeWidth: 1
+        strokeWidth: 1,
       });
       baseLayer.add(rect);
 
@@ -196,7 +299,7 @@ export default Vue.extend({
             verticalAlign: "middle",
             text: charStr,
             fontSize: 11,
-            fill: color
+            fill: color,
           });
           baseLayer.add(keyText);
         }
@@ -222,7 +325,7 @@ export default Vue.extend({
         this.musicService.play(startTime, musicVolume, musicRate);
         this.currentPositionService.musicAnimate(playDuration);
         if (this.musicTimer) {
-          const timer: number = setTimeout(() => {
+          const timer: number = window.setTimeout(() => {
             this.musicService.pause();
             loop(startTime, endTime);
           }, playDuration);
@@ -259,17 +362,17 @@ export default Vue.extend({
       stage.add(notesLayer);
 
       pageScore.notes.forEach((laneArr, lane) => {
-        laneArr.forEach(position => {
+        laneArr.forEach((position) => {
           noteService.draw(lane, position, false);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
-        laneArr.forEach(position => {
+        laneArr.forEach((position) => {
           noteService.draw(lane, position, true);
         });
         noteService.fillFreeze(this.page, lane);
       });
-      pageScore.speeds.forEach(speed => {
+      pageScore.speeds.forEach((speed) => {
         speedPieceService.draw(speed.position, speed.type);
       });
     },
@@ -281,7 +384,7 @@ export default Vue.extend({
 
       // 今いるページ + 1までの範囲でemptyのページを初期化する
       if (!this.scoreData.scores[page]) this.scoreData.scores.length = page + 1;
-      this.scoreData.scores = [...this.scoreData.scores].map(pageScore => {
+      this.scoreData.scores = [...this.scoreData.scores].map((pageScore) => {
         if (!pageScore) return new DefaultPageScore(this.keyNum);
         else return pageScore;
       });
@@ -544,109 +647,7 @@ export default Vue.extend({
           }
         }
       }
-    }
-  },
-
-  computed: {
-    mode(): number {
-      return (quarterInterval / this.divisor) * 4;
     },
-
-    moveIntervalFrame(): number {
-      return (
-        Math.round(
-          (positionToFrame(this.timing, this.page, this.divisor) -
-            positionToFrame(this.timing, this.page, 0)) *
-            100
-        ) / 100
-      );
-    }
   },
-
-  mounted(): void {
-    const stage = new Konva.Stage({
-      x: canvasMarginHorizontal,
-      y: canvasMarginVertical,
-      container: "canvas",
-      width: this.editorWidth + canvasMarginHorizontal * 2,
-      height: editorHeight + canvasMarginVertical * 2
-    });
-    const baseLayer = new Konva.Layer({
-      container: "baseLayer"
-    });
-    const currentPositionLayer = new Konva.Layer({
-      container: "currentPositionLayer"
-    });
-    const notesLayer = new Konva.Layer({
-      container: "notesLayer"
-    });
-
-    this.stage = stage;
-    this.baseLayer = baseLayer;
-    this.currentPositionLayer = currentPositionLayer;
-    this.notesLayer = notesLayer;
-
-    this.noteService = new NoteService(
-      this.scoreData,
-      this.keyConfig,
-      this.keyKind,
-      this.isReverse,
-      this.stage,
-      this.notesLayer,
-      this.operationQueue
-    );
-
-    this.speedPieceService = new SpeedPieceService(
-      this.scoreData,
-      this.editorWidth,
-      this.isReverse,
-      this.stage,
-      this.notesLayer
-    );
-
-    this.pageScoreService = new PageScoreService(
-      this.scoreData,
-      this.copyScoreStore,
-      this.keyNum,
-      this.displayPageScore,
-      this.operationQueue
-    );
-
-    this.currentPositionService = new CurrentPositionService(
-      this.scoreData,
-      this.editorWidth,
-      this.isReverse,
-      this.stage,
-      this.currentPositionLayer,
-      position => (this.currentPosition = position)
-    );
-
-    this.baseLayerDraw();
-    this.currentPositionService.draw(0, 1, this.timing);
-    this.pageMove(1);
-    this.displayPageScore(1);
-
-    // オートフォーカス
-    if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
-  },
-
-  beforeDestroy(): void {
-    // 画面終了時に音楽を止める
-    if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
-  },
-
-  watch: {
-    pageNum(newPage: number): void {
-      this.pageMove(newPage);
-    },
-
-    scoreData(scoreData: ScoreData): void {
-      this.$emit("changeScoreData", scoreData);
-    },
-
-    propScoreNumber(scoreNumber: number) {
-      this.scoreData.scoreNumber = scoreNumber;
-    }
-  }
 });
 </script>

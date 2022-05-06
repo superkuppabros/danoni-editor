@@ -15,9 +15,9 @@
       @page-jump="pageJump"
     ></editor-main>
     <editor-option
-      :scoreNumber.sync="scoreNumber"
-      :musicVolume.sync="musicVolume"
-      :musicRate.sync="musicRate"
+      v-model:scoreNumber="scoreNumber"
+      v-model:musicVolume="musicVolume"
+      v-model:musicRate="musicRate"
     ></editor-option>
     <editor-save @save="save"></editor-save>
     <div id="editor-menu">
@@ -37,13 +37,13 @@
         <div class="menu-move-header">
           <div class="menu-txt">Label</div>
           <input
-            class="uk-checkbox"
             id="menu-label-checkbox"
+            ref="label-checkbox"
+            class="uk-checkbox"
             type="checkbox"
             :checked="getLabelNumByPageNum(pageNum) !== -1"
             :disabled="pageNum === 1"
             @click="callLabelOperation"
-            ref="label-checkbox"
           />
         </div>
         <div class="menu-move-display">
@@ -57,28 +57,28 @@
       <div id="menu-adj" class="menu-item-container">
         <div class="menu-txt">Blank Frame</div>
         <input
+          v-model.number="scoreData.blankFrame"
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model.number="scoreData.blankFrame"
         />
       </div>
       <div id="menu-sn" class="menu-item-container">
         <div class="menu-txt">Start Number</div>
         <input
+          v-model.number="timing.startNum"
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model.number="timing.startNum"
         />
       </div>
       <div id="menu-bpm" class="menu-item-container">
         <div class="menu-txt">BPM</div>
         <input
+          v-model.number="timing.bpm"
           type="number"
           step="0.01"
           class="uk-input uk-form-small"
-          v-model.number="timing.bpm"
         />
       </div>
 
@@ -105,14 +105,14 @@
       uk-close
       :to="{
         name: 'start',
-        path: '/'
+        path: '/',
       }"
     ></router-link>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import EditorMain from "./EditorMain.vue";
 import EditorOption from "./EditorOption.vue";
 import { Timing } from "../../model/Timing";
@@ -140,17 +140,17 @@ type DataType = {
   scoreConvertService: ScoreConvertService;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorController",
   components: {
     EditorMain,
     EditorOption,
-    EditorSave
+    EditorSave,
   },
   props: {
-    selectedKey: String,
-    loadScoreDataStr: String,
-    loadMusicUrl: String
+    selectedKey: { type: String, required: true },
+    loadScoreDataStr: { type: String, required: true },
+    loadMusicUrl: { type: String, required: true },
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
@@ -174,7 +174,7 @@ export default Vue.extend({
           this.loadScoreDataStr
         ) as ScoreData;
       } else
-        scoreData = (JSON.parse(this.loadScoreDataStr) as unknown) as ScoreData;
+        scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
       if (scoreData.scores.length === 0) {
         scoreData.scores.push(new DefaultPageScore(selectedKeyNum));
       }
@@ -197,8 +197,18 @@ export default Vue.extend({
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
-      scoreConvertService: new ScoreConvertService(keyKind, keyConfig)
+      scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
     };
+  },
+  watch: {
+    pageNum(newPage: number) {
+      const labelNum = this.getNearestLabelNumByPageNum(newPage);
+      this.labelNum = labelNum;
+      this.labelMove(labelNum);
+    },
+  },
+  mounted() {
+    if (!this.scoreData.scoreNumber) this.scoreData.scoreNumber = 1;
   },
   methods: {
     pageMinus(n: number): void {
@@ -306,11 +316,11 @@ export default Vue.extend({
     },
 
     getLabelNumByPageNum(pageNum: number): number {
-      const labels = this.scoreData.timings.map(timing => timing.label);
+      const labels = this.scoreData.timings.map((timing) => timing.label);
       return labels.indexOf(pageNum);
     },
     getNearestLabelNumByPageNum(pageNum: number): number {
-      const labels = this.scoreData.timings.map(timing => timing.label);
+      const labels = this.scoreData.timings.map((timing) => timing.label);
       const labelNum = labels.reduce(
         (acc, label) => (label <= pageNum ? acc + 1 : acc),
         0
@@ -339,7 +349,7 @@ export default Vue.extend({
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,
-          bpm: oldTiming.bpm
+          bpm: oldTiming.bpm,
         };
         this.scoreData.timings.splice(this.labelNum, 0, newTiming);
         this.timing = newTiming;
@@ -351,17 +361,7 @@ export default Vue.extend({
       const labelFlag = this.getLabelNumByPageNum(pageNum) !== -1;
       this.labelOperation(pageNum, labelFlag);
       this.pageNum = pageNum;
-    }
+    },
   },
-  watch: {
-    pageNum(newPage: number) {
-      const labelNum = this.getNearestLabelNumByPageNum(newPage);
-      this.labelNum = labelNum;
-      this.labelMove(labelNum);
-    }
-  },
-  mounted() {
-    if (!this.scoreData.scoreNumber) this.scoreData.scoreNumber = 1;
-  }
 });
 </script>

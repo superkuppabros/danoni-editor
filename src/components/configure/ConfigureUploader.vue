@@ -5,14 +5,14 @@
     @drop.prevent="ondrop"
   >
     <div
+      id="configure-droparea"
       uk-form-custom
       class="uk-placeholder uk-text-center uk-margin-remove-bottom uk-form-width-medium"
-      id="configure-droparea"
     >
       <input
-        type="file"
         id="configure-droparea-input"
         ref="input"
+        type="file"
         @change="loadFile"
       />
       <div id="configure-droparea-text">
@@ -25,23 +25,31 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 type DataType = {
-  vue: Vue;
   file: File | null;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "ConfigureUploader",
   props: {
-    msg: String
+    msg: { type: String, required: true },
   },
+  emits: ["fileRecieve"],
   data(): DataType {
     return {
-      vue: this,
-      file: null
+      file: null,
     };
+  },
+  watch: {
+    file(newFile: File | null) {
+      if (!(newFile === null)) {
+        this.$emit("fileRecieve", newFile);
+      } else {
+        alert("ファイルが見つかりませんでした。");
+      }
+    },
   },
   methods: {
     ondragover(e: DragEvent): void {
@@ -62,16 +70,7 @@ export default Vue.extend({
       } else {
         this.file = null;
       }
-    }
+    },
   },
-  watch: {
-    file(newFile: File | null) {
-      if (!(newFile === null)) {
-        this.$emit("fileRecieve", newFile);
-      } else {
-        alert("ファイルが見つかりませんでした。");
-      }
-    }
-  }
 });
 </script>

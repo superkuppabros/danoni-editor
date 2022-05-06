@@ -11,46 +11,47 @@
     <div id="option-score-number" class="option-item-container">
       <div class="menu-txt">Score No.</div>
       <input
+        v-model.number="inputScoreNumber"
         type="number"
         min="1"
         class="uk-input uk-form-small"
-        v-model.number="inputScoreNumber"
       />
     </div>
     <div id="option-music-volume" class="option-item-container">
       <div class="menu-txt">Music Volume</div>
       <input
+        v-model.number="inputMusicVolume"
         type="range"
         min="0"
         max="1"
         step="0.05"
         class="uk-range uk-form-small"
-        v-model.number="inputMusicVolume"
       />
     </div>
     <div id="option-music-rate" class="option-item-container">
       <div class="menu-txt">Music Speed</div>
       <input
+        v-model.number="inputMusicRate"
         type="number"
         min="0.25"
         max="2"
         step="0.05"
         class="uk-input uk-form-small"
-        v-model.number="inputMusicRate"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "EditorOption",
   props: {
-    scoreNumber: Number,
-    musicVolume: Number,
-    musicRate: Number
+    scoreNumber: { type: Number, required: true },
+    musicVolume: { type: Number, required: true },
+    musicRate: { type: Number, required: true },
   },
+  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate"],
   computed: {
     inputScoreNumber: {
       get(): number {
@@ -59,7 +60,7 @@ export default Vue.extend({
       set(scoreNumber: string) {
         const value = Number(scoreNumber);
         this.$emit("update:scoreNumber", value);
-      }
+      },
     },
 
     inputMusicVolume: {
@@ -70,7 +71,7 @@ export default Vue.extend({
         localStorage.setItem("musicVolume", musicVolume);
         const value = Number(musicVolume);
         this.$emit("update:musicVolume", value);
-      }
+      },
     },
 
     inputMusicRate: {
@@ -80,8 +81,8 @@ export default Vue.extend({
       set(musicRate: string) {
         const value = Number(musicRate);
         this.$emit("update:musicRate", value);
-      }
-    }
-  }
+      },
+    },
+  },
 });
 </script>

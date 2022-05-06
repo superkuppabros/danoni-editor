@@ -37,7 +37,7 @@ export class PageScoreService {
     this.operationQueue.push({
       type: "CUT",
       page,
-      copyScoreStore
+      copyScoreStore,
     });
   }
 
@@ -52,7 +52,7 @@ export class PageScoreService {
     this.write(page, pageScore);
     this.operationQueue.push({
       type: "PASTE",
-      page
+      page,
     });
   }
 
@@ -61,7 +61,7 @@ export class PageScoreService {
     this.scoreData.scores.splice(page - 1, 0, pageScore);
 
     const timings = this.scoreData.timings;
-    this.scoreData.timings = timings.map(timing => {
+    this.scoreData.timings = timings.map((timing) => {
       if (timing.label > page) timing.label++;
       return timing;
     });
@@ -74,7 +74,7 @@ export class PageScoreService {
     this.insert(page, pageScore);
     this.operationQueue.push({
       type: "ADD_PAGE",
-      page
+      page,
     });
   }
 
@@ -83,7 +83,7 @@ export class PageScoreService {
     this.scoreData.scores.splice(page - 1, 1);
 
     const timings = this.scoreData.timings;
-    this.scoreData.timings = timings.map(timing => {
+    this.scoreData.timings = timings.map((timing) => {
       if (timing.label > page) timing.label--;
       return timing;
     });
@@ -99,7 +99,7 @@ export class PageScoreService {
     this.operationQueue.push({
       type: "REMOVE_PAGE",
       page,
-      copyScoreStore
+      copyScoreStore,
     });
   }
 }

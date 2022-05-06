@@ -8,7 +8,7 @@
       uk-form-custom
       class="uk-placeholder uk-text-center uk-margin-remove-bottom start-droparea"
     >
-      <input type="file" ref="input" @change="loadFile" />
+      <input ref="input" type="file" @change="loadFile" />
       <span uk-icon="icon: upload"></span>
       <span class="uk-text-middle"> {{ msg }} </span>
       <span class="uk-text-middle uk-link">参照</span>
@@ -17,23 +17,31 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 type DataType = {
-  vue: Vue;
   file: File | null;
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "StartUploader",
   props: {
-    msg: String
+    msg: { type: String, required: true },
   },
+  emits: ["fileRecieve"],
   data(): DataType {
     return {
-      vue: this,
-      file: null
+      file: null,
     };
+  },
+  watch: {
+    file(newFile: File | null) {
+      if (!(newFile === null)) {
+        this.$emit("fileRecieve", newFile);
+      } else {
+        alert("ファイルが見つかりませんでした。");
+      }
+    },
   },
   methods: {
     ondragover(e: DragEvent): void {
@@ -54,16 +62,7 @@ export default Vue.extend({
       } else {
         this.file = null;
       }
-    }
+    },
   },
-  watch: {
-    file(newFile: File | null) {
-      if (!(newFile === null)) {
-        this.$emit("fileRecieve", newFile);
-      } else {
-        alert("ファイルが見つかりませんでした。");
-      }
-    }
-  }
 });
 </script>

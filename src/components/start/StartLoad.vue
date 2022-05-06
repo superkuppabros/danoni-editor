@@ -16,17 +16,17 @@
     </div>
     <div id="save-key-phrase" class="save-item-container">
       <input
+        v-model.trim="inputKeyPhrase"
         type="text"
         max="50"
         class="uk-input uk-form-small"
-        v-model.trim="inputKeyPhrase"
         list="phrase-history"
       />
       <datalist id="phrase-history">
         <option v-for="p in phraseHistory" :key="p">{{ p }}</option>
       </datalist>
     </div>
-    <div class="save-item-container" style="display: flex;">
+    <div class="save-item-container" style="display: flex">
       <div class="save-output-btn btn-red" @click="submitPhrase">OK</div>
       <div class="save-output-btn btn-gray" @click="resetForm">RESET</div>
     </div>
@@ -34,22 +34,23 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
 type DataType = {
   keyPhrase: string;
   phraseHistory: string[];
 };
 
-export default Vue.extend({
+export default defineComponent({
   name: "EditorOption",
+  emits: ["submitPhrase"],
   data(): DataType {
     const phraseHistory: string[] = JSON.parse(
       localStorage.getItem("keyPhrases") || "[]"
     );
     return {
       keyPhrase: "",
-      phraseHistory
+      phraseHistory,
     };
   },
   computed: {
@@ -59,17 +60,17 @@ export default Vue.extend({
       },
       set(keyPhrase: string) {
         this.keyPhrase = keyPhrase;
-      }
-    }
+      },
+    },
   },
   methods: {
     submitPhrase() {
       const keyPhrase = this.keyPhrase;
-      this.$emit("load", keyPhrase);
+      this.$emit("submitPhrase", keyPhrase);
     },
     resetForm() {
       this.keyPhrase = "";
-    }
-  }
+    },
+  },
 });
 </script>

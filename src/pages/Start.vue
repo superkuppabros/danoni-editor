@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import StartMain from "@/components/start/StartMain.vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "Start",
   components: {
-    StartMain
-  }
+    StartMain,
+  },
 });
 </script>

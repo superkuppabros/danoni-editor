@@ -3,14 +3,14 @@ import {
   frameToPagePosition,
   positionToFrame,
   positionToSeconds,
-  secondsToTimeStr
+  secondsToTimeStr,
 } from "@/components/editor/helper/Calculator";
 
 describe("Calculator", () => {
   const timing: Timing = {
     label: 1,
     startNum: 200,
-    bpm: 180
+    bpm: 180,
   };
 
   it("position -> frameへの変換が出来る", () => {
@@ -22,15 +22,15 @@ describe("Calculator", () => {
   it("frame -> page, positionへの変換が出来る", () => {
     expect(frameToPagePosition(timing, 300, 100)).toStrictEqual({
       page: 1,
-      position: 0
+      position: 0,
     });
     expect(frameToPagePosition(timing, 360, 0)).toStrictEqual({
       page: 2,
-      position: 0
+      position: 0,
     });
     expect(frameToPagePosition(timing, 480, 40)).toStrictEqual({
       page: 2,
-      position: 192
+      position: 192,
     });
   });
 

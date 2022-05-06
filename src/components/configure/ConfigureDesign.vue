@@ -8,22 +8,22 @@
         <div class="configure-radio">
           <label>
             <input
+              v-model="isReverse"
               type="radio"
               class="uk-radio"
               name="editor-direction"
               :value="false"
-              v-model="isReverse"
             />Upward
           </label>
         </div>
         <div class="configure-radio">
           <label>
             <input
+              v-model="isReverse"
               type="radio"
               class="uk-radio"
               name="editor-direction"
               :value="true"
-              v-model="isReverse"
             />Downward
           </label>
         </div>
@@ -35,11 +35,11 @@
         <div class="configure-radio">
           <label>
             <input
+              v-model="isHighlightedFreeze"
               type="radio"
               class="uk-radio"
               name="editor-highlighted-freeze"
               :value="true"
-              v-model="isHighlightedFreeze"
             />
             <span class="configure-radio-text">On</span>
           </label>
@@ -47,11 +47,11 @@
         <div class="configure-radio">
           <label>
             <input
+              v-model="isHighlightedFreeze"
               type="radio"
               class="uk-radio"
               name="editor-highlighted-freeze"
               :value="false"
-              v-model="isHighlightedFreeze"
             />
             <span class="configure-radio-text">Off</span>
           </label>
@@ -64,12 +64,12 @@
       </div>
       <div class="configure-options">
         <input
+          v-model.number="simultaneousThreshold"
           type="number"
           min="-1"
           max="1000"
           step="1"
           class="uk-input uk-form-small"
-          v-model.number="simultaneousThreshold"
         />
       </div>
     </div>
@@ -77,24 +77,14 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   name: "ConfigureDesign",
   data() {
     return {
-      simultaneousThreshold: 0
+      simultaneousThreshold: 0,
     };
-  },
-  mounted() {
-    this.simultaneousThreshold = JSON.parse(
-      localStorage.getItem("simultaneousThreshold") ?? "30"
-    );
-  },
-  watch: {
-    simultaneousThreshold(newValue) {
-      localStorage.setItem("simultaneousThreshold", JSON.stringify(newValue));
-    }
   },
   computed: {
     isReverse: {
@@ -107,7 +97,7 @@ export default Vue.extend({
       set(newValue: boolean): boolean {
         localStorage.setItem("isReverse", JSON.stringify(newValue));
         return newValue;
-      }
+      },
     },
 
     isHighlightedFreeze: {
@@ -120,8 +110,18 @@ export default Vue.extend({
       set(newValue: boolean): boolean {
         localStorage.setItem("isHighlightedFreeze", JSON.stringify(newValue));
         return newValue;
-      }
-    }
-  }
+      },
+    },
+  },
+  watch: {
+    simultaneousThreshold(newValue) {
+      localStorage.setItem("simultaneousThreshold", JSON.stringify(newValue));
+    },
+  },
+  mounted() {
+    this.simultaneousThreshold = JSON.parse(
+      localStorage.getItem("simultaneousThreshold") ?? "30"
+    );
+  },
 });
 </script>
