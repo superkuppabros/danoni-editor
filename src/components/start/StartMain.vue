@@ -104,7 +104,11 @@ export default defineComponent({
     onFileRecieve(file: File, errorMessage: string) {
       if (file.type.match("audio.*")) {
         this.readMusicFile(file);
-      } else if (file.type.match("(application/json|text/plain)")) {
+      } else if (
+        file.type.match(
+          "application/json|application/x-javascript|text/html|text/plain"
+        )
+      ) {
         this.readScoreFile(file);
       } else {
         alert(errorMessage);
