@@ -99,8 +99,35 @@ export default defineComponent({
   },
   mounted() {
     sessionStorage.removeItem("keyKind");
+    document.addEventListener("keydown", this.keydownAction);
+  },
+  unmounted() {
+    document.removeEventListener("keydown", this.keydownAction);
   },
   methods: {
+    keydownAction(e: KeyboardEvent) {
+      if (e.ctrlKey && e.code === "KeyV") {
+        if (navigator.clipboard) {
+          navigator.clipboard.readText().then(
+            // 成功時
+            (text) => {
+              if (text !== "") {
+                this.scoreDataStr = text;
+                this.scoreTitle = "(クリップボードから読込)";
+              } else {
+                alert("クリップボードが空か、テキストデータではありません。");
+              }
+            },
+            // 失敗時
+            () =>
+              alert("クリップボードを読み込めませんでした。権限がありません。")
+          );
+          e.preventDefault();
+        }
+      } else {
+        alert("クリップボードを読み込めませんでした。非対応のブラウザです。");
+      }
+    },
     onFileRecieve(file: File, errorMessage: string) {
       if (file.type.match("audio.*")) {
         this.readMusicFile(file);
