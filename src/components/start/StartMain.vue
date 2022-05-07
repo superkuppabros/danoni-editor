@@ -79,7 +79,7 @@ export default defineComponent({
     return {
       keyConfig,
       musicTitle: "楽曲ファイルをドロップ",
-      scoreTitle: "セーブファイルをドロップ",
+      scoreTitle: "セーブファイルをドロップ/Ctrl+V",
       selectedKey: "5",
       musicUrl: "",
       scoreDataStr: "",
@@ -99,39 +99,75 @@ export default defineComponent({
   },
   mounted() {
     sessionStorage.removeItem("keyKind");
+    document.addEventListener("keydown", this.keydownAction);
+  },
+  unmounted() {
+    document.removeEventListener("keydown", this.keydownAction);
   },
   methods: {
-    onMusicFileRecieve(file: File) {
-      const mimeTypePattern = "audio.*";
-      if (!file.type.match(mimeTypePattern))
-        alert("音楽ファイルではありません。");
-      else {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result;
-          if (typeof result == "string") {
-            this.musicUrl = result;
-            this.musicTitle = file.name;
-          }
-        };
-        reader.readAsDataURL(file);
+    keydownAction(e: KeyboardEvent) {
+      if (e.ctrlKey && e.code === "KeyV") {
+        if (navigator.clipboard) {
+          navigator.clipboard.readText().then(
+            // 成功時
+            (text) => {
+              if (text !== "") {
+                this.scoreDataStr = text;
+                this.scoreTitle = "(クリップボードから読込)";
+              } else {
+                alert("クリップボードが空か、テキストデータではありません。");
+              }
+            },
+            // 失敗時
+            () =>
+              alert("クリップボードを読み込めませんでした。権限がありません。")
+          );
+          e.preventDefault();
+        } else {
+          alert("クリップボードを読み込めませんでした。非対応のブラウザです。");
+        }
       }
     },
-    onScoreFileRecieve(file: File) {
-      const mimeTypePattern = "(application/json|text/plain)";
-      if (!file.type.match(mimeTypePattern))
-        alert("譜面ファイルではありません。");
-      else {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result;
-          if (typeof result == "string") {
-            this.scoreDataStr = result;
-            this.scoreTitle = file.name;
-          }
-        };
-        reader.readAsText(file);
+    onFileRecieve(file: File, errorMessage: string) {
+      if (file.type.match("audio.*")) {
+        this.readMusicFile(file);
+      } else if (
+        file.type.match(
+          "application/json|[text|application]/[x-]?javascript|text/html|text/plain"
+        )
+      ) {
+        this.readScoreFile(file);
+      } else {
+        alert(errorMessage);
       }
+    },
+    onMusicFileRecieve(file: File) {
+      this.onFileRecieve(file, "音楽ファイルではありません。");
+    },
+    onScoreFileRecieve(file: File) {
+      this.onFileRecieve(file, "譜面ファイルではありません。");
+    },
+    readMusicFile(file: File) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result == "string") {
+          this.musicUrl = result;
+          this.musicTitle = file.name;
+        }
+      };
+      reader.readAsDataURL(file);
+    },
+    readScoreFile(file: File) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result == "string") {
+          this.scoreDataStr = result;
+          this.scoreTitle = file.name;
+        }
+      };
+      reader.readAsText(file);
     },
     moveToEditor(scoreData: string, musicUrl: string, key: string) {
       this.$router.push({

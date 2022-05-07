@@ -244,8 +244,15 @@ export default defineComponent({
 
     writeClipBoard(data: string, message: string): void {
       if (navigator.clipboard) {
-        navigator.clipboard.writeText(data);
-        alert(message);
+        navigator.clipboard.writeText(data).then(
+          // 成功時
+          () => alert(message),
+          // 失敗時
+          () =>
+            alert("クリップボードにコピーできませんでした。権限がありません。")
+        );
+      } else {
+        alert("クリップボードにコピーできませんでした。非対応のブラウザです。");
       }
     },
 

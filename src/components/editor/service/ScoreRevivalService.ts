@@ -87,7 +87,7 @@ export class ScoreRevivalService {
           keyNameWithNum.replace(scoreNumber.toString(), "")
         )
         .map((keyName: string) =>
-          dict[keyName]
+          (dict[keyName] ?? "")
             .split(",")
             .filter((x) => x)
             .map((x: string) => Number(x))
