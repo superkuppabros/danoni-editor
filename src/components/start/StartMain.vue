@@ -79,7 +79,7 @@ export default defineComponent({
     return {
       keyConfig,
       musicTitle: "楽曲ファイルをドロップ",
-      scoreTitle: "セーブファイルをドロップ",
+      scoreTitle: "セーブファイルをドロップ/Ctrl+V",
       selectedKey: "5",
       musicUrl: "",
       scoreDataStr: "",

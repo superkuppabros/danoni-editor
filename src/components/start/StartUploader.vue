@@ -6,12 +6,12 @@
   >
     <div
       uk-form-custom
-      class="uk-placeholder uk-text-center uk-margin-remove-bottom start-droparea"
+      class="uk-placeholder uk-text-center uk-text-middle start-droparea"
     >
       <input ref="input" type="file" @change="loadFile" />
       <span uk-icon="icon: upload"></span>
-      <span class="uk-text-middle"> {{ msg }} </span>
-      <span class="uk-text-middle uk-link">参照</span>
+      <span class="uk-text-small uk-text-center-small"> {{ msg }} </span>
+      <span uk-icon="icon: folder" style="color: blue"></span>
     </div>
   </div>
 </template>

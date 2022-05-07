@@ -257,10 +257,10 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .start-droparea.uk-placeholder {
-  height: 35px;
+  height: 40px;
   width: 255px;
-  padding: 25px;
-  line-height: 35px;
+  padding: 20px;
+  line-height: 40px;
 }
 
 #start-go-next {
