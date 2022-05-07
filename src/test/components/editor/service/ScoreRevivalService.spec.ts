@@ -1,3 +1,5 @@
+import { describe, it, expect } from "vitest"
+
 import { ScoreRevivalService } from "@/components/editor/service/ScoreRevivalService";
 import { DefaultKeyConfig } from "@/model/KeyConfig";
 import {
