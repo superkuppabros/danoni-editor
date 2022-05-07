@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path-browserify'
@@ -14,5 +15,9 @@ export default defineConfig({
   build: {
     outDir: 'docs',
     sourcemap: true
-  }
+  },
+  test: {
+    globals: true,
+    threads: false
+  },
 })

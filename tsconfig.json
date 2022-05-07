@@ -21,7 +21,8 @@
       "dom",
       "dom.iterable",
       "scripthost"
-    ]
+    ],
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*.ts",

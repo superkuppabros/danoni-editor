@@ -1,6 +1,7 @@
+import Konva from "konva";
+
 import { ScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
-import Konva from "konva";
 import { testScoreData } from "./testScoreData";
 import { SpeedPieceService } from "@/components/editor/service/SpeedPieceService";
 import { Speed } from "@/model/Speed";

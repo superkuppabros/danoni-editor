@@ -1,11 +1,14 @@
+import Konva from "konva";
+
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
-import Konva from "konva";
 import { NoteService } from "@/components/editor/service/NoteService";
 import { testScoreData } from "./testScoreData";
 import { Operation } from "@/model/OperationQueue";
+
+import 'mock-local-storage'
 
 describe("noteService", () => {
   const keyKind: KeyKind = "5";
