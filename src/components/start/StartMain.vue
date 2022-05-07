@@ -123,9 +123,9 @@ export default defineComponent({
               alert("クリップボードを読み込めませんでした。権限がありません。")
           );
           e.preventDefault();
+        } else {
+          alert("クリップボードを読み込めませんでした。非対応のブラウザです。");
         }
-      } else {
-        alert("クリップボードを読み込めませんでした。非対応のブラウザです。");
       }
     },
     onFileRecieve(file: File, errorMessage: string) {
