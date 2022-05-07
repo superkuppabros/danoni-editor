@@ -133,7 +133,7 @@ export default defineComponent({
         this.readMusicFile(file);
       } else if (
         file.type.match(
-          "application/json|application/x-javascript|text/html|text/plain"
+          "application/json|[text|application]/[x-]?javascript|text/html|text/plain"
         )
       ) {
         this.readScoreFile(file);
