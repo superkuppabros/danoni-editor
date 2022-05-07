@@ -22,7 +22,7 @@
       "dom.iterable",
       "scripthost"
     ],
-    "types": ["vitest/global"]
+    "types": ["vitest/globals"]
   },
   "include": [
     "src/**/*.ts",

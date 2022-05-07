@@ -1,5 +1,3 @@
-import { describe, it, expect } from "vitest"
-
 import Konva from "konva";
 
 import { ScoreData } from "@/model/ScoreData";
