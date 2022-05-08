@@ -152,7 +152,7 @@ export class ScoreRevivalService {
     [name: string]: string;
   } {
     try {
-      const difData: string[] = dict["difData"].split(",") || dict["difStep"].split(",");
+      const difData: string[] = (dict["difData"] || dict["difStep"]).split(",");
       const firstNum: number[] = dict["first_num"].split(",").map((x: string) => Number(x));
       const habaNum: number[] = dict["haba_num"].split(",").map((x: string) => Number(x));
       const habaPageNum: number[] = dict["haba_page_num"].split(",").map((x: string) => Number(x));
