@@ -16,7 +16,7 @@ describe("noteService", () => {
   const isReverse = true;
   const stage = "dummyStage" as unknown as Konva.Stage;
   const layer = "dummyLayer" as unknown as Konva.Layer;
-  const operationQueue: Operation[] = [];
+  const operationStack: Operation[] = [];
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
@@ -27,7 +27,7 @@ describe("noteService", () => {
       isReverse,
       stage,
       layer,
-      operationQueue
+      operationStack
     );
 
   it("ノーツの有無が判定できる", () => {

@@ -3,7 +3,7 @@ import { PageScore } from "./PageScore";
 
 export type Operation = {
   type: OperationType;
-  page?: number;
+  page: number;
   newPage?: number;
   position?: number;
   newPosition?: number;
@@ -13,6 +13,7 @@ export type Operation = {
   movedLanes?: NoteOnPosition[];
   originalLanes?: NoteOnPosition[];
   copyScoreStore?: PageScore;
+  originalPageScore?: PageScore;
 };
 
 export type OperationType =

@@ -5,11 +5,12 @@ import { PageScoreService } from "../service/PageScoreService";
 /* eslint @typescript-eslint/no-non-null-assertion: 0 */
 
 export function undo(
-  operationQueue: Operation[],
+  operationStack: Operation[],
   noteService: NoteService,
   pageScoreService: PageScoreService
 ): { undoPage?: number; undoPosition?: number } {
-  const operation = operationQueue.pop();
+  console.log(operationStack)
+  const operation = operationStack.pop();
   if (!operation) return {};
 
   switch (operation.type) {
@@ -48,7 +49,7 @@ export function undo(
       pageScoreService.write(operation.page!, operation.copyScoreStore!);
       break;
     case "PASTE":
-      pageScoreService.clear(operation.page!);
+      pageScoreService.write(operation.page!, operation.originalPageScore!);
       break;
     case "ADD_PAGE":
       pageScoreService.remove(operation.page!);
@@ -59,7 +60,7 @@ export function undo(
   }
 
   return {
-    undoPage: operation.page || 1,
+    undoPage: operation.page,
     undoPosition: operation.position || 0,
   };
 }

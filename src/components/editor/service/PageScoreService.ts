@@ -9,8 +9,14 @@ export class PageScoreService {
     private copyScoreStore: PageScore,
     private keyNum: number,
     private displayPageScore: (page: number) => void,
-    private operationQueue: Operation[]
+    private operationStack: Operation[]
   ) {}
+
+  private stackPush(operation: Operation): void {
+    const maxStackSize = 1000;
+    this.operationStack.push(operation);
+    if (this.operationStack.length > maxStackSize) this.operationStack.shift();
+  }
 
   // ページコピー
   copy(page: number) {
@@ -34,7 +40,7 @@ export class PageScoreService {
     this.clear(page);
 
     const copyScoreStore = cloneDeep(this.copyScoreStore);
-    this.operationQueue.push({
+    this.stackPush({
       type: "CUT",
       page,
       copyScoreStore,
@@ -49,10 +55,12 @@ export class PageScoreService {
 
   // ページ貼り付け
   paste(page: number, pageScore = cloneDeep(this.copyScoreStore)) {
+    const originalPageScore = cloneDeep(this.scoreData.scores[page - 1]);
     this.write(page, pageScore);
-    this.operationQueue.push({
+    this.stackPush({
       type: "PASTE",
       page,
+      originalPageScore,
     });
   }
 
@@ -72,7 +80,7 @@ export class PageScoreService {
   // ページ追加
   add(page: number, pageScore = cloneDeep(this.copyScoreStore)) {
     this.insert(page, pageScore);
-    this.operationQueue.push({
+    this.stackPush({
       type: "ADD_PAGE",
       page,
     });
@@ -96,7 +104,7 @@ export class PageScoreService {
     this.remove(page);
 
     const copyScoreStore = cloneDeep(this.copyScoreStore);
-    this.operationQueue.push({
+    this.stackPush({
       type: "REMOVE_PAGE",
       page,
       copyScoreStore,

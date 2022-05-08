@@ -61,7 +61,7 @@ type DataType = {
   musicTimer: number | null;
   musicService: MusicService;
   copyScoreStore: PageScore;
-  operationQueue: Operation[];
+  operationStack: Operation[];
   currentPositionService: CurrentPositionService;
   noteService?: NoteService;
   speedPieceService?: SpeedPieceService;
@@ -98,7 +98,7 @@ export default defineComponent({
     const audio = new Audio(this.loadMusicUrl);
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
-    const operationQueue: Operation[] = [];
+    const operationStack: Operation[] = [];
 
     return {
       currentPosition: 0,
@@ -110,7 +110,7 @@ export default defineComponent({
       editorWidth: noteWidth * keyConfig[keyKind].num,
       musicService: new MusicService(audio),
       musicTimer: null,
-      operationQueue,
+      operationStack,
       copyScoreStore: new DefaultPageScore(keyNum),
       currentPositionService: undefined as unknown as CurrentPositionService,
       previousPosition: 0,
@@ -179,7 +179,7 @@ export default defineComponent({
       this.isReverse,
       stage,
       notesLayer,
-      this.operationQueue
+      this.operationStack
     );
 
     this.speedPieceService = new SpeedPieceService(
@@ -195,7 +195,7 @@ export default defineComponent({
       this.copyScoreStore,
       this.keyNum,
       this.displayPageScore,
-      this.operationQueue
+      this.operationStack
     );
 
     this.currentPositionService = new CurrentPositionService(
@@ -481,7 +481,7 @@ export default defineComponent({
             break;
           case "KeyZ": {
             const { undoPage, undoPosition } = undo(
-              this.operationQueue,
+              this.operationStack,
               noteService,
               pageScoreService
             );

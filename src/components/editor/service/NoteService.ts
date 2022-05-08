@@ -21,13 +21,19 @@ export class NoteService {
     private isReverse: boolean,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer,
-    private operationQueue: Operation[]
+    private operationStack: Operation[]
   ) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private isHighlightedFreeze: string = JSON.parse(
     localStorage.getItem("isHighlightedFreeze") ?? "true"
   );
+
+  private stackPush(operation: Operation): void {
+    const maxStackSize = 1000;
+    this.operationStack.push(operation);
+    if (this.operationStack.length > maxStackSize) this.operationStack.shift();
+  }
 
   // ノーツの有無の判定
   hasNote(
@@ -105,7 +111,7 @@ export class NoteService {
       this.draw(lane, position, isFreeze);
     }
     if (isFreeze) this.fillFreeze(displayPage, lane);
-    this.operationQueue.push({
+    this.stackPush({
       type: "ADD_NOTE",
       page,
       position,
@@ -116,20 +122,20 @@ export class NoteService {
 
   // 1ノーツを削除してクリア
   removeOne(page: number, displayPage: number, lane: number, position: number) {
+    const { isFreeze } = this.hasNote(page, lane, position);
+
     this.remove(page, lane, position);
     if (page === displayPage) {
       this.clear(lane, position);
     }
     this.fillFreeze(displayPage, lane);
-    const { exists, isFreeze } = this.hasNote(page, lane, position);
-    if (exists)
-      this.operationQueue.push({
-        type: "REMOVE_NOTE",
-        page,
-        position,
-        lane,
-        isFreeze,
-      });
+    this.stackPush({
+      type: "REMOVE_NOTE",
+      page,
+      position,
+      lane,
+      isFreeze,
+    });
   }
 
   // フリーズの塗りつぶし描画
@@ -199,7 +205,7 @@ export class NoteService {
 
   removeOnPosition(page: number, position: number): void {
     const removedLanes = this.removeLanes(page, position);
-    this.operationQueue.push({
+    this.stackPush({
       type: "REMOVE_ON_POSITION",
       page,
       position,
@@ -237,7 +243,7 @@ export class NoteService {
     const originalLanes = this.removeLanes(newPage, newPosition);
     this.addOnPosition(newPage, newPosition, movedLanes);
 
-    this.operationQueue.push({
+    this.stackPush({
       type: "SHIFT",
       page,
       position: currentPosition,
