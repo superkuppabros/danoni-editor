@@ -234,11 +234,17 @@ export default defineComponent({
       // ローカルストレージに現在のデータを保存
       localStorage.setItem("saveData", converter.save(this.scoreData));
     },
-    async save(keyPhrase: string): Promise<void> {
+    save(keyPhrase: string) {
       if (keyPhrase) {
-        await this.onlineSave(keyPhrase);
-        const message = "セーブデータをオンラインにセーブしました！";
-        alert(message);
+        this.onlineSave(keyPhrase).then(
+          // 成功時
+          () => alert("セーブデータをオンラインにセーブしました！"),
+          // 失敗時
+          (err) => {
+            console.log(err);
+            alert("オンラインセーブに失敗しました。");
+          }
+        );
       } else if (keyPhrase === "") {
         this.localSave();
       }
@@ -249,15 +255,21 @@ export default defineComponent({
       const message = "セーブデータをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },
-    async onlineSave(keyPhrase: string): Promise<void> {
+    async onlineSave(keyPhrase: string): Promise<boolean> {
       const converter = this.scoreConvertService;
       const data: string = converter.save(this.scoreData);
 
-      const xhr = new XMLHttpRequest();
       const apiUrl = "https://asia-northeast1-danoni-editor-backend.cloudfunctions.net/addSaveData";
-      xhr.open("POST", apiUrl);
-      xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-      xhr.send(JSON.stringify({ keyPhrase, data }));
+
+      const req: RequestInit = {
+        method: "POST",
+        headers: {
+          "content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify({ keyPhrase, data }),
+      };
+      const response = await fetch(apiUrl, req);
+      return response.ok;
     },
     convertWithQuarters(): void {
       // NOTE: scoreNoを増やしたことによる暫定処置
