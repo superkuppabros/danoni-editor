@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2021",
     "module": "esnext",
     "strict": true,
     "noUnusedLocals": true,
@@ -17,7 +17,7 @@
       ]
     },
     "lib": [
-      "esnext",
+      "es2021",
       "dom",
       "dom.iterable",
       "scripthost"
