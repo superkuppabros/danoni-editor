@@ -1,11 +1,6 @@
 import { ScoreRevivalService } from "@/components/editor/service/ScoreRevivalService";
 import { DefaultKeyConfig } from "@/model/KeyConfig";
-import {
-  test2DosData,
-  test2ScoreData,
-  testDosData,
-  testScoreData,
-} from "./testScoreData";
+import { test2DosData, test2ScoreData, testDosData, testScoreData } from "./testScoreData";
 
 describe("dosConvert", () => {
   it("正しくscoreDataに変換できる", () => {

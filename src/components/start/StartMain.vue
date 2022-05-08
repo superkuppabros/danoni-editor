@@ -3,20 +3,10 @@
     <start-load @submit-phrase="load"></start-load>
     <div id="start-title">Dancing☆Onigiri Editor</div>
     <div id="start-menu">
-      <start-uploader
-        :msg="musicTitle"
-        @file-recieve="onMusicFileRecieve"
-      ></start-uploader>
-      <start-uploader
-        :msg="scoreTitle"
-        @file-recieve="onScoreFileRecieve"
-      ></start-uploader>
+      <start-uploader :msg="musicTitle" @file-recieve="onMusicFileRecieve"></start-uploader>
+      <start-uploader :msg="scoreTitle" @file-recieve="onScoreFileRecieve"></start-uploader>
       <div id="start-go-next">
-        <select
-          id="start-key-selector"
-          v-model="selectedKey"
-          class="uk-select uk-form-width-medium"
-        >
+        <select id="start-key-selector" v-model="selectedKey" class="uk-select uk-form-width-medium">
           <option v-for="keyKind in keyKinds" :key="keyKind">
             {{ keyKind }}
           </option>
@@ -119,8 +109,7 @@ export default defineComponent({
               }
             },
             // 失敗時
-            () =>
-              alert("クリップボードを読み込めませんでした。権限がありません。")
+            () => alert("クリップボードを読み込めませんでした。権限がありません。")
           );
           e.preventDefault();
         } else {
@@ -131,11 +120,7 @@ export default defineComponent({
     onFileRecieve(file: File, errorMessage: string) {
       if (file.type.match("audio.*")) {
         this.readMusicFile(file);
-      } else if (
-        file.type.match(
-          "application/json|[text|application]/[x-]?javascript|text/html|text/plain"
-        )
-      ) {
+      } else if (file.type.match("application/json|[text|application]/[x-]?javascript|text/html|text/plain")) {
         this.readScoreFile(file);
       } else {
         alert(errorMessage);
@@ -184,12 +169,7 @@ export default defineComponent({
     },
     async load(keyPhrase: string): Promise<void> {
       if (keyPhrase === null) return;
-      else if (keyPhrase === "")
-        this.moveToEditor(
-          this.localSaveDataStr,
-          this.musicUrl || "",
-          this.selectedKey
-        );
+      else if (keyPhrase === "") this.moveToEditor(this.localSaveDataStr, this.musicUrl || "", this.selectedKey);
       else {
         try {
           const save = await this.loadData(keyPhrase);

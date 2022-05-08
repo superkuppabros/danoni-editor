@@ -1,13 +1,6 @@
 <template>
-  <div
-    class="start-uploader"
-    @dragover.prevent="ondragover"
-    @drop.prevent="ondrop"
-  >
-    <div
-      uk-form-custom
-      class="uk-placeholder uk-text-center uk-text-middle start-droparea"
-    >
+  <div class="start-uploader" @dragover.prevent="ondragover" @drop.prevent="ondrop">
+    <div uk-form-custom class="uk-placeholder uk-text-center uk-text-middle start-droparea">
       <input ref="input" type="file" @change="loadFile" />
       <span uk-icon="icon: upload"></span>
       <span class="uk-text-small uk-text-center-small"> {{ msg }} </span>

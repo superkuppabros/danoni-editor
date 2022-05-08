@@ -21,10 +21,7 @@ export type OutputData = {
 };
 
 export class ScoreConvertService {
-  constructor(
-    private keyKind: CustomKeyKind,
-    private keyConfig: CustomKeyConfig
-  ) {}
+  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private defaultPageScore = new DefaultPageScore(this.keyNum);
@@ -43,18 +40,12 @@ export class ScoreConvertService {
       const pageScore = scores[pageNum - 1];
       if (pageScore === undefined) frameScores.push(initialPageScore);
       else {
-        if (timings[labelCounter] && pageNum === timings[labelCounter].label)
-          labelCounter++;
+        if (timings[labelCounter] && pageNum === timings[labelCounter].label) labelCounter++;
         const timing = timings[labelCounter - 1];
-        const calculateFrame = (position: number) =>
-          Math.round(positionToFrame(timing, pageNum, position, blankFrame));
+        const calculateFrame = (position: number) => Math.round(positionToFrame(timing, pageNum, position, blankFrame));
 
-        const pageNoteFrames = pageScore.notes.map((notesArr) =>
-          notesArr.sort((a, b) => a - b).map(calculateFrame)
-        );
-        const freezeNoteFrames = pageScore.freezes.map((freezesArr) =>
-          freezesArr.sort((a, b) => a - b).map(calculateFrame)
-        );
+        const pageNoteFrames = pageScore.notes.map((notesArr) => notesArr.sort((a, b) => a - b).map(calculateFrame));
+        const freezeNoteFrames = pageScore.freezes.map((freezesArr) => freezesArr.sort((a, b) => a - b).map(calculateFrame));
         const speedsNoteFrames = pageScore.speeds.map((speed) => {
           const newSpeed: Speed = cloneDeep(speed);
           newSpeed.position = calculateFrame(speed.position);
@@ -78,22 +69,15 @@ export class ScoreConvertService {
       boosts: [],
     };
 
-    const outputData: OutputData = frameScores.reduce(
-      (data: OutputData, currentPage) => {
-        for (let i = 0; i < this.keyNum; i++) {
-          data.notes[i] = data.notes[i].concat(currentPage.notes[i]);
-          data.freezes[i] = data.freezes[i].concat(currentPage.freezes[i]);
-        }
-        data.speeds = data.speeds.concat(
-          currentPage.speeds.filter((speed) => speed.type === "speed")
-        );
-        data.boosts = data.boosts.concat(
-          currentPage.speeds.filter((speed) => speed.type === "boost")
-        );
-        return data;
-      },
-      initialData
-    );
+    const outputData: OutputData = frameScores.reduce((data: OutputData, currentPage) => {
+      for (let i = 0; i < this.keyNum; i++) {
+        data.notes[i] = data.notes[i].concat(currentPage.notes[i]);
+        data.freezes[i] = data.freezes[i].concat(currentPage.freezes[i]);
+      }
+      data.speeds = data.speeds.concat(currentPage.speeds.filter((speed) => speed.type === "speed"));
+      data.boosts = data.boosts.concat(currentPage.speeds.filter((speed) => speed.type === "boost"));
+      return data;
+    }, initialData);
 
     return outputData;
   }
@@ -102,9 +86,7 @@ export class ScoreConvertService {
     const keyKind: string = scoreData.keyKind as string;
     const blankFrame: number = scoreData.blankFrame;
     const labels: number[] = scoreData.timings.map((timing) => timing.label);
-    const startNumbers: number[] = scoreData.timings.map(
-      (timing) => timing.startNum
-    );
+    const startNumbers: number[] = scoreData.timings.map((timing) => timing.startNum);
     const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
     const scoreNumber = scoreData.scoreNumber || 1;
 
@@ -127,35 +109,24 @@ export class ScoreConvertService {
     data.boosts.sort((a, b) => a.position - b.position);
 
     const noteStr = data.notes
-      .reduce(
-        (str, notesArr, laneNum) =>
-          `${str}${
-            this.keyConfig[this.keyKind].noteNames[laneNum]
-          }=${notesArr.join(",")}|`,
-        "|"
-      )
+      .reduce((str, notesArr, laneNum) => `${str}${this.keyConfig[this.keyKind].noteNames[laneNum]}=${notesArr.join(",")}|`, "|")
       .replace(/_/g, `${scorePostfix}_`);
 
     const freezeStr = data.freezes
       .reduce(
-        (str, freezesArr, laneNum) =>
-          `${str}${
-            this.keyConfig[this.keyKind].freezeNames[laneNum]
-          }=${freezesArr.join(",")}|`,
+        (str, freezesArr, laneNum) => `${str}${this.keyConfig[this.keyKind].freezeNames[laneNum]}=${freezesArr.join(",")}|`,
         ""
       )
       .replace(/_/g, `${scorePostfix}_`);
 
-    const speedStr = (
-      "speed_data=" +
-      data.speeds.map((speed) => `${speed.position},${speed.value}`).join(",") +
-      "|"
-    ).replace(/_/g, `${scorePostfix}_`);
-    const boostStr = (
-      "boost_data=" +
-      data.boosts.map((speed) => `${speed.position},${speed.value}`).join(",") +
-      "|"
-    ).replace(/_/g, `${scorePostfix}_`);
+    const speedStr = ("speed_data=" + data.speeds.map((speed) => `${speed.position},${speed.value}`).join(",") + "|").replace(
+      /_/g,
+      `${scorePostfix}_`
+    );
+    const boostStr = ("boost_data=" + data.boosts.map((speed) => `${speed.position},${speed.value}`).join(",") + "|").replace(
+      /_/g,
+      `${scorePostfix}_`
+    );
 
     const easySave = this.makeEasySave(scoreData);
 

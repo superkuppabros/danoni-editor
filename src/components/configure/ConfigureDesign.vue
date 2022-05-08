@@ -7,24 +7,12 @@
       <div class="configure-options">
         <div class="configure-radio">
           <label>
-            <input
-              v-model="isReverse"
-              type="radio"
-              class="uk-radio"
-              name="editor-direction"
-              :value="false"
-            />Upward
+            <input v-model="isReverse" type="radio" class="uk-radio" name="editor-direction" :value="false" />Upward
           </label>
         </div>
         <div class="configure-radio">
           <label>
-            <input
-              v-model="isReverse"
-              type="radio"
-              class="uk-radio"
-              name="editor-direction"
-              :value="true"
-            />Downward
+            <input v-model="isReverse" type="radio" class="uk-radio" name="editor-direction" :value="true" />Downward
           </label>
         </div>
       </div>
@@ -34,43 +22,22 @@
       <div class="configure-options">
         <div class="configure-radio">
           <label>
-            <input
-              v-model="isHighlightedFreeze"
-              type="radio"
-              class="uk-radio"
-              name="editor-highlighted-freeze"
-              :value="true"
-            />
+            <input v-model="isHighlightedFreeze" type="radio" class="uk-radio" name="editor-highlighted-freeze" :value="true" />
             <span class="configure-radio-text">On</span>
           </label>
         </div>
         <div class="configure-radio">
           <label>
-            <input
-              v-model="isHighlightedFreeze"
-              type="radio"
-              class="uk-radio"
-              name="editor-highlighted-freeze"
-              :value="false"
-            />
+            <input v-model="isHighlightedFreeze" type="radio" class="uk-radio" name="editor-highlighted-freeze" :value="false" />
             <span class="configure-radio-text">Off</span>
           </label>
         </div>
       </div>
     </div>
     <div class="configure-design-item">
-      <div class="configure-design-text-long">
-        Simultaneous Threshold(msec):
-      </div>
+      <div class="configure-design-text-long">Simultaneous Threshold(msec):</div>
       <div class="configure-options">
-        <input
-          v-model.number="simultaneousThreshold"
-          type="number"
-          min="-1"
-          max="1000"
-          step="1"
-          class="uk-input uk-form-small"
-        />
+        <input v-model.number="simultaneousThreshold" type="number" min="-1" max="1000" step="1" class="uk-input uk-form-small" />
       </div>
     </div>
   </div>
@@ -89,8 +56,7 @@ export default defineComponent({
   computed: {
     isReverse: {
       get(): boolean {
-        const isReverseStr: string =
-          localStorage.getItem("isReverse") ?? "false";
+        const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
         return JSON.parse(isReverseStr);
       },
 
@@ -102,8 +68,7 @@ export default defineComponent({
 
     isHighlightedFreeze: {
       get(): boolean {
-        const isHighlightedFreezeStr: string =
-          localStorage.getItem("isHighlightedFreeze") ?? "true";
+        const isHighlightedFreezeStr: string = localStorage.getItem("isHighlightedFreeze") ?? "true";
         return JSON.parse(isHighlightedFreezeStr);
       },
 
@@ -119,9 +84,7 @@ export default defineComponent({
     },
   },
   mounted() {
-    this.simultaneousThreshold = JSON.parse(
-      localStorage.getItem("simultaneousThreshold") ?? "30"
-    );
+    this.simultaneousThreshold = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
   },
 });
 </script>

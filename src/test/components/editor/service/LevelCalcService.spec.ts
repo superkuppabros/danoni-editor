@@ -1,7 +1,4 @@
-import {
-  LevelCalcService,
-  FlattenData,
-} from "@/components/editor/service/LevelCalcService";
+import { LevelCalcService, FlattenData } from "@/components/editor/service/LevelCalcService";
 
 describe("levelCalcService", () => {
   const levelCalcService = new LevelCalcService();
@@ -13,18 +10,14 @@ describe("levelCalcService", () => {
       frzStartData: [200, 240, 260],
       frzEndData: [220, 260, 290],
     };
-    expect(
-      levelCalcService["calcFlattenData"](noteFrames, freezeFrames)
-    ).toStrictEqual(expectedData);
+    expect(levelCalcService["calcFlattenData"](noteFrames, freezeFrames)).toStrictEqual(expectedData);
   });
 
   it("calcLaneContinuous", () => {
     const noteFrames = [[200, 205, 210, 230], [240, 242], [], [300], []];
     const freezeFrames = [[], [], [], [305, 333], []];
     const expectedValue = 3.3;
-    expect(levelCalcService.calcLaneContinuous(noteFrames, freezeFrames)).toBe(
-      expectedValue
-    );
+    expect(levelCalcService.calcLaneContinuous(noteFrames, freezeFrames)).toBe(expectedValue);
   });
 
   it("calcAdjustValue", () => {
@@ -43,18 +36,10 @@ describe("levelCalcService", () => {
   });
 
   it("calcLevel", () => {
-    const noteFrames = [
-      [305, 315, 340, 350],
-      [350],
-      [240, 350],
-      [200, 240, 260, 300],
-      [310, 320, 325, 330, 340, 350],
-    ];
+    const noteFrames = [[305, 315, 340, 350], [350], [240, 350], [200, 240, 260, 300], [310, 320, 325, 330, 340, 350]];
     const freezeFrames = [[200, 220], [240, 280], [], [], []];
     // 実際のツール値
-    expect(
-      levelCalcService.calcLevel(noteFrames, freezeFrames).level
-    ).toBeCloseTo(3.29, 1);
+    expect(levelCalcService.calcLevel(noteFrames, freezeFrames).level).toBeCloseTo(3.29, 1);
   });
 
   it("countNotes", () => {
@@ -64,8 +49,6 @@ describe("levelCalcService", () => {
       notesCountArr: [4, 2, 0, 1, 0],
       freezesCountArr: [0, 0, 0, 1, 0],
     };
-    expect(levelCalcService.countNotes(noteFrames, freezeFrames)).toStrictEqual(
-      expectedValue
-    );
+    expect(levelCalcService.countNotes(noteFrames, freezeFrames)).toStrictEqual(expectedValue);
   });
 });

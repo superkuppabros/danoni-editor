@@ -1,30 +1,16 @@
 import { Timing } from "@/model/Timing";
 import { fps, quarterInterval, verticalSizeNum } from "../EditorConstant";
 
-export function positionToFrame(
-  timing: Timing,
-  page: number,
-  position: number,
-  blankFrame = 0
-): number {
+export function positionToFrame(timing: Timing, page: number, position: number, blankFrame = 0): number {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
-  const startFrame =
-    blankFrame +
-    timing.startNum +
-    (page - timing.label) * verticalSizeNum * framePerPosition;
+  const startFrame = blankFrame + timing.startNum + (page - timing.label) * verticalSizeNum * framePerPosition;
   return startFrame + position * framePerPosition;
 }
 
-export function frameToPagePosition(
-  timing: Timing,
-  frame: number,
-  blankFrame: number
-): { page: number; position: number } {
+export function frameToPagePosition(timing: Timing, frame: number, blankFrame: number): { page: number; position: number } {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
 
-  const rawPosition = Math.round(
-    (frame - blankFrame - timing.startNum) / framePerPosition
-  );
+  const rawPosition = Math.round((frame - blankFrame - timing.startNum) / framePerPosition);
   // 小数の誤差補正、奇数のノーツが補正されてしまうが多いケースをカバーしにいく
   let adjustedPosition: number = rawPosition;
   if (rawPosition % 4 == 1) adjustedPosition = rawPosition - 1;
@@ -36,12 +22,7 @@ export function frameToPagePosition(
   return { page, position };
 }
 
-export function positionToSeconds(
-  timing: Timing,
-  page: number,
-  position: number,
-  blankFrame = 0
-): number {
+export function positionToSeconds(timing: Timing, page: number, position: number, blankFrame = 0): number {
   return positionToFrame(timing, page, position, blankFrame) / fps;
 }
 

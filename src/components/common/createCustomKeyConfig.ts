@@ -1,8 +1,4 @@
-import {
-  KeyConfig,
-  CustomKeyConfig,
-  DefaultKeyConfig,
-} from "@/model/KeyConfig";
+import { KeyConfig, CustomKeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 
 export function createCustomKeyConfig(): CustomKeyConfig {
   const customKeyConfigStr = localStorage.getItem("customKeyConfig");

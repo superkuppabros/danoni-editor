@@ -9,7 +9,7 @@ export function undo(
   noteService: NoteService,
   pageScoreService: PageScoreService
 ): { undoPage?: number; undoPosition?: number } {
-  console.log(operationStack)
+  console.log(operationStack);
   const operation = operationStack.pop();
   if (!operation) return {};
 
@@ -18,32 +18,15 @@ export function undo(
       noteService.remove(operation.page!, operation.lane!, operation.position!);
       break;
     case "REMOVE_NOTE":
-      noteService.add(
-        operation.page!,
-        operation.lane!,
-        operation.position!,
-        operation.isFreeze!
-      );
+      noteService.add(operation.page!, operation.lane!, operation.position!, operation.isFreeze!);
       break;
     case "REMOVE_ON_POSITION":
-      noteService.addOnPosition(
-        operation.page!,
-        operation.position!,
-        operation.removedLanes!
-      );
+      noteService.addOnPosition(operation.page!, operation.position!, operation.removedLanes!);
       break;
     case "SHIFT":
-      noteService.addOnPosition(
-        operation.page!,
-        operation.position!,
-        operation.movedLanes!
-      );
+      noteService.addOnPosition(operation.page!, operation.position!, operation.movedLanes!);
       noteService.removeLanes(operation.newPage!, operation.newPosition!);
-      noteService.addOnPosition(
-        operation.newPage!,
-        operation.newPosition!,
-        operation.originalLanes!
-      );
+      noteService.addOnPosition(operation.newPage!, operation.newPosition!, operation.originalLanes!);
       break;
     case "CUT":
       pageScoreService.write(operation.page!, operation.copyScoreStore!);

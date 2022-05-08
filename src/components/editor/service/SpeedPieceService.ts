@@ -14,9 +14,7 @@ export class SpeedPieceService {
 
   // 速度変化コマの存在判定
   hasSpeedPiece(page: number, position: number): boolean {
-    return this.scoreData.scores[page - 1].speeds.some(
-      (speed) => speed.position === position
-    );
+    return this.scoreData.scores[page - 1].speeds.some((speed) => speed.position === position);
   }
 
   // 速度変化コマの追加
@@ -30,9 +28,9 @@ export class SpeedPieceService {
 
   // 速度変化コマの削除
   remove(page: number, position: number) {
-    this.scoreData.scores[page - 1].speeds = this.scoreData.scores[
-      page - 1
-    ].speeds.filter((speed) => speed.position !== position);
+    this.scoreData.scores[page - 1].speeds = this.scoreData.scores[page - 1].speeds.filter(
+      (speed) => speed.position !== position
+    );
   }
 
   // 速度変化コマの描画

@@ -1,11 +1,5 @@
 <template>
-  <input
-    v-model="inputValue"
-    type="number"
-    step="0.01"
-    class="editor-speed-piece"
-    :style="{ top: top + 'px' }"
-  />
+  <input v-model="inputValue" type="number" step="0.01" class="editor-speed-piece" :style="{ top: top + 'px' }" />
 </template>
 
 <script lang="ts">

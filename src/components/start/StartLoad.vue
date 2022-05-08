@@ -1,10 +1,5 @@
 <template>
-  <div
-    id="start-load"
-    class="uk-modal-dialog"
-    uk-modal
-    container="#start-container"
-  >
+  <div id="start-load" class="uk-modal-dialog" uk-modal container="#start-container">
     <button class="uk-modal-close-default" type="button" uk-close></button>
 
     <h2 class="uk-modal-title">Load</h2>
@@ -15,13 +10,7 @@
       </div>
     </div>
     <div id="save-key-phrase" class="save-item-container">
-      <input
-        v-model.trim="inputKeyPhrase"
-        type="text"
-        max="50"
-        class="uk-input uk-form-small"
-        list="phrase-history"
-      />
+      <input v-model.trim="inputKeyPhrase" type="text" max="50" class="uk-input uk-form-small" list="phrase-history" />
       <datalist id="phrase-history">
         <option v-for="p in phraseHistory" :key="p">{{ p }}</option>
       </datalist>
@@ -45,9 +34,7 @@ export default defineComponent({
   name: "EditorOption",
   emits: ["submitPhrase"],
   data(): DataType {
-    const phraseHistory: string[] = JSON.parse(
-      localStorage.getItem("keyPhrases") || "[]"
-    );
+    const phraseHistory: string[] = JSON.parse(localStorage.getItem("keyPhrases") || "[]");
     return {
       keyPhrase: "",
       phraseHistory,

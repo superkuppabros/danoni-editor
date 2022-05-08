@@ -1,11 +1,7 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
 import { editorHeight, canvasMarginHorizontal } from "../EditorConstant";
-import {
-  positionToFrame,
-  positionToSeconds,
-  secondsToTimeStr,
-} from "../helper/Calculator";
+import { positionToFrame, positionToSeconds, secondsToTimeStr } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
 import toPx from "../helper/toPx";
 
@@ -40,9 +36,7 @@ export class CurrentPositionService {
           });
     const radius = 6;
 
-    const maybeTriangle = currentPositionLayer.findOne(
-      "#currentPositionTriangle"
-    );
+    const maybeTriangle = currentPositionLayer.findOne("#currentPositionTriangle");
     const triangle: Konva.RegularPolygon =
       maybeTriangle instanceof Konva.RegularPolygon
         ? maybeTriangle.y(yValue)
@@ -59,16 +53,10 @@ export class CurrentPositionService {
     const blankFrame = this.scoreData.blankFrame;
     const currentFrame =
       positionToFrame(timing, page, position, blankFrame) < 100000
-        ? Math.round(positionToFrame(timing, page, position, blankFrame) * 10) /
-          10
+        ? Math.round(positionToFrame(timing, page, position, blankFrame) * 10) / 10
         : Math.round(positionToFrame(timing, page, position, blankFrame));
 
-    const currentSeconds = positionToSeconds(
-      timing,
-      page,
-      position,
-      blankFrame
-    );
+    const currentSeconds = positionToSeconds(timing, page, position, blankFrame);
     const currentTimeStr = secondsToTimeStr(currentSeconds);
     const displayedText = `${currentFrame}\n[${currentTimeStr}]`;
     const textWidth = 40;

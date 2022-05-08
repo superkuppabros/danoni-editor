@@ -8,7 +8,7 @@ import { NoteService } from "@/components/editor/service/NoteService";
 import { testScoreData } from "./testScoreData";
 import { Operation } from "@/model/OperationQueue";
 
-import 'mock-local-storage'
+import "mock-local-storage";
 
 describe("noteService", () => {
   const keyKind: KeyKind = "5";
@@ -20,15 +20,7 @@ describe("noteService", () => {
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
-    new NoteService(
-      scoreData,
-      keyConfig,
-      keyKind,
-      isReverse,
-      stage,
-      layer,
-      operationStack
-    );
+    new NoteService(scoreData, keyConfig, keyKind, isReverse, stage, layer, operationStack);
 
   it("ノーツの有無が判定できる", () => {
     const noteService = createNoteService(cloneDeep(scoreData));

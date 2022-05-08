@@ -2,13 +2,7 @@ import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
 import { CustomKeyConfig } from "@/model/KeyConfig";
 import { CustomKeyKind } from "@/model/KeyKind";
-import {
-  freezeColors,
-  noteColors,
-  noteWidth,
-  noteHeight,
-  verticalSizeNum,
-} from "../EditorConstant";
+import { freezeColors, noteColors, noteWidth, noteHeight, verticalSizeNum } from "../EditorConstant";
 import toPx from "../helper/toPx";
 import { cloneDeep } from "lodash";
 import { Operation } from "@/model/OperationQueue";
@@ -25,9 +19,7 @@ export class NoteService {
   ) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
-  private isHighlightedFreeze: string = JSON.parse(
-    localStorage.getItem("isHighlightedFreeze") ?? "true"
-  );
+  private isHighlightedFreeze: string = JSON.parse(localStorage.getItem("isHighlightedFreeze") ?? "true");
 
   private stackPush(operation: Operation): void {
     const maxStackSize = 1000;
@@ -36,11 +28,7 @@ export class NoteService {
   }
 
   // ノーツの有無の判定
-  hasNote(
-    page: number,
-    lane: number,
-    position: number
-  ): { exists: boolean; isFreeze: boolean } {
+  hasNote(page: number, lane: number, position: number): { exists: boolean; isFreeze: boolean } {
     const pageScore = this.scoreData.scores[page - 1];
     const isFreeze = pageScore.freezes[lane].includes(position);
     const exists = pageScore.notes[lane].includes(position) || isFreeze;
@@ -55,14 +43,10 @@ export class NoteService {
 
   // ノーツの削除
   remove(page: number, lane: number, position: number): void {
-    const removedFreezes = this.scoreData.scores[page - 1].freezes[lane].filter(
-      (pos) => pos !== position
-    );
+    const removedFreezes = this.scoreData.scores[page - 1].freezes[lane].filter((pos) => pos !== position);
     this.scoreData.scores[page - 1].freezes.splice(lane, 1, removedFreezes);
 
-    const removedNotes = this.scoreData.scores[page - 1].notes[lane].filter(
-      (pos) => pos !== position
-    );
+    const removedNotes = this.scoreData.scores[page - 1].notes[lane].filter((pos) => pos !== position);
     this.scoreData.scores[page - 1].notes.splice(lane, 1, removedNotes);
   }
 
@@ -72,9 +56,7 @@ export class NoteService {
     const notesLayer = this.notesLayer as Konva.Layer;
 
     const colorGroup = this.keyConfig[this.keyKind].colorGroup;
-    const color = isFreeze
-      ? freezeColors[colorGroup[lane]]
-      : noteColors[colorGroup[lane]];
+    const color = isFreeze ? freezeColors[colorGroup[lane]] : noteColors[colorGroup[lane]];
 
     const note = new Konva.Rect({
       x: lane * noteWidth,
@@ -99,13 +81,7 @@ export class NoteService {
   }
 
   // 1ノーツを追加して描画
-  addOne(
-    page: number,
-    displayPage: number,
-    lane: number,
-    position: number,
-    isFreeze: boolean
-  ) {
+  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean) {
     this.add(page, lane, position, isFreeze);
     if (page === displayPage) {
       this.draw(lane, position, isFreeze);
@@ -147,9 +123,7 @@ export class NoteService {
     const colorGroup = this.keyConfig[this.keyKind].colorGroup;
     const color = freezeColors[colorGroup[lane]];
 
-    const laneFreezes: number[] = cloneDeep(
-      this.scoreData.scores[page - 1].freezes[lane]
-    ).sort((a, b) => a - b);
+    const laneFreezes: number[] = cloneDeep(this.scoreData.scores[page - 1].freezes[lane]).sort((a, b) => a - b);
 
     const startParity =
       this.scoreData.scores.reduce((acc, score, index) => {
@@ -170,10 +144,7 @@ export class NoteService {
 
       const fillFreeze = new Konva.Rect({
         x: lane * noteWidth,
-        y: Math.min(
-          toPx(freezeStart, this.isReverse),
-          toPx(freezeEnd, this.isReverse)
-        ),
+        y: Math.min(toPx(freezeStart, this.isReverse), toPx(freezeEnd, this.isReverse)),
         width: noteWidth,
         height,
         opacity,
@@ -214,14 +185,8 @@ export class NoteService {
   }
 
   // 行追加
-  addOnPosition(
-    page: number,
-    currentPosition: number,
-    notesOnPosition: NoteOnPosition[]
-  ) {
-    notesOnPosition.forEach((obj) =>
-      this.add(page, obj.lane, currentPosition, obj.isFreeze)
-    );
+  addOnPosition(page: number, currentPosition: number, notesOnPosition: NoteOnPosition[]) {
+    notesOnPosition.forEach((obj) => this.add(page, obj.lane, currentPosition, obj.isFreeze));
   }
 
   // 行をずらす

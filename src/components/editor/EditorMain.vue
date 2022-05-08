@@ -1,11 +1,6 @@
 <template>
   <div id="editor-main">
-    <div
-      id="canvas"
-      ref="canvas"
-      tabindex="-1"
-      @keydown.prevent="keydownAction"
-    ></div>
+    <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
     <speed-piece
       v-for="(speed, index) in scoreData.scores[page - 1].speeds"
       :key="index"
@@ -14,9 +9,7 @@
       :type="speed.type"
       :is-reverse="isReverse"
     ></speed-piece>
-    <div id="editor-mode-text">
-      入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)
-    </div>
+    <div id="editor-mode-text">入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)</div>
   </div>
 </template>
 
@@ -126,11 +119,8 @@ export default defineComponent({
 
     moveIntervalFrame(): number {
       return (
-        Math.round(
-          (positionToFrame(this.timing, this.page, this.divisor) -
-            positionToFrame(this.timing, this.page, 0)) *
-            100
-        ) / 100
+        Math.round((positionToFrame(this.timing, this.page, this.divisor) - positionToFrame(this.timing, this.page, 0)) * 100) /
+        100
       );
     },
   },
@@ -182,13 +172,7 @@ export default defineComponent({
       this.operationStack
     );
 
-    this.speedPieceService = new SpeedPieceService(
-      this.scoreData,
-      this.editorWidth,
-      this.isReverse,
-      stage,
-      notesLayer
-    );
+    this.speedPieceService = new SpeedPieceService(this.scoreData, this.editorWidth, this.isReverse, stage, notesLayer);
 
     this.pageScoreService = new PageScoreService(
       this.scoreData,
@@ -411,11 +395,7 @@ export default defineComponent({
     changeDivisor(divisor: number) {
       this.divisor = divisor;
       if (this.currentPosition % divisor !== 0) {
-        this.currentPositionService.move(
-          Math.floor(this.currentPosition / divisor) * divisor,
-          this.page,
-          this.timing
-        );
+        this.currentPositionService.move(Math.floor(this.currentPosition / divisor) * divisor, this.page, this.timing);
       }
       this.baseLayerDraw();
     },
@@ -423,17 +403,11 @@ export default defineComponent({
     // 現在位置の上下移動
     currentPositionIncrease() {
       this.currentPosition += this.divisor;
-      const threshold: number = JSON.parse(
-        localStorage.getItem("simultaneousThreshold") ?? "30"
-      );
+      const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
       if (this.currentPosition >= verticalSizeNum) {
         setTimeout(() => this.pagePlus(1), threshold);
       } else {
-        this.currentPositionService.move(
-          this.currentPosition,
-          this.page,
-          this.timing
-        );
+        this.currentPositionService.move(this.currentPosition, this.page, this.timing);
       }
     },
 
@@ -442,12 +416,7 @@ export default defineComponent({
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
         else this.pageMinus(1, this.currentPosition + verticalSizeNum);
-      } else
-        this.currentPositionService.move(
-          this.currentPosition,
-          this.page,
-          this.timing
-        );
+      } else this.currentPositionService.move(this.currentPosition, this.page, this.timing);
     },
 
     // キーを押したときの挙動
@@ -461,9 +430,7 @@ export default defineComponent({
       const divisor = this.divisor;
 
       const positionLineMove = (isRaise: boolean) => {
-        return isRaise === this.isReverse
-          ? this.currentPositionDecrease
-          : this.currentPositionIncrease;
+        return isRaise === this.isReverse ? this.currentPositionDecrease : this.currentPositionIncrease;
       };
 
       const mustCtrlAction = (e: KeyboardEvent) => {
@@ -480,20 +447,11 @@ export default defineComponent({
             else pageScoreService.paste(page);
             break;
           case "KeyZ": {
-            const { undoPage, undoPosition } = undo(
-              this.operationStack,
-              noteService,
-              pageScoreService
-            );
+            const { undoPage, undoPosition } = undo(this.operationStack, noteService, pageScoreService);
             const targetPage = undoPage != undefined ? undoPage : page;
-            const targetPosition =
-              undoPosition != undefined ? undoPosition : currentPosition;
+            const targetPosition = undoPosition != undefined ? undoPosition : currentPosition;
             this.pageMove(targetPage);
-            this.currentPositionService.move(
-              targetPosition,
-              targetPage,
-              this.timing
-            );
+            this.currentPositionService.move(targetPosition, targetPage, this.timing);
             this.displayPageScore(targetPage);
             break;
           }
@@ -609,9 +567,7 @@ export default defineComponent({
             if (possiblyLane >= 0) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
-              const threshold: number = JSON.parse(
-                localStorage.getItem("simultaneousThreshold") ?? "30"
-              );
+              const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
 
               if (now.getTime() - this.previousDate.getTime() <= threshold) {
                 page = this.previousPage;
@@ -625,13 +581,7 @@ export default defineComponent({
               if (noteService.hasNote(page, possiblyLane, position).exists) {
                 noteService.removeOne(page, this.page, possiblyLane, position);
               } else {
-                noteService.addOne(
-                  page,
-                  this.page,
-                  possiblyLane,
-                  position,
-                  isFreeze
-                );
+                noteService.addOne(page, this.page, possiblyLane, position, isFreeze);
               }
 
               // 同時押しのときはカーソルを進めない

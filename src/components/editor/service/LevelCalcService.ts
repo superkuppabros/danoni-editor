@@ -22,10 +22,7 @@ export type ScoreDataInfo = {
 
 export class LevelCalcService {
   // データの準備
-  calcFlattenData(
-    noteFrames: number[][],
-    freezeFrames: number[][]
-  ): FlattenData {
+  calcFlattenData(noteFrames: number[][], freezeFrames: number[][]): FlattenData {
     const flattenData: FlattenData = {
       allScorebook: [],
       frzStartData: [],
@@ -33,19 +30,13 @@ export class LevelCalcService {
     };
 
     freezeFrames.forEach((laneFreezes) => {
-      flattenData.frzStartData = flattenData.frzStartData.concat(
-        laneFreezes.filter((value, index) => index % 2 == 0)
-      );
-      flattenData.frzEndData = flattenData.frzEndData.concat(
-        laneFreezes.filter((value, index) => index % 2 == 1)
-      );
+      flattenData.frzStartData = flattenData.frzStartData.concat(laneFreezes.filter((value, index) => index % 2 == 0));
+      flattenData.frzEndData = flattenData.frzEndData.concat(laneFreezes.filter((value, index) => index % 2 == 1));
     });
 
     flattenData.frzStartData.sort((a, b) => a - b);
     flattenData.frzEndData.sort((a, b) => a - b);
-    flattenData.allScorebook = flattenDeep(
-      noteFrames.concat(flattenData.frzStartData)
-    ).sort((a, b) => a - b);
+    flattenData.allScorebook = flattenDeep(noteFrames.concat(flattenData.frzStartData)).sort((a, b) => a - b);
 
     return flattenData;
   }
@@ -55,16 +46,11 @@ export class LevelCalcService {
     const keyNum = noteFrames.length;
     let laneContinuous = 0;
     for (let i = 0; i < keyNum; i++) {
-      const frames = noteFrames[i]
-        .concat(freezeFrames[i].filter((_value, index) => index % 2 == 0))
-        .sort((a, b) => a - b);
+      const frames = noteFrames[i].concat(freezeFrames[i].filter((_value, index) => index % 2 == 0)).sort((a, b) => a - b);
       laneContinuous += frames.reduce((acc, value, index) => {
         const continuousFrame = 10; // 縦連補正のフレーム範囲
         const diff = index !== 0 ? value - frames[index - 1] : continuousFrame;
-        const adj =
-          diff < continuousFrame
-            ? continuousFrame / diff ** 2 - 1 / continuousFrame
-            : 0;
+        const adj = diff < continuousFrame ? continuousFrame / diff ** 2 - 1 / continuousFrame : 0;
         return acc + adj;
       }, 0);
     }
@@ -103,15 +89,11 @@ export class LevelCalcService {
       if (index !== uniqueScorebook.length - 1 && index !== 0) {
         const hitsNum = allScorebook.filter((f) => f === frame).length;
         if (hitsNum + currentFrzNum > 2) {
-          scoreDataInfo.overTriple += Math.min(
-            hitsNum,
-            hitsNum + currentFrzNum - 2
-          );
+          scoreDataInfo.overTriple += Math.min(hitsNum, hitsNum + currentFrzNum - 2);
           scoreDataInfo.overTripleFrame.push(frame);
         }
         if (hitsNum >= 2 && currentFrzNum === 0) {
-          const doubleAdj =
-            40 / ((frame - uniqueScorebook[index - 1]) * (nextFrame - frame));
+          const doubleAdj = 40 / ((frame - uniqueScorebook[index - 1]) * (nextFrame - frame));
           scoreDataInfo.double += doubleAdj;
         }
 
@@ -140,23 +122,15 @@ export class LevelCalcService {
 
     const totalNotes = flattenData.allScorebook.length;
     if (totalNotes === 0) return scoreDataInfo;
-    else if (totalNotes === 1)
-      return Object.assign(scoreDataInfo, { level: 0.01 });
+    else if (totalNotes === 1) return Object.assign(scoreDataInfo, { level: 0.01 });
     else {
-      const adjFunc = (adj: number) =>
-        (adj / Math.sqrt(totalNotes - 1 - scoreDataInfo.overTriple)) * 4;
-      const totalAdj = adjFunc(
-        scoreDataInfo.single +
-          scoreDataInfo.double +
-          scoreDataInfo.laneContinuous
-      );
+      const adjFunc = (adj: number) => (adj / Math.sqrt(totalNotes - 1 - scoreDataInfo.overTriple)) * 4;
+      const totalAdj = adjFunc(scoreDataInfo.single + scoreDataInfo.double + scoreDataInfo.laneContinuous);
       scoreDataInfo.single = adjFunc(scoreDataInfo.single);
       scoreDataInfo.double = adjFunc(scoreDataInfo.double);
       scoreDataInfo.laneContinuous = adjFunc(scoreDataInfo.laneContinuous);
 
-      const tripleCorrectedLevel =
-        (totalAdj * (totalNotes - 1)) /
-        (totalNotes - 1 - scoreDataInfo.overTriple);
+      const tripleCorrectedLevel = (totalAdj * (totalNotes - 1)) / (totalNotes - 1 - scoreDataInfo.overTriple);
       const roundedLevel = Math.round(tripleCorrectedLevel * 100) / 100;
 
       return Object.assign(scoreDataInfo, { level: roundedLevel });
@@ -169,29 +143,20 @@ export class LevelCalcService {
     return { notesCountArr, freezesCountArr };
   }
 
-  createScoreDataInfoStr(
-    noteFrames: number[][],
-    freezeFrames: number[][]
-  ): string {
+  createScoreDataInfoStr(noteFrames: number[][], freezeFrames: number[][]): string {
     const scoreDataInfo = this.calcLevel(noteFrames, freezeFrames);
 
-    const levelStr = `ツール値: ${scoreDataInfo.level}${
-      scoreDataInfo.overTriple > 0 ? "*" : ""
-    }`;
+    const levelStr = `ツール値: ${scoreDataInfo.level}${scoreDataInfo.overTriple > 0 ? "*" : ""}`;
     const doubleStr = `同時補正: ${scoreDataInfo.double}`;
     const continuousStr = `縦連補正: ${scoreDataInfo.laneContinuous}`;
 
     const arrowsCount = this.countNotes(noteFrames, freezeFrames);
     const totalNotes = sum(arrowsCount.notesCountArr);
     const totalfreezes = sum(arrowsCount.freezesCountArr);
-    const arrowNumStr = `矢印数: ${
-      totalNotes + totalfreezes
-    }(${totalNotes} + ${totalfreezes})`;
+    const arrowNumStr = `矢印数: ${totalNotes + totalfreezes}(${totalNotes} + ${totalfreezes})`;
     const notesStr = `通常ノーツ: (${arrowsCount.notesCountArr.join("/")})`;
     const freezesStr = `氷矢: (${arrowsCount.freezesCountArr.join("/")})`;
-    const overTripleFrameStr = `3押し位置: (${scoreDataInfo.overTripleFrame.join(
-      "/"
-    )})`;
+    const overTripleFrameStr = `3押し位置: (${scoreDataInfo.overTripleFrame.join("/")})`;
 
     const dataInfoStr = `${levelStr}
 ${doubleStr}

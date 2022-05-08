@@ -1,10 +1,5 @@
 <template>
-  <div
-    id="editor-save"
-    class="uk-modal-dialog"
-    uk-modal
-    container="#editor-controller"
-  >
+  <div id="editor-save" class="uk-modal-dialog" uk-modal container="#editor-controller">
     <button class="uk-modal-close-default" type="button" uk-close></button>
 
     <h2 class="uk-modal-title">Save</h2>
@@ -15,13 +10,7 @@
       </div>
     </div>
     <div id="save-key-phrase" class="save-item-container">
-      <input
-        v-model.trim="inputKeyPhrase"
-        type="text"
-        max="50"
-        class="uk-input uk-form-small"
-        list="phrase-history"
-      />
+      <input v-model.trim="inputKeyPhrase" type="text" max="50" class="uk-input uk-form-small" list="phrase-history" />
       <datalist id="phrase-history">
         <option v-for="p in phraseHistory" :key="p">{{ p }}</option>
       </datalist>
@@ -45,9 +34,7 @@ export default defineComponent({
   name: "EditorOption",
   emits: ["save"],
   data(): DataType {
-    const phraseHistory: string[] = JSON.parse(
-      localStorage.getItem("keyPhrases") || "[]"
-    );
+    const phraseHistory: string[] = JSON.parse(localStorage.getItem("keyPhrases") || "[]");
     return {
       keyPhrase: "",
       phraseHistory,
@@ -75,8 +62,7 @@ export default defineComponent({
         this.phraseHistory = arr;
       } else {
         this.phraseHistory.unshift(keyPhrase);
-        if (this.phraseHistory.length > phrasesLengthMax)
-          this.phraseHistory.pop();
+        if (this.phraseHistory.length > phrasesLengthMax) this.phraseHistory.pop();
       }
       localStorage.setItem("keyPhrases", JSON.stringify(this.phraseHistory));
 

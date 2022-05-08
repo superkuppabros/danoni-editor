@@ -26,11 +26,7 @@ export class PageScoreService {
 
   // ページクリア
   clear(page: number) {
-    this.scoreData.scores.splice(
-      page - 1,
-      1,
-      new DefaultPageScore(this.keyNum)
-    );
+    this.scoreData.scores.splice(page - 1, 1, new DefaultPageScore(this.keyNum));
     this.displayPageScore(page);
   }
 

@@ -5,10 +5,7 @@
     </div>
     <h3 class="configure-context-title">Key Config</h3>
     <div id="configure-uploader">
-      <configure-uploader
-        :msg="confTitle"
-        @file-recieve="onConfFileRecieve"
-      ></configure-uploader>
+      <configure-uploader :msg="confTitle" @file-recieve="onConfFileRecieve"></configure-uploader>
       <div class="start-btn btn-gray" @click="resetConf">RESET</div>
     </div>
     <configure-design></configure-design>
@@ -45,8 +42,7 @@ export default defineComponent({
     onConfFileRecieve(file: File) {
       const storage = localStorage;
       const mimeTypePattern = "(application/json|text/plain)";
-      if (!file.type.match(mimeTypePattern))
-        alert("コンフィグファイルではありません。");
+      if (!file.type.match(mimeTypePattern)) alert("コンフィグファイルではありません。");
       else {
         const reader = new FileReader();
         reader.onload = () => {

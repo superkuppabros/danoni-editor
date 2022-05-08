@@ -56,45 +56,22 @@
       </div>
       <div id="menu-adj" class="menu-item-container">
         <div class="menu-txt">Blank Frame</div>
-        <input
-          v-model.number="scoreData.blankFrame"
-          type="number"
-          step="0.01"
-          class="uk-input uk-form-small"
-        />
+        <input v-model.number="scoreData.blankFrame" type="number" step="0.01" class="uk-input uk-form-small" />
       </div>
       <div id="menu-sn" class="menu-item-container">
         <div class="menu-txt">Start Number</div>
-        <input
-          v-model.number="timing.startNum"
-          type="number"
-          step="0.01"
-          class="uk-input uk-form-small"
-        />
+        <input v-model.number="timing.startNum" type="number" step="0.01" class="uk-input uk-form-small" />
       </div>
       <div id="menu-bpm" class="menu-item-container">
         <div class="menu-txt">BPM</div>
-        <input
-          v-model.number="timing.bpm"
-          type="number"
-          step="0.01"
-          class="uk-input uk-form-small"
-        />
+        <input v-model.number="timing.bpm" type="number" step="0.01" class="uk-input uk-form-small" />
       </div>
 
       <div id="menu-output" class="menu-item-container">
-        <a class="menu-output-btn btn-orange" href="#editor-option" uk-toggle
-          >OPTION</a
-        >
-        <div class="menu-output-btn btn-gray" @click="convertWithQuarters">
-          TEST
-        </div>
-        <div class="menu-output-btn btn-blue" href="#editor-save" uk-toggle>
-          SAVE
-        </div>
-        <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">
-          CALC
-        </div>
+        <a class="menu-output-btn btn-orange" href="#editor-option" uk-toggle>OPTION</a>
+        <div class="menu-output-btn btn-gray" @click="convertWithQuarters">TEST</div>
+        <div class="menu-output-btn btn-blue" href="#editor-save" uk-toggle>SAVE</div>
+        <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">CALC</div>
         <div class="menu-output-btn btn-red" @click="convert">GO!</div>
       </div>
     </div>
@@ -158,8 +135,7 @@ export default defineComponent({
     let scoreData: ScoreData;
     const storedKeyKind = sessionStorage.getItem("keyKind");
 
-    const selectedKeyKind = (storedKeyKind ||
-      this.selectedKey) as CustomKeyKind;
+    const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
     const selectedKeyNum = keyConfig[selectedKeyKind].num;
 
     const scoreRevivalService = new ScoreRevivalService(keyConfig);
@@ -167,14 +143,9 @@ export default defineComponent({
       //TODO: 譜面データのチェッカーを作る
       if (!this.loadScoreDataStr) {
         scoreData = new DefaultScoreData(selectedKeyNum);
-      } else if (
-        scoreRevivalService.dosConvert(this.loadScoreDataStr) != null
-      ) {
-        scoreData = scoreRevivalService.dosConvert(
-          this.loadScoreDataStr
-        ) as ScoreData;
-      } else
-        scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
+      } else if (scoreRevivalService.dosConvert(this.loadScoreDataStr) != null) {
+        scoreData = scoreRevivalService.dosConvert(this.loadScoreDataStr) as ScoreData;
+      } else scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
       if (scoreData.scores.length === 0) {
         scoreData.scores.push(new DefaultPageScore(selectedKeyNum));
       }
@@ -226,10 +197,7 @@ export default defineComponent({
       this.pageNum = this.scoreData.timings[this.labelNum - 1].label;
     },
     labelPlus(n: number): void {
-      this.labelNum = Math.min(
-        this.scoreData.timings.length,
-        this.labelNum + n
-      );
+      this.labelNum = Math.min(this.scoreData.timings.length, this.labelNum + n);
       this.labelMove(this.labelNum);
       this.pageNum = this.scoreData.timings[this.labelNum - 1].label;
     },
@@ -248,8 +216,7 @@ export default defineComponent({
           // 成功時
           () => alert(message),
           // 失敗時
-          () =>
-            alert("クリップボードにコピーできませんでした。権限がありません。")
+          () => alert("クリップボードにコピーできませんでした。権限がありません。")
         );
       } else {
         alert("クリップボードにコピーできませんでした。非対応のブラウザです。");
@@ -258,10 +225,7 @@ export default defineComponent({
 
     convert(): void {
       // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix =
-        this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber
-          ? this.scoreData.scoreNumber.toString()
-          : "";
+      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
       const data: string = converter.convert(this.scoreData, postfix);
       const message = "譜面データをクリップボードにコピーしました！";
@@ -290,23 +254,16 @@ export default defineComponent({
       const data: string = converter.save(this.scoreData);
 
       const xhr = new XMLHttpRequest();
-      const apiUrl =
-        "https://asia-northeast1-danoni-editor-backend.cloudfunctions.net/addSaveData";
+      const apiUrl = "https://asia-northeast1-danoni-editor-backend.cloudfunctions.net/addSaveData";
       xhr.open("POST", apiUrl);
       xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
       xhr.send(JSON.stringify({ keyPhrase, data }));
     },
     convertWithQuarters(): void {
       // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix =
-        this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber
-          ? this.scoreData.scoreNumber.toString()
-          : "";
+      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
-      const data: string = converter.convertWithQuarters(
-        this.scoreData,
-        postfix
-      );
+      const data: string = converter.convertWithQuarters(this.scoreData, postfix);
       const message = "四分譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },
@@ -315,10 +272,7 @@ export default defineComponent({
       const levelChecker = new LevelCalcService();
       const frameData = this.scoreConvertService.toFrameData(this.scoreData);
       const outputData = this.scoreConvertService.framesToOutputData(frameData);
-      const scoreDataInfoStr = levelChecker.createScoreDataInfoStr(
-        outputData.notes,
-        outputData.freezes
-      );
+      const scoreDataInfoStr = levelChecker.createScoreDataInfoStr(outputData.notes, outputData.freezes);
       alert(scoreDataInfoStr);
     },
 
@@ -328,10 +282,7 @@ export default defineComponent({
     },
     getNearestLabelNumByPageNum(pageNum: number): number {
       const labels = this.scoreData.timings.map((timing) => timing.label);
-      const labelNum = labels.reduce(
-        (acc, label) => (label <= pageNum ? acc + 1 : acc),
-        0
-      );
+      const labelNum = labels.reduce((acc, label) => (label <= pageNum ? acc + 1 : acc), 0);
       return labelNum;
     },
     labelOperation(pageNum: number, labelFlag: boolean): void {
@@ -346,13 +297,7 @@ export default defineComponent({
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newStartNum =
-          Math.round(
-            (oldTiming.startNum +
-              (pageNum - oldTiming.label) *
-                verticalSizeNum *
-                framePerPosition) *
-              100
-          ) / 100;
+          Math.round((oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum * framePerPosition) * 100) / 100;
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,

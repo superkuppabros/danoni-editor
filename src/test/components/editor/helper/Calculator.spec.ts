@@ -1,12 +1,7 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect } from "vitest";
 
-import { Timing } from "@/model/Timing"
-import {
-  frameToPagePosition,
-  positionToFrame,
-  positionToSeconds,
-  secondsToTimeStr,
-} from "@/components/editor/helper/Calculator"
+import { Timing } from "@/model/Timing";
+import { frameToPagePosition, positionToFrame, positionToSeconds, secondsToTimeStr } from "@/components/editor/helper/Calculator";
 
 describe("Calculator", () => {
   const timing: Timing = {

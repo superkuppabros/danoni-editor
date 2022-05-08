@@ -13,8 +13,7 @@ describe("speedPieceService", () => {
   const layer = "dummyLayer" as unknown as Konva.Layer;
 
   const scoreData: ScoreData = testScoreData;
-  const createNoteService = (scoreData: ScoreData) =>
-    new SpeedPieceService(scoreData, editorWidth, isReverse, stage, layer);
+  const createNoteService = (scoreData: ScoreData) => new SpeedPieceService(scoreData, editorWidth, isReverse, stage, layer);
 
   it("速度変化コマの有無が判定できる", () => {
     const speedPieceService = createNoteService(cloneDeep(scoreData));

@@ -1,20 +1,11 @@
 <template>
-  <div
-    id="configure-conf-select"
-    @dragover.prevent="ondragover"
-    @drop.prevent="ondrop"
-  >
+  <div id="configure-conf-select" @dragover.prevent="ondragover" @drop.prevent="ondrop">
     <div
       id="configure-droparea"
       uk-form-custom
       class="uk-placeholder uk-text-center uk-margin-remove-bottom uk-form-width-medium"
     >
-      <input
-        id="configure-droparea-input"
-        ref="input"
-        type="file"
-        @change="loadFile"
-      />
+      <input id="configure-droparea-input" ref="input" type="file" @change="loadFile" />
       <div id="configure-droparea-text">
         <span uk-icon="icon: upload"></span>
         <span class="uk-text-middle">{{ msg }}</span>

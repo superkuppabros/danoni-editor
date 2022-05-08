@@ -18,30 +18,17 @@ export class ScoreRevivalService {
     const regExp = RegExp(extractedScoreNumber + "_", "g");
 
     const splitArray = compact(
-      dosData
-        .replace(regExp, "_")
-        .replace(/&/g, "|")
-        .replace(/\|es_/g, "|")
-        .replace(/\n/g, "")
-        .split(this.delimiter)
+      dosData.replace(regExp, "_").replace(/&/g, "|").replace(/\|es_/g, "|").replace(/\n/g, "").split(this.delimiter)
     );
 
-    const rawDict: { [name: string]: string } = fromPairs(
-      splitArray.map((elem) => elem.split("="))
-    );
+    const rawDict: { [name: string]: string } = fromPairs(splitArray.map((elem) => elem.split("=")));
     try {
       const dict = this.fromOldCWToNewCW(rawDict);
       const keyKind: string = dict["keyKind"];
       const blankFrame: number = parseInt(dict["blankFrame"]);
-      const labels: number[] = dict["label"]
-        .split(",")
-        .map((x: string) => parseInt(x));
-      const startNumbers: number[] = dict["startNumber"]
-        .split(",")
-        .map((x: string) => parseFloat(x));
-      const bpms: number[] = dict["bpm"]
-        .split(",")
-        .map((x: string) => parseFloat(x));
+      const labels: number[] = dict["label"].split(",").map((x: string) => parseInt(x));
+      const startNumbers: number[] = dict["startNumber"].split(",").map((x: string) => parseFloat(x));
+      const bpms: number[] = dict["bpm"].split(",").map((x: string) => parseFloat(x));
       const scoreNumber: number = parseInt(dict["scoreNumber"]);
 
       const timings: Timing[] = labels.map((label, index) => ({
@@ -62,30 +49,17 @@ export class ScoreRevivalService {
     }
   }
 
-  private calcScoreData = (
-    dict: { [name: string]: string },
-    timings: Timing[],
-    scoreData: ScoreData
-  ) => {
+  private calcScoreData = (dict: { [name: string]: string }, timings: Timing[], scoreData: ScoreData) => {
     const keyKind = scoreData.keyKind as KeyKind;
     const scoreNumber = scoreData.scoreNumber as number;
 
     const noteNames: string[] = this.keyConfig[keyKind].noteNames;
     const freezeNames: string[] = this.keyConfig[keyKind].freezeNames;
-    const speedChangeNames: string[] =
-      "speed_data" in dict
-        ? ["speed_data", "boost_data"]
-        : ["speed_change", "boost_data"];
+    const speedChangeNames: string[] = "speed_data" in dict ? ["speed_data", "boost_data"] : ["speed_change", "boost_data"];
 
-    const [noteFrames, freezeFrames, speedChangeFrames]: number[][][] = [
-      noteNames,
-      freezeNames,
-      speedChangeNames,
-    ].map((names) =>
+    const [noteFrames, freezeFrames, speedChangeFrames]: number[][][] = [noteNames, freezeNames, speedChangeNames].map((names) =>
       names
-        .map((keyNameWithNum: string) =>
-          keyNameWithNum.replace(scoreNumber.toString(), "")
-        )
+        .map((keyNameWithNum: string) => keyNameWithNum.replace(scoreNumber.toString(), ""))
         .map((keyName: string) =>
           (dict[keyName] ?? "")
             .split(",")
@@ -94,22 +68,10 @@ export class ScoreRevivalService {
         )
     );
 
-    const maxFrame = Math.max(
-      this.findMaxNumber(noteFrames),
-      this.findMaxNumber(freezeFrames)
-    );
-    const maxPage = frameToPagePosition(
-      timings.slice(-1)[0],
-      maxFrame,
-      scoreData.blankFrame
-    ).page;
+    const maxFrame = Math.max(this.findMaxNumber(noteFrames), this.findMaxNumber(freezeFrames));
+    const maxPage = frameToPagePosition(timings.slice(-1)[0], maxFrame, scoreData.blankFrame).page;
     const noteScores = this.makeScores(noteFrames, timings, scoreData, maxPage);
-    const freezeScores = this.makeScores(
-      freezeFrames,
-      timings,
-      scoreData,
-      maxPage
-    );
+    const freezeScores = this.makeScores(freezeFrames, timings, scoreData, maxPage);
 
     const speedFrames = speedChangeFrames[0].filter((_, i) => i % 2 == 0);
     const speedValues = speedChangeFrames[0].filter((_, i) => i % 2 == 1);
@@ -138,21 +100,13 @@ export class ScoreRevivalService {
       const type = frameSpeed.type;
       const blankFrame = scoreData.blankFrame;
       let labelCounter = 0;
-      while (
-        labelCounter + 1 < timings.length &&
-        frame >= timings[labelCounter + 1].startNum + blankFrame
-      ) {
+      while (labelCounter + 1 < timings.length && frame >= timings[labelCounter + 1].startNum + blankFrame) {
         labelCounter++;
       }
-      const pagePosition = frameToPagePosition(
-        timings[labelCounter],
-        frame,
-        blankFrame
-      );
+      const pagePosition = frameToPagePosition(timings[labelCounter], frame, blankFrame);
       const page = pagePosition.page;
       const position = pagePosition.position;
-      if (page >= 1 && position >= 0)
-        speedsArr[page - 1].push({ position, value, type });
+      if (page >= 1 && position >= 0) speedsArr[page - 1].push({ position, value, type });
     });
 
     const pageScores: PageScore[] = new Array(maxPage).fill({}).map((_, i) => {
@@ -168,18 +122,10 @@ export class ScoreRevivalService {
   };
 
   private findMaxNumber(frames: number[][]): number {
-    return frames.reduce(
-      (acc, curr) => Math.max(acc, curr.slice(-1)[0] | 0),
-      0
-    );
+    return frames.reduce((acc, curr) => Math.max(acc, curr.slice(-1)[0] | 0), 0);
   }
 
-  private makeScores(
-    frames: number[][],
-    timings: Timing[],
-    scoreData: ScoreData,
-    maxPage: number
-  ): number[][][] {
+  private makeScores(frames: number[][], timings: Timing[], scoreData: ScoreData, maxPage: number): number[][][] {
     const laneLen = frames.length;
     const blankFrame = scoreData.blankFrame;
     const arr: number[][][] = new Array(maxPage).fill([]).map(() => {
@@ -189,17 +135,10 @@ export class ScoreRevivalService {
     frames.forEach((laneFrames, lane) => {
       let labelCounter = 0;
       laneFrames.forEach((frame) => {
-        while (
-          labelCounter + 1 < timings.length &&
-          frame >= timings[labelCounter + 1].startNum + blankFrame
-        ) {
+        while (labelCounter + 1 < timings.length && frame >= timings[labelCounter + 1].startNum + blankFrame) {
           labelCounter++;
         }
-        const pagePosition = frameToPagePosition(
-          timings[labelCounter],
-          frame,
-          blankFrame
-        );
+        const pagePosition = frameToPagePosition(timings[labelCounter], frame, blankFrame);
         const page = pagePosition.page;
         const position = pagePosition.position;
         if (page >= 1 && position >= 0) arr[page - 1][lane].push(position);
@@ -214,15 +153,9 @@ export class ScoreRevivalService {
   } {
     try {
       const difData: string[] = dict["difData"].split(",");
-      const firstNum: number[] = dict["first_num"]
-        .split(",")
-        .map((x: string) => Number(x));
-      const habaNum: number[] = dict["haba_num"]
-        .split(",")
-        .map((x: string) => Number(x));
-      const habaPageNum: number[] = dict["haba_page_num"]
-        .split(",")
-        .map((x: string) => Number(x));
+      const firstNum: number[] = dict["first_num"].split(",").map((x: string) => Number(x));
+      const habaNum: number[] = dict["haba_num"].split(",").map((x: string) => Number(x));
+      const habaPageNum: number[] = dict["haba_page_num"].split(",").map((x: string) => Number(x));
       dict.keyKind = difData[0];
       dict.blankFrame = "200";
       let counter = 0; // ページの端数をカウント

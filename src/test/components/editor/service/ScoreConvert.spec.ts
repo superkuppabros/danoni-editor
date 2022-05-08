@@ -1,18 +1,10 @@
-import {
-  ScoreConvertService,
-  FrameData,
-} from "@/components/editor/service/ScoreConvertService";
+import { ScoreConvertService, FrameData } from "@/components/editor/service/ScoreConvertService";
 import { KeyKind } from "@/model/KeyKind";
 import { KeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { ScoreData, DefaultScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
-import {
-  test2DosData,
-  test2ScoreData,
-  testDosData,
-  testScoreData,
-} from "./testScoreData";
+import { test2DosData, test2ScoreData, testDosData, testScoreData } from "./testScoreData";
 
 describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
@@ -43,9 +35,7 @@ describe("scoreConvertService", () => {
       },
     ];
 
-    expect(scoreConverter.toFrameData(scoreData)).toStrictEqual(
-      expectedFrameData
-    );
+    expect(scoreConverter.toFrameData(scoreData)).toStrictEqual(expectedFrameData);
   });
 
   it("dosの出力が正しく出来る", () => {
@@ -58,13 +48,8 @@ describe("scoreConvertService", () => {
 
   it("譜面データの後ろの空白が削除されている", () => {
     const scoreDataWithDefault = cloneDeep(scoreData);
-    scoreDataWithDefault.scores.push(
-      new DefaultPageScore(keyNum),
-      new DefaultPageScore(keyNum)
-    );
-    expect(scoreConverter.cutLastDefault(scoreDataWithDefault)).toStrictEqual(
-      scoreData
-    );
+    scoreDataWithDefault.scores.push(new DefaultPageScore(keyNum), new DefaultPageScore(keyNum));
+    expect(scoreConverter.cutLastDefault(scoreDataWithDefault)).toStrictEqual(scoreData);
   });
 
   it("四分譜面が生成されている", () => {
@@ -74,8 +59,6 @@ describe("scoreConvertService", () => {
 |speed_data=|boost_data=|
 |es_keyKind=5|es_blankFrame=200|es_label=1|es_startNumber=0|es_bpm=140|es_scoreNumber=1|
 `;
-    expect(scoreConverter.convertWithQuarters(initialScoreData)).toBe(
-      expectedData
-    );
+    expect(scoreConverter.convertWithQuarters(initialScoreData)).toBe(expectedData);
   });
 });
