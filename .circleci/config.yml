@@ -1,0 +1,30 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+jobs:
+  all:
+    docker:
+      - image: cimg/node:16.15
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-npm-deps-{{ checksum "package-lock.json" }}
+            - v1-npm-deps-
+      - node/install-packages:
+          pkg-manager: npm
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run lint
+      - run: npm run prettier
+      - run: npm run build
+      - run: npm run test
+
+workflows:
+  danoni-editor:
+    jobs:
+      - all
