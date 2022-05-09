@@ -10,11 +10,14 @@ export function positionToFrame(timing: Timing, page: number, position: number, 
 export function frameToPagePosition(timing: Timing, frame: number, blankFrame: number): { page: number; position: number } {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
 
-  const rawPosition = Math.round((frame - blankFrame - timing.startNum) / framePerPosition);
-  // 小数の誤差補正、奇数のノーツが補正されてしまうが多いケースをカバーしにいく
-  let adjustedPosition: number = rawPosition;
-  if (rawPosition % 4 == 1) adjustedPosition = rawPosition - 1;
-  else if (rawPosition % 4 == 3) adjustedPosition = rawPosition + 1;
+  const rawPosition = (frame - blankFrame - timing.startNum) / framePerPosition;
+  // 小数の誤差補正 4=>48分で補正するため、32分はうまく補正されない確率が高い
+  let adjustedPosition: number = Math.round(rawPosition);
+  if (adjustedPosition % 4 == 1) adjustedPosition -= 1;
+  else if (adjustedPosition % 4 == 3) adjustedPosition += 1;
+  // 48分より4分、16分を優先する
+  else if (adjustedPosition % 12 == 2) adjustedPosition -= 2;
+  else if (adjustedPosition % 12 == 10) adjustedPosition += 2;
 
   const page = Math.floor(adjustedPosition / verticalSizeNum) + timing.label;
   const position = adjustedPosition % verticalSizeNum;

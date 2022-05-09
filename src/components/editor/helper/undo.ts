@@ -9,7 +9,6 @@ export function undo(
   noteService: NoteService,
   pageScoreService: PageScoreService
 ): { undoPage?: number; undoPosition?: number } {
-  console.log(operationStack);
   const operation = operationStack.pop();
   if (!operation) return {};
 
