@@ -36,7 +36,7 @@ export class MusicService {
     if (musicDuration > startTime) {
       if (startTime < 0) {
         // 再生開始のみ倍速の補正が必要
-        this.source.start(-(startTime / musicRate), 0, duration + startTime);
+        this.source.start(this.context.currentTime - startTime / musicRate, 0, duration + startTime);
       } else this.source.start(0, startTime, duration);
     }
   }
