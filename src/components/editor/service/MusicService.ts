@@ -1,31 +1,48 @@
 export class MusicService {
   private context: AudioContext = new AudioContext();
   private gainNode: GainNode;
+  private buffer!: AudioBuffer;
+  private source: AudioBufferSourceNode;
 
-  constructor(private audio: HTMLAudioElement) {
-    audio.load();
-    const track = this.context.createMediaElementSource(audio);
+  constructor(arrayBuffer: ArrayBuffer) {
     const gainNode = this.context.createGain();
-    track.connect(gainNode);
     gainNode.connect(this.context.destination);
     this.gainNode = gainNode;
+    this.context.decodeAudioData(
+      arrayBuffer,
+      (buffer) => (this.buffer = buffer),
+      () => {
+        throw "failed loading music.";
+      }
+    );
+    this.source = this.context.createBufferSource();
   }
 
-  play(startTime: number, musicVolume: number, musicRate: number): void {
+  /**
+   *
+   * @param startTime 開始秒
+   * @param duration 再生する長さ(秒)
+   * @param musicVolume 音量(0-1)
+   * @param musicRate 速度(0.25-2)
+   */
+  play(startTime: number, duration: number, musicVolume: number, musicRate: number): void {
+    this.source = this.context.createBufferSource();
+    this.source.buffer = this.buffer;
+    this.source.connect(this.gainNode);
     this.gainNode.gain.value = musicVolume;
-    this.audio.playbackRate = musicRate;
+    this.source.playbackRate.value = musicRate;
 
-    const duration = this.audio.duration;
-    if (duration > startTime) {
-      this.audio.currentTime = startTime;
+    const musicDuration = this.buffer.duration;
+    if (musicDuration > startTime) {
       if (startTime < 0) {
-        setTimeout(() => this.audio.play(), -startTime * 1000);
-      } else this.audio.play();
+        // 再生開始のみ倍速の補正が必要
+        this.source.start(this.context.currentTime - startTime / musicRate, 0, duration + startTime);
+      } else this.source.start(0, startTime, duration);
     }
   }
 
   pause(timer?: number) {
-    this.audio.pause();
+    this.source.stop(0);
     clearTimeout(timer);
   }
 }

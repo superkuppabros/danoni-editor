@@ -52,7 +52,7 @@ type DataType = {
   editorWidth: number;
   isReverse: boolean;
   musicTimer: number | null;
-  musicService: MusicService;
+  musicService?: MusicService;
   copyScoreStore: PageScore;
   operationStack: Operation[];
   currentPositionService: CurrentPositionService;
@@ -88,7 +88,6 @@ export default defineComponent({
     const keyConfig = createCustomKeyConfig();
     const keyKind = this.keyKind;
     const keyNum = keyConfig[keyKind].num;
-    const audio = new Audio(this.loadMusicUrl);
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
     const operationStack: Operation[] = [];
@@ -101,7 +100,6 @@ export default defineComponent({
       keyNum,
       isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
-      musicService: new MusicService(audio),
       musicTimer: null,
       operationStack,
       copyScoreStore: new DefaultPageScore(keyNum),
@@ -139,7 +137,7 @@ export default defineComponent({
     },
   },
 
-  mounted(): void {
+  async mounted() {
     const stage = new Konva.Stage({
       x: canvasMarginHorizontal,
       y: canvasMarginVertical,
@@ -161,6 +159,11 @@ export default defineComponent({
     this.baseLayer = baseLayer;
     this.currentPositionLayer = currentPositionLayer;
     this.notesLayer = notesLayer;
+
+    if (this.loadMusicUrl) {
+      const arrayBuffer = await fetch(this.loadMusicUrl).then((response) => response.arrayBuffer());
+      this.musicService = new MusicService(arrayBuffer);
+    }
 
     this.noteService = new NoteService(
       this.scoreData,
@@ -306,11 +309,12 @@ export default defineComponent({
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = ((endTime - startTime) * 1000) / musicRate;
-        this.musicService.play(startTime, musicVolume, musicRate);
+        if (!this.musicService) return;
+        this.musicService.play(startTime, endTime - startTime, musicVolume, musicRate);
         this.currentPositionService.musicAnimate(playDuration);
         if (this.musicTimer) {
           const timer: number = window.setTimeout(() => {
-            this.musicService.pause();
+            if (this.musicService) this.musicService.pause();
             loop(startTime, endTime);
           }, playDuration);
           this.musicTimer = timer;
@@ -329,7 +333,7 @@ export default defineComponent({
       node.destroy();
       stage.add(currentPositionLayer);
 
-      this.musicService.pause(timer);
+      if (this.musicService) this.musicService.pause(timer);
       this.musicTimer = null;
     },
 
