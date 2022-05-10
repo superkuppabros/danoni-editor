@@ -4,7 +4,7 @@
     <speed-piece
       v-for="(speed, index) in scoreData.scores[page - 1].speeds"
       :key="index"
-      v-model="speed.value"
+      v-model:speedValue.number="speed.value"
       :position="speed.position"
       :type="speed.type"
       :is-reverse="isReverse"

@@ -8,28 +8,24 @@ import { SpeedType } from "../../model/Speed";
 import toPx from "./helper/toPx";
 export default defineComponent({
   name: "SpeedPiece",
-  model: {
-    prop: "propValue",
-    event: "changeSpeed",
-  },
   props: {
     isReverse: { type: Boolean, required: true },
     position: { type: Number, required: true },
-    propValue: { type: Number, default: 1 },
+    speedValue: { type: Number, default: 1 },
     type: { type: String as PropType<SpeedType>, required: true },
   },
-  emits: ["changeSpeed"],
+  emits: ["update:speedValue"],
   computed: {
     top(): number {
       return toPx(this.position || 0, this.isReverse) + 15;
     },
     inputValue: {
       get(): number {
-        return this.propValue || 1;
+        return this.speedValue;
       },
       set(inputValue: string) {
         const value = Number(inputValue);
-        this.$emit("changeSpeed", value);
+        this.$emit("update:speedValue", value);
       },
     },
   },
