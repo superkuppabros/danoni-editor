@@ -45,4 +45,12 @@ export class MusicService {
     this.source.stop(0);
     clearTimeout(timer);
   }
+
+  changeVolume(volume: number) {
+    this.gainNode.gain.value = volume;
+  }
+
+  changeRate(rate: number) {
+    this.source.playbackRate.value = rate;
+  }
 }
