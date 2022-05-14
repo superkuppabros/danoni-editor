@@ -3,6 +3,7 @@ export class MusicService {
   private gainNode: GainNode;
   private buffer!: AudioBuffer;
   private source: AudioBufferSourceNode;
+  private isPlaying: boolean;
 
   constructor(arrayBuffer: ArrayBuffer) {
     const gainNode = this.context.createGain();
@@ -16,6 +17,7 @@ export class MusicService {
       }
     );
     this.source = this.context.createBufferSource();
+    this.isPlaying = false;
   }
 
   /**
@@ -38,11 +40,15 @@ export class MusicService {
         // 再生開始のみ倍速の補正が必要
         this.source.start(this.context.currentTime - startTime / musicRate, 0, duration + startTime);
       } else this.source.start(0, startTime, duration);
+      this.isPlaying = true;
     }
   }
 
   pause(timer?: number) {
-    this.source.stop(0);
+    if (this.isPlaying) {
+      this.source.stop(0);
+    }
     clearTimeout(timer);
+    this.isPlaying = false;
   }
 }
