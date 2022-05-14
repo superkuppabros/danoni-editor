@@ -13,6 +13,15 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 3.1.6
+
+#### 機能改善
+- ボリュームと再生速度を即時反映する ( thanks: @suzme )
+
+#### バグ修正
+- ページ端での同時押し入力時に不正な場所にノートが置かれてしまう場合がある不具合の修正 ( thanks: @suzme )
+- ページ送りが二重になることがある問題の修正
+
 ### ver 3.1.5
 
 #### バグ修正
