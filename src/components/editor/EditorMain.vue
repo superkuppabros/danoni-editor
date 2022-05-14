@@ -417,10 +417,11 @@ export default defineComponent({
     },
 
     // 現在位置の上下移動
-    currentPositionIncrease() {
+    currentPositionIncrease(withThreshold: boolean) {
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
       if (this.currentPosition + this.divisor >= verticalSizeNum) {
-        setTimeout(() => this.pagePlus(1), threshold);
+        if (withThreshold) setTimeout(() => this.pagePlus(1), threshold);
+        else this.pagePlus(1);
       } else {
         this.currentPositionService.move(this.currentPosition + this.divisor, this.page, this.timing);
       }
@@ -445,7 +446,7 @@ export default defineComponent({
       const divisor = this.divisor;
 
       const positionLineMove = (isRaise: boolean) => {
-        return isRaise === this.isReverse ? this.currentPositionDecrease : this.currentPositionIncrease;
+        return isRaise === this.isReverse ? this.currentPositionDecrease : () => this.currentPositionIncrease(false);
       };
 
       const mustCtrlAction = (e: KeyboardEvent) => {
@@ -533,7 +534,7 @@ export default defineComponent({
             this.displayPageScore(this.page);
             break;
           case "Space": // 通常、リバースともに正方向に進む
-            this.currentPositionIncrease();
+            this.currentPositionIncrease(false);
             break;
           case "ArrowUp":
             positionLineMove(true)();
@@ -601,7 +602,7 @@ export default defineComponent({
 
               // 同時押しのときはカーソルを進めない
               if (!isSimultaneous) {
-                this.currentPositionIncrease();
+                this.currentPositionIncrease(false);
                 this.previousPage = page;
                 this.previousPosition = position;
               }
