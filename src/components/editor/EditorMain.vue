@@ -135,6 +135,21 @@ export default defineComponent({
     propScoreNumber(scoreNumber: number) {
       this.scoreData.scoreNumber = scoreNumber;
     },
+
+    musicVolume(musicVolume: number) {
+      if (this.musicService) {
+        this.musicService.changeVolume(musicVolume);
+      }
+    },
+
+    musicRate() {
+      if (this.musicService) {
+        if (this.musicTimer) {
+          this.stopMusicLoop(this.musicTimer);
+        }
+        this.playMusicLoop(this.timing);
+      }
+    },
   },
 
   async mounted() {
@@ -304,13 +319,10 @@ export default defineComponent({
       const startTime = positionToSeconds(timing, this.page, startPosition);
       const endTime = positionToSeconds(timing, this.page, endPosition);
 
-      const musicVolume = this.musicVolume;
-      const musicRate = this.musicRate;
-
       const loop = (startTime: number, endTime: number) => {
-        const playDuration = ((endTime - startTime) * 1000) / musicRate;
+        const playDuration = ((endTime - startTime) * 1000) / this.musicRate;
         if (!this.musicService) return;
-        this.musicService.play(startTime, endTime - startTime, musicVolume, musicRate);
+        this.musicService.play(startTime, endTime - startTime, this.musicVolume, this.musicRate);
         this.currentPositionService.musicAnimate(playDuration);
         if (this.musicTimer) {
           const timer: number = window.setTimeout(() => {
