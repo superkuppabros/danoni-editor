@@ -406,12 +406,11 @@ export default defineComponent({
 
     // 現在位置の上下移動
     currentPositionIncrease() {
-      this.currentPosition += this.divisor;
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
-      if (this.currentPosition >= verticalSizeNum) {
+      if (this.currentPosition + this.divisor >= verticalSizeNum) {
         setTimeout(() => this.pagePlus(1), threshold);
       } else {
-        this.currentPositionService.move(this.currentPosition, this.page, this.timing);
+        this.currentPositionService.move(this.currentPosition + this.divisor, this.page, this.timing);
       }
     },
 
