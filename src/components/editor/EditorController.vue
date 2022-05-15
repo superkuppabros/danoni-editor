@@ -3,7 +3,7 @@
     <editor-main
       :page-num="pageNum"
       :load-score-data="scoreData"
-      :load-music-url="loadMusicUrl"
+      :load-music-url="musicUrl"
       :key-config="keyConfig"
       :key-kind="keyKind"
       :timing="timing"
@@ -112,6 +112,7 @@ type DataType = {
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
   scoreNumber: number;
+  musicUrl: string;
   musicVolume: number;
   musicRate: number;
   scoreConvertService: ScoreConvertService;
@@ -166,6 +167,7 @@ export default defineComponent({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
