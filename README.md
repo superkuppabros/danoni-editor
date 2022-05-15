@@ -13,6 +13,11 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
+### ver 3.1.7
+
+#### バグ修正
+- 音楽再生周りの不具合解消 ( thanks: @suzme )
+
 ### ver 3.1.6
 
 #### 機能改善
