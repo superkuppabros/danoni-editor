@@ -1,4 +1,5 @@
 export class MusicService {
+  public canPlay: boolean;
   private context: AudioContext = new AudioContext();
   private gainNode: GainNode;
   private buffer!: AudioBuffer;
@@ -8,9 +9,13 @@ export class MusicService {
     const gainNode = this.context.createGain();
     gainNode.connect(this.context.destination);
     this.gainNode = gainNode;
+    this.canPlay = false;
     this.context.decodeAudioData(
       arrayBuffer,
-      (buffer) => (this.buffer = buffer),
+      (buffer) => {
+        this.buffer = buffer;
+        this.canPlay = true;
+      },
       () => {
         throw "failed loading music.";
       }
@@ -26,6 +31,10 @@ export class MusicService {
    * @param musicRate 速度(0.25-2)
    */
   play(startTime: number, duration: number, musicVolume: number, musicRate: number): void {
+    if (!this.buffer) {
+      return;
+    }
+
     this.source = this.context.createBufferSource();
     this.source.buffer = this.buffer;
     this.source.connect(this.gainNode);

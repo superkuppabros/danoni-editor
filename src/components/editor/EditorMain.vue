@@ -176,8 +176,11 @@ export default defineComponent({
     this.notesLayer = notesLayer;
 
     if (this.loadMusicUrl) {
-      const arrayBuffer = await fetch(this.loadMusicUrl).then((response) => response.arrayBuffer());
-      this.musicService = new MusicService(arrayBuffer);
+      fetch(this.loadMusicUrl)
+        .then((response) => response.arrayBuffer())
+        .then((buffer) => {
+          this.musicService = new MusicService(buffer);
+        });
     }
 
     this.noteService = new NoteService(
@@ -314,6 +317,8 @@ export default defineComponent({
 
     // 音楽再生処理
     playMusicLoop(timing: Timing) {
+      if (!this.musicService || !this.musicService.canPlay) return;
+
       const startPosition = -verticalSizeNum / 4;
       const endPosition = verticalSizeNum;
       const startTime = positionToSeconds(timing, this.page, startPosition);
