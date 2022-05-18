@@ -143,13 +143,11 @@ export default defineComponent({
     },
 
     musicRate() {
-      if (this.musicService) {
-        if (this.musicTimer) {
-          this.stopMusicLoop(this.musicTimer);
-        }
+      if (this.musicService && this.musicTimer) {
+        this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
       }
-    },
+    }
   },
 
   async mounted() {
