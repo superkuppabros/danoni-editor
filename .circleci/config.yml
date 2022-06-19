@@ -15,6 +15,7 @@ jobs:
             - v1-npm-deps-
       - node/install-packages:
           pkg-manager: npm
+          override-ci-command: npm install
       - save_cache:
           paths:
             - node_modules

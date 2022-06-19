@@ -147,7 +147,7 @@ export default defineComponent({
         this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
       }
-    }
+    },
   },
 
   async mounted() {
