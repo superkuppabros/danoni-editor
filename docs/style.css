@@ -192,7 +192,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 #editor-save {
-  background-color: rgba(103, 197, 255, 0.9);
+  background-color: rgba(126, 201, 248, 0.9);
 }
 
 .option-item-container {
@@ -226,6 +226,17 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 .save-output-btn:hover {
   color: white;
   cursor: pointer;
+}
+
+.save-cover {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  background: gray;
+  opacity: 0.5;
+  z-index: 99;
 }
 
 .uk-modal-close-default.editor-close {

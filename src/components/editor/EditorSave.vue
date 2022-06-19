@@ -19,7 +19,7 @@
       <div class="save-output-btn btn-red" @click="submitPhrase">OK</div>
       <div class="save-output-btn btn-gray" @click="resetForm">RESET</div>
     </div>
-    <div class="save-cover" v-if="isSaving"></div>
+    <div v-if="isSaving" class="save-cover"></div>
   </div>
 </template>
 
@@ -33,10 +33,10 @@ type DataType = {
 
 export default defineComponent({
   name: "EditorOption",
-  emits: ["save"],
   props: {
     isSaving: { type: Boolean, required: true, default: false },
   },
+  emits: ["save"],
   data(): DataType {
     const phraseHistory: string[] = JSON.parse(localStorage.getItem("keyPhrases") || "[]");
     return {

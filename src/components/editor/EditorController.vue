@@ -19,7 +19,7 @@
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
     ></editor-option>
-    <editor-save @save="save" :is-saving="isSaving"></editor-save>
+    <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
       <div id="menu-page" class="menu-item-container">
         <div class="menu-move-header">
