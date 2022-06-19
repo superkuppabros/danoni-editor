@@ -19,7 +19,7 @@
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
     ></editor-option>
-    <editor-save @save="save"></editor-save>
+    <editor-save @save="save" :is-saving="isSaving"></editor-save>
     <div id="editor-menu">
       <div id="menu-page" class="menu-item-container">
         <div class="menu-move-header">
@@ -115,6 +115,7 @@ type DataType = {
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
+  isSaving: boolean;
   scoreConvertService: ScoreConvertService;
 };
 
@@ -172,6 +173,7 @@ export default defineComponent({
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
+      isSaving: false,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
     };
   },
@@ -240,15 +242,18 @@ export default defineComponent({
     },
     save(keyPhrase: string) {
       if (keyPhrase) {
-        this.onlineSave(keyPhrase).then(
-          // 成功時
-          () => alert("セーブデータをオンラインにセーブしました！"),
-          // 失敗時
-          (err) => {
-            console.log(err);
-            alert("オンラインセーブに失敗しました。");
-          }
-        );
+        this.isSaving = true;
+        this.onlineSave(keyPhrase)
+          .then(
+            // 成功時
+            () => alert("セーブデータをオンラインにセーブしました！"),
+            // 失敗時
+            (err) => {
+              console.log(err);
+              alert("オンラインセーブに失敗しました。");
+            }
+          )
+          .finally(() => (this.isSaving = false));
       } else if (keyPhrase === "") {
         this.localSave();
       }
