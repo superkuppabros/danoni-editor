@@ -147,9 +147,6 @@ export default defineComponent({
       } else if (scoreRevivalService.dosConvert(this.loadScoreDataStr) != null) {
         scoreData = scoreRevivalService.dosConvert(this.loadScoreDataStr) as ScoreData;
       } else scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
-      if (scoreData.scores.length === 0) {
-        scoreData.scores.push(new DefaultPageScore(selectedKeyNum));
-      }
     } catch {
       alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
       scoreData = new DefaultScoreData(selectedKeyNum);
@@ -158,6 +155,11 @@ export default defineComponent({
     const keyKind = (scoreData.keyKind || selectedKeyKind) as CustomKeyKind;
     scoreData.keyKind = keyKind;
     sessionStorage.setItem("keyKind", keyKind); // 更新してもkeyがデフォルトに戻らないようにするため
+
+    const keyNum = keyConfig[keyKind].num;
+    if (scoreData.scores.length === 0) {
+      scoreData.scores.push(new DefaultPageScore(keyNum));
+    }
 
     return {
       pageNum: 1,
