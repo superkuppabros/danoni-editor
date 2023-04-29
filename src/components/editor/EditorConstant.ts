@@ -1,8 +1,8 @@
 export const noteWidth = 30;
 export const noteHeight = 5;
-export const verticalSizeNum = 384;
-export const editorHeight = verticalSizeNum;
-export const quarterInterval = verticalSizeNum / 8;
+export const quarterInterval = 48;
+export const verticalSizeNum = (num = 8) => quarterInterval * num;
+export const editorHeight = quarterInterval * 8;
 export const fps = 60;
 
 export const canvasMarginHorizontal = 50;

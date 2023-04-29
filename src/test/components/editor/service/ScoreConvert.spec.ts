@@ -10,7 +10,8 @@ describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const keyNum: number = keyConfig[keyKind].num;
-  const scoreConverter = new ScoreConvertService(keyKind, keyConfig);
+  const pageBlockNum = 8
+  const scoreConverter = new ScoreConvertService(keyKind, keyConfig, pageBlockNum);
   const scoreData: ScoreData = testScoreData;
 
   it("frameDataへの変換が正しく出来る", () => {

@@ -51,6 +51,7 @@ type DataType = {
   page: number;
   editorWidth: number;
   isReverse: boolean;
+  pageBlockNum: number;
   musicTimer: number | null;
   musicService?: MusicService;
   copyScoreStore: PageScore;
@@ -100,6 +101,7 @@ export default defineComponent({
       keyNum,
       isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
+      pageBlockNum: 6, // TODO: 可変に出来るようにする
       musicTimer: null,
       operationStack,
       copyScoreStore: new DefaultPageScore(keyNum),
@@ -117,7 +119,7 @@ export default defineComponent({
 
     moveIntervalFrame(): number {
       return (
-        Math.round((positionToFrame(this.timing, this.page, this.divisor) - positionToFrame(this.timing, this.page, 0)) * 100) /
+        Math.round((positionToFrame(this.timing, this.page, this.divisor, this.pageBlockNum) - positionToFrame(this.timing, this.page, 0, this.pageBlockNum)) * 100) /
         100
       );
     },
@@ -186,6 +188,7 @@ export default defineComponent({
       this.keyConfig,
       this.keyKind,
       this.isReverse,
+      this.pageBlockNum,
       stage,
       notesLayer,
       this.operationStack
@@ -205,6 +208,7 @@ export default defineComponent({
       this.scoreData,
       this.editorWidth,
       this.isReverse,
+      this.pageBlockNum,
       stage,
       currentPositionLayer,
       (position) => (this.currentPosition = position)
@@ -262,7 +266,7 @@ export default defineComponent({
       }
 
       // 横罫線の描画
-      for (let i = 0; i < verticalSizeNum / divisor; i++) {
+      for (let i = 0; i < verticalSizeNum(this.pageBlockNum) / divisor; i++) {
         const yPos = (i + 1) * divisor;
         const line = new Konva.Line({
           points: [0, yPos, editorWidth, yPos],
@@ -317,8 +321,8 @@ export default defineComponent({
     playMusicLoop(timing: Timing) {
       if (!this.musicService || !this.musicService.canPlay) return;
 
-      const startPosition = -verticalSizeNum / 4;
-      const endPosition = verticalSizeNum;
+      const startPosition = -quarterInterval * 2;
+      const endPosition = verticalSizeNum(this.pageBlockNum);
       const startTime = positionToSeconds(timing, this.page, startPosition);
       const endTime = positionToSeconds(timing, this.page, endPosition);
 
@@ -422,7 +426,7 @@ export default defineComponent({
     // 現在位置の上下移動
     currentPositionIncrease(withThreshold: boolean) {
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
-      if (this.currentPosition + this.divisor >= verticalSizeNum) {
+      if (this.currentPosition + this.divisor >= verticalSizeNum(this.pageBlockNum)) {
         if (withThreshold) setTimeout(() => this.pagePlus(1), threshold);
         else this.pagePlus(1);
       } else {
@@ -434,7 +438,7 @@ export default defineComponent({
       this.currentPosition -= this.divisor;
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
-        else this.pageMinus(1, this.currentPosition + verticalSizeNum);
+        else this.pageMinus(1, this.currentPosition + verticalSizeNum(this.pageBlockNum));
       } else this.currentPositionService.move(this.currentPosition, this.page, this.timing);
     },
 

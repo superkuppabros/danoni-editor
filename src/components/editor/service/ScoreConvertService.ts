@@ -21,7 +21,7 @@ export type OutputData = {
 };
 
 export class ScoreConvertService {
-  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig) {}
+  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig, private pageBlockNum: number) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private defaultPageScore = new DefaultPageScore(this.keyNum);
@@ -42,7 +42,7 @@ export class ScoreConvertService {
       else {
         if (timings[labelCounter] && pageNum === timings[labelCounter].label) labelCounter++;
         const timing = timings[labelCounter - 1];
-        const calculateFrame = (position: number) => Math.round(positionToFrame(timing, pageNum, position, blankFrame));
+        const calculateFrame = (position: number) => Math.round(positionToFrame(timing, pageNum, position, this.pageBlockNum, blankFrame));
 
         const pageNoteFrames = pageScore.notes.map((notesArr) => notesArr.sort((a, b) => a - b).map(calculateFrame));
         const freezeNoteFrames = pageScore.freezes.map((freezesArr) => freezesArr.sort((a, b) => a - b).map(calculateFrame));

@@ -112,6 +112,7 @@ type DataType = {
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
   scoreNumber: number;
+  pageBlockNum: number;
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
@@ -162,6 +163,8 @@ export default defineComponent({
       scoreData.scores.push(new DefaultPageScore(keyNum));
     }
 
+    const pageBlockNum = 8 // Todo: 可変にする
+
     return {
       pageNum: 1,
       labelNum: 1,
@@ -170,11 +173,12 @@ export default defineComponent({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       isSaving: false,
-      scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
+      scoreConvertService: new ScoreConvertService(keyKind, keyConfig, pageBlockNum),
     };
   },
   watch: {
@@ -318,7 +322,7 @@ export default defineComponent({
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newStartNum =
-          Math.round((oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum * framePerPosition) * 100) / 100;
+          Math.round((oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(this.pageBlockNum) * framePerPosition) * 100) / 100;
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,

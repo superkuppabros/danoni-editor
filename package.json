@@ -20,7 +20,7 @@
     "test:watch": "vitest -w"
   },
   "dependencies": {
-    "konva": "^8.3.8",
+    "konva": "^9.0.1",
     "uikit": "^3.14.1",
     "vue": "^3.2.33",
     "vue-router": "^4.0.15"
