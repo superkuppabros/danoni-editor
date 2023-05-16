@@ -92,6 +92,7 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"))
     const operationStack: Operation[] = [];
 
     return {
@@ -102,7 +103,7 @@ export default defineComponent({
       keyNum,
       isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
-      pageBlockNum: 6, // TODO: 可変に出来るようにする
+      pageBlockNum,
       musicTimer: null,
       operationStack,
       copyScoreStore: new DefaultPageScore(keyNum),

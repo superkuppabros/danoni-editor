@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { editorHeight, canvasMarginHorizontal, verticalSizeNum } from "../EditorConstant";
+import { canvasMarginHorizontal, verticalSizeNum } from "../EditorConstant";
 import { positionToFrame, positionToSeconds, secondsToTimeStr } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
 import toPx from "../helper/toPx";
