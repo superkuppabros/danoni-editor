@@ -43,7 +43,13 @@
     <div class="configure-design-item">
       <div class="configure-design-text-long">Page Block Num(1-8):</div>
       <div class="configure-options">
-        <input v-model.number="pageBlockNum" type="number" min="-1" max="8" step="1" class="uk-input uk-form-small" />
+        <input v-model.number="pageBlockNum" type="number" min="1" max="8" step="1" class="uk-input uk-form-small" />
+      </div>
+    </div>
+    <div class="configure-design-item">
+      <div class="configure-design-text-long">Test Pattern (e.g. 1,2):</div>
+      <div class="configure-options">
+        <input v-model="testPattern" type="text" class="uk-input uk-form-small" />
       </div>
     </div>
   </div>
@@ -58,6 +64,7 @@ export default defineComponent({
     return {
       simultaneousThreshold: 0,
       pageBlockNum : 8,
+      testPattern: ""
     };
   },
   computed: {
@@ -92,10 +99,14 @@ export default defineComponent({
     pageBlockNum(newValue) {
       localStorage.setItem("pageBlockNum", JSON.stringify(newValue));
     },
+    testPattern(newValue) {
+      localStorage.setItem("testPattern", JSON.stringify(newValue));
+    },
   },
   mounted() {
     this.simultaneousThreshold = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
     this.pageBlockNum = JSON.parse(localStorage.getItem("pageBlockNum") ?? "8");
+    this.testPattern = JSON.parse(localStorage.getItem("testPattern") ?? "1");
   },
 });
 </script>

@@ -151,23 +151,40 @@ ${easySave}
 
   // 四分譜面の作成・変換
   convertWithQuarters(scoreData: ScoreData, scorePostfix = ""): string {
+
     const quarterNotes: number[] = [];
-    for (let i = 0; i < 8; i++) {
-      quarterNotes.push(i * quarterInterval);
-    }
 
     // Todo: 四分譜面を出力するページ数を変更できるようにする
     const pushQuartersPageNum = 20;
 
-    // Todo: ノーツを置く位置を変更できるようにする
-    const pushQuartersLane = 0;
+    let testPatternStr = JSON.parse(localStorage.getItem("testPattern") ?? "1")
+    testPatternStr = (typeof(testPatternStr) == "string") ? testPatternStr : "1"
 
     const newScoreData = this.cutLastDefault(cloneDeep(scoreData));
 
-    for (let i = 0; i < pushQuartersPageNum; i++) {
-      const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
-      quartersPageScore.notes[pushQuartersLane] = quarterNotes;
-      newScoreData.scores.push(quartersPageScore);
+    try {
+      for (let i = 0; i < pushQuartersPageNum; i++) {
+        const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+
+        const testPattern = testPatternStr.split(",")
+        const testPatternLength = testPattern.length
+
+        for (let j = 0; j < this.pageBlockNum; j++) {
+          const lane = parseInt(testPattern[j % testPatternLength]) - 1
+          quartersPageScore.notes[lane].push(j * quarterInterval);
+        }
+        newScoreData.scores.push(quartersPageScore);
+      }
+    } catch(e) {
+      console.log(e)
+      alert("パターンが不適切なためデフォルトのテストデータを出力します。")
+
+      const pushQuartersLane = 0;
+      for (let i = 0; i < pushQuartersPageNum; i++) {
+        const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+        quartersPageScore.notes[pushQuartersLane] = quarterNotes;
+        newScoreData.scores.push(quartersPageScore);
+      }
     }
 
     return this.convert(this.cutLastDefault(newScoreData), scorePostfix);

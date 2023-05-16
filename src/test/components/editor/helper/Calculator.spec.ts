@@ -17,15 +17,15 @@ describe("Calculator", () => {
   });
 
   it("frame -> page, positionへの変換が出来る", () => {
-    expect(frameToPagePosition(timing, 300, 100, 8)).toStrictEqual({
+    expect(frameToPagePosition(timing, 300, 8, 100)).toStrictEqual({
       page: 1,
       position: 0,
     });
-    expect(frameToPagePosition(timing, 360, 0, 8)).toStrictEqual({
+    expect(frameToPagePosition(timing, 360, 8, 0)).toStrictEqual({
       page: 2,
       position: 0,
     });
-    expect(frameToPagePosition(timing, 480, 40, 8)).toStrictEqual({
+    expect(frameToPagePosition(timing, 480, 8, 40)).toStrictEqual({
       page: 2,
       position: 192,
     });

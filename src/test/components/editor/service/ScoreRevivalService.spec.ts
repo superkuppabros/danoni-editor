@@ -5,7 +5,8 @@ import { test2DosData, test2ScoreData, testDosData, testScoreData } from "./test
 describe("dosConvert", () => {
   it("正しくscoreDataに変換できる", () => {
     const keyConfig = DefaultKeyConfig;
-    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+    const pageBlockNum = 8
+    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
 
     const scoreData = scoreRevivalService.dosConvert(testDosData);
     expect(scoreData).toStrictEqual(testScoreData);
@@ -13,7 +14,8 @@ describe("dosConvert", () => {
 
   it("2譜面目でも正しくscoreDataに変換できる", () => {
     const keyConfig = DefaultKeyConfig;
-    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+    const pageBlockNum = 8
+    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
 
     const scoreData = scoreRevivalService.dosConvert(test2DosData);
     expect(scoreData).toStrictEqual(test2ScoreData);
@@ -21,7 +23,8 @@ describe("dosConvert", () => {
 
   it("不正なデータならnullが返る", () => {
     const keyConfig = DefaultKeyConfig;
-    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+    const pageBlockNum = 8
+    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
 
     const scoreData = scoreRevivalService.dosConvert("|aaa|bbb|");
     expect(scoreData).toBe(null);

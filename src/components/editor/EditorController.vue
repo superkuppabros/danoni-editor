@@ -140,8 +140,9 @@ export default defineComponent({
 
     const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
     const selectedKeyNum = keyConfig[selectedKeyKind].num;
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"))
 
-    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
     try {
       //TODO: 譜面データのチェッカーを作る
       if (!this.loadScoreDataStr) {
@@ -162,8 +163,6 @@ export default defineComponent({
     if (scoreData.scores.length === 0) {
       scoreData.scores.push(new DefaultPageScore(keyNum));
     }
-
-    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"))
 
     return {
       pageNum: 1,
