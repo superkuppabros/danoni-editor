@@ -42,6 +42,7 @@ import SpeedPiece from "./SpeedPiece.vue";
 import { positionToSeconds, positionToFrame } from "./helper/Calculator";
 import { undo } from "./helper/undo";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
+import toPx from "./helper/toPx";
 
 type DataType = {
   currentPosition: number;
@@ -267,13 +268,34 @@ export default defineComponent({
 
       // 横罫線の描画
       for (let i = 0; i < verticalSizeNum(this.pageBlockNum) / divisor; i++) {
-        const yPos = (i + 1) * divisor;
+        const yPos = toPx((i + 1) * divisor, this.isReverse);
         const line = new Konva.Line({
           points: [0, yPos, editorWidth, yPos],
           stroke: "#969696",
           strokeWidth: (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5,
         });
         baseLayer.add(line);
+      }
+
+      // 不使用部分の背景色変更
+      if (this.pageBlockNum != 8) {
+        const mask = new Konva.Rect({
+          x: 0,
+          y: this.isReverse ? verticalSizeNum(this.pageBlockNum) : 0,
+          width: editorWidth,
+          height: editorHeight - verticalSizeNum(this.pageBlockNum),
+          fill: "#D8D8D8",
+          strokeWidth: 0,
+        })
+        baseLayer.add(mask)
+
+        const ypos = toPx(verticalSizeNum(this.pageBlockNum), this.isReverse)
+        const maxLine = new Konva.Line({
+          points: [0, ypos, editorWidth, ypos],
+          stroke: "black",
+          strokeWidth: 1,
+        });
+        baseLayer.add(maxLine);
       }
 
       // 枠線の描画
@@ -323,8 +345,8 @@ export default defineComponent({
 
       const startPosition = -quarterInterval * 2;
       const endPosition = verticalSizeNum(this.pageBlockNum);
-      const startTime = positionToSeconds(timing, this.page, startPosition);
-      const endTime = positionToSeconds(timing, this.page, endPosition);
+      const startTime = positionToSeconds(timing, this.page, startPosition, this.pageBlockNum);
+      const endTime = positionToSeconds(timing, this.page, endPosition, this.pageBlockNum);
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = ((endTime - startTime) * 1000) / this.musicRate;

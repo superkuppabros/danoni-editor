@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { editorHeight, canvasMarginHorizontal } from "../EditorConstant";
+import { editorHeight, canvasMarginHorizontal, verticalSizeNum } from "../EditorConstant";
 import { positionToFrame, positionToSeconds, secondsToTimeStr } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
 import toPx from "../helper/toPx";
@@ -22,7 +22,7 @@ export class CurrentPositionService {
     const currentPositionLayer = this.currentPositionLayer;
 
     const color = "#d8d800";
-    const yValue = toPx(position, this.isReverse, this.pageBlockNum);
+    const yValue = toPx(position, this.isReverse);
 
     const maybeLine = currentPositionLayer.findOne("#currentPositionLine");
     const line: Konva.Line =
@@ -98,9 +98,9 @@ export class CurrentPositionService {
     const node = currentPositionLayer.findOne("#musicPosition");
     const currentPositionLine: Konva.Line =
       node instanceof Konva.Line
-        ? node.y(toPx(0, this.isReverse, this.pageBlockNum))
+        ? node.y(toPx(0, this.isReverse))
         : new Konva.Line({
-            y: toPx(0, this.isReverse, this.pageBlockNum),
+            y: toPx(0, this.isReverse),
             points: [0, 0, this.editorWidth, 0],
             stroke: "#8000ff",
             strokeWidth: 1.75,
@@ -114,7 +114,7 @@ export class CurrentPositionService {
       node: currentPositionLine,
       duration: playDuration * this.pageBlockNum / (2 + this.pageBlockNum) / 1000, // 上に到達するまでの時間
       x: 0,
-      y: toPx(editorHeight, this.isReverse, this.pageBlockNum),
+      y: toPx(verticalSizeNum(this.pageBlockNum), this.isReverse),
     });
 
     setTimeout(() => {

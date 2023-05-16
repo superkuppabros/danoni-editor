@@ -61,7 +61,7 @@ export class NoteService {
 
     const note = new Konva.Rect({
       x: lane * noteWidth,
-      y: toPx(position, this.isReverse, this.pageBlockNum) - noteHeight / 2,
+      y: toPx(position, this.isReverse) - noteHeight / 2,
       width: noteWidth,
       height: noteHeight,
       fill: color,
@@ -146,7 +146,7 @@ export class NoteService {
 
       const fillFreeze = new Konva.Rect({
         x: lane * noteWidth,
-        y: Math.min(toPx(freezeStart, this.isReverse, this.pageBlockNum), toPx(freezeEnd, this.isReverse, this.pageBlockNum)),
+        y: Math.min(toPx(freezeStart, this.isReverse), toPx(freezeEnd, this.isReverse)),
         width: noteWidth,
         height,
         opacity,

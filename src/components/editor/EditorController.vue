@@ -163,7 +163,7 @@ export default defineComponent({
       scoreData.scores.push(new DefaultPageScore(keyNum));
     }
 
-    const pageBlockNum = 8 // Todo: 可変にする
+    const pageBlockNum = 6 // Todo: 可変にする
 
     return {
       pageNum: 1,
