@@ -92,7 +92,7 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
-    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"))
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
 
     return {
@@ -121,8 +121,11 @@ export default defineComponent({
 
     moveIntervalFrame(): number {
       return (
-        Math.round((positionToFrame(this.timing, this.page, this.divisor, this.pageBlockNum) - positionToFrame(this.timing, this.page, 0, this.pageBlockNum)) * 100) /
-        100
+        Math.round(
+          (positionToFrame(this.timing, this.page, this.divisor, this.pageBlockNum) -
+            positionToFrame(this.timing, this.page, 0, this.pageBlockNum)) *
+            100
+        ) / 100
       );
     },
   },
@@ -287,10 +290,10 @@ export default defineComponent({
           height: editorHeight - verticalSizeNum(this.pageBlockNum),
           fill: "#D8D8D8",
           strokeWidth: 0,
-        })
-        baseLayer.add(mask)
+        });
+        baseLayer.add(mask);
 
-        const ypos = toPx(verticalSizeNum(this.pageBlockNum), this.isReverse)
+        const ypos = toPx(verticalSizeNum(this.pageBlockNum), this.isReverse);
         const maxLine = new Konva.Line({
           points: [0, ypos, editorWidth, ypos],
           stroke: "black",

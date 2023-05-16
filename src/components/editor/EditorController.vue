@@ -140,7 +140,7 @@ export default defineComponent({
 
     const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
     const selectedKeyNum = keyConfig[selectedKeyKind].num;
-    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"))
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
 
     const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
     try {
@@ -321,7 +321,9 @@ export default defineComponent({
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newStartNum =
-          Math.round((oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(this.pageBlockNum) * framePerPosition) * 100) / 100;
+          Math.round(
+            (oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(this.pageBlockNum) * framePerPosition) * 100
+          ) / 100;
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,

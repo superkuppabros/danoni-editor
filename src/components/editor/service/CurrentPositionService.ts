@@ -112,13 +112,13 @@ export class CurrentPositionService {
 
     const tween = new Konva.Tween({
       node: currentPositionLine,
-      duration: playDuration * this.pageBlockNum / (2 + this.pageBlockNum) / 1000, // 上に到達するまでの時間
+      duration: (playDuration * this.pageBlockNum) / (2 + this.pageBlockNum) / 1000, // 上に到達するまでの時間
       x: 0,
       y: toPx(verticalSizeNum(this.pageBlockNum), this.isReverse),
     });
 
     setTimeout(() => {
       tween.play();
-    }, playDuration * 2 / (2 + this.pageBlockNum)); // 2拍後にアニメーション開始
+    }, (playDuration * 2) / (2 + this.pageBlockNum)); // 2拍後にアニメーション開始
   }
 }

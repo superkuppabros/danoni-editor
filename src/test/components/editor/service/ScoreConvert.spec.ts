@@ -10,7 +10,7 @@ describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const keyNum: number = keyConfig[keyKind].num;
-  const pageBlockNum = 8
+  const pageBlockNum = 8;
   const scoreConverter = new ScoreConvertService(keyKind, keyConfig, pageBlockNum);
   const scoreData: ScoreData = testScoreData;
 

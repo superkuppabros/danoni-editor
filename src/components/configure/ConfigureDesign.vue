@@ -63,8 +63,8 @@ export default defineComponent({
   data() {
     return {
       simultaneousThreshold: 0,
-      pageBlockNum : 8,
-      testPattern: ""
+      pageBlockNum: 8,
+      testPattern: "",
     };
   },
   computed: {
