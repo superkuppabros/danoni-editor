@@ -21,7 +21,7 @@ export type OutputData = {
 };
 
 export class ScoreConvertService {
-  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig) {}
+  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig, private pageBlockNum: number) {}
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private defaultPageScore = new DefaultPageScore(this.keyNum);
@@ -42,7 +42,8 @@ export class ScoreConvertService {
       else {
         if (timings[labelCounter] && pageNum === timings[labelCounter].label) labelCounter++;
         const timing = timings[labelCounter - 1];
-        const calculateFrame = (position: number) => Math.round(positionToFrame(timing, pageNum, position, blankFrame));
+        const calculateFrame = (position: number) =>
+          Math.round(positionToFrame(timing, pageNum, position, this.pageBlockNum, blankFrame));
 
         const pageNoteFrames = pageScore.notes.map((notesArr) => notesArr.sort((a, b) => a - b).map(calculateFrame));
         const freezeNoteFrames = pageScore.freezes.map((freezesArr) => freezesArr.sort((a, b) => a - b).map(calculateFrame));
@@ -152,22 +153,38 @@ ${easySave}
   // 四分譜面の作成・変換
   convertWithQuarters(scoreData: ScoreData, scorePostfix = ""): string {
     const quarterNotes: number[] = [];
-    for (let i = 0; i < 8; i++) {
-      quarterNotes.push(i * quarterInterval);
-    }
 
     // Todo: 四分譜面を出力するページ数を変更できるようにする
     const pushQuartersPageNum = 20;
 
-    // Todo: ノーツを置く位置を変更できるようにする
-    const pushQuartersLane = 0;
+    let testPatternStr = JSON.parse(localStorage.getItem("testPattern") ?? "1");
+    testPatternStr = typeof testPatternStr == "string" ? testPatternStr : "1";
 
     const newScoreData = this.cutLastDefault(cloneDeep(scoreData));
 
-    for (let i = 0; i < pushQuartersPageNum; i++) {
-      const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
-      quartersPageScore.notes[pushQuartersLane] = quarterNotes;
-      newScoreData.scores.push(quartersPageScore);
+    try {
+      for (let i = 0; i < pushQuartersPageNum; i++) {
+        const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+
+        const testPattern = testPatternStr.split(",");
+        const testPatternLength = testPattern.length;
+
+        for (let j = 0; j < this.pageBlockNum; j++) {
+          const lane = parseInt(testPattern[j % testPatternLength]) - 1;
+          quartersPageScore.notes[lane].push(j * quarterInterval);
+        }
+        newScoreData.scores.push(quartersPageScore);
+      }
+    } catch (e) {
+      console.log(e);
+      alert("パターンが不適切なためデフォルトのテストデータを出力します。");
+
+      const pushQuartersLane = 0;
+      for (let i = 0; i < pushQuartersPageNum; i++) {
+        const quartersPageScore: PageScore = new DefaultPageScore(this.keyNum);
+        quartersPageScore.notes[pushQuartersLane] = quarterNotes;
+        newScoreData.scores.push(quartersPageScore);
+      }
     }
 
     return this.convert(this.cutLastDefault(newScoreData), scorePostfix);

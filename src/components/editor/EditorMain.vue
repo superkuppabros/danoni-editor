@@ -42,6 +42,7 @@ import SpeedPiece from "./SpeedPiece.vue";
 import { positionToSeconds, positionToFrame } from "./helper/Calculator";
 import { undo } from "./helper/undo";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
+import toPx from "./helper/toPx";
 
 type DataType = {
   currentPosition: number;
@@ -51,6 +52,7 @@ type DataType = {
   page: number;
   editorWidth: number;
   isReverse: boolean;
+  pageBlockNum: number;
   musicTimer: number | null;
   musicService?: MusicService;
   copyScoreStore: PageScore;
@@ -90,6 +92,7 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
 
     return {
@@ -100,6 +103,7 @@ export default defineComponent({
       keyNum,
       isReverse,
       editorWidth: noteWidth * keyConfig[keyKind].num,
+      pageBlockNum,
       musicTimer: null,
       operationStack,
       copyScoreStore: new DefaultPageScore(keyNum),
@@ -117,8 +121,11 @@ export default defineComponent({
 
     moveIntervalFrame(): number {
       return (
-        Math.round((positionToFrame(this.timing, this.page, this.divisor) - positionToFrame(this.timing, this.page, 0)) * 100) /
-        100
+        Math.round(
+          (positionToFrame(this.timing, this.page, this.divisor, this.pageBlockNum) -
+            positionToFrame(this.timing, this.page, 0, this.pageBlockNum)) *
+            100
+        ) / 100
       );
     },
   },
@@ -186,6 +193,7 @@ export default defineComponent({
       this.keyConfig,
       this.keyKind,
       this.isReverse,
+      this.pageBlockNum,
       stage,
       notesLayer,
       this.operationStack
@@ -205,6 +213,7 @@ export default defineComponent({
       this.scoreData,
       this.editorWidth,
       this.isReverse,
+      this.pageBlockNum,
       stage,
       currentPositionLayer,
       (position) => (this.currentPosition = position)
@@ -262,14 +271,35 @@ export default defineComponent({
       }
 
       // 横罫線の描画
-      for (let i = 0; i < verticalSizeNum / divisor; i++) {
-        const yPos = (i + 1) * divisor;
+      for (let i = 0; i < verticalSizeNum(this.pageBlockNum) / divisor; i++) {
+        const yPos = toPx((i + 1) * divisor, this.isReverse);
         const line = new Konva.Line({
           points: [0, yPos, editorWidth, yPos],
           stroke: "#969696",
           strokeWidth: (divisor * (i + 1)) % quarterInterval == 0 ? 1 : 0.5,
         });
         baseLayer.add(line);
+      }
+
+      // 不使用部分の背景色変更
+      if (this.pageBlockNum != 8) {
+        const mask = new Konva.Rect({
+          x: 0,
+          y: this.isReverse ? verticalSizeNum(this.pageBlockNum) : 0,
+          width: editorWidth,
+          height: editorHeight - verticalSizeNum(this.pageBlockNum),
+          fill: "#D8D8D8",
+          strokeWidth: 0,
+        });
+        baseLayer.add(mask);
+
+        const ypos = toPx(verticalSizeNum(this.pageBlockNum), this.isReverse);
+        const maxLine = new Konva.Line({
+          points: [0, ypos, editorWidth, ypos],
+          stroke: "black",
+          strokeWidth: 1,
+        });
+        baseLayer.add(maxLine);
       }
 
       // 枠線の描画
@@ -317,10 +347,10 @@ export default defineComponent({
     playMusicLoop(timing: Timing) {
       if (!this.musicService || !this.musicService.canPlay) return;
 
-      const startPosition = -verticalSizeNum / 4;
-      const endPosition = verticalSizeNum;
-      const startTime = positionToSeconds(timing, this.page, startPosition);
-      const endTime = positionToSeconds(timing, this.page, endPosition);
+      const startPosition = -quarterInterval * 2;
+      const endPosition = verticalSizeNum(this.pageBlockNum);
+      const startTime = positionToSeconds(timing, this.page, startPosition, this.pageBlockNum);
+      const endTime = positionToSeconds(timing, this.page, endPosition, this.pageBlockNum);
 
       const loop = (startTime: number, endTime: number) => {
         const playDuration = ((endTime - startTime) * 1000) / this.musicRate;
@@ -422,7 +452,7 @@ export default defineComponent({
     // 現在位置の上下移動
     currentPositionIncrease(withThreshold: boolean) {
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
-      if (this.currentPosition + this.divisor >= verticalSizeNum) {
+      if (this.currentPosition + this.divisor >= verticalSizeNum(this.pageBlockNum)) {
         if (withThreshold) setTimeout(() => this.pagePlus(1), threshold);
         else this.pagePlus(1);
       } else {
@@ -434,7 +464,7 @@ export default defineComponent({
       this.currentPosition -= this.divisor;
       if (this.currentPosition < 0) {
         if (this.page === 1) this.currentPosition = 0;
-        else this.pageMinus(1, this.currentPosition + verticalSizeNum);
+        else this.pageMinus(1, this.currentPosition + verticalSizeNum(this.pageBlockNum));
       } else this.currentPositionService.move(this.currentPosition, this.page, this.timing);
     },
 

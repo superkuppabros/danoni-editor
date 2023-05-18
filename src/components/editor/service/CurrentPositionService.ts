@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { editorHeight, canvasMarginHorizontal } from "../EditorConstant";
+import { canvasMarginHorizontal, verticalSizeNum } from "../EditorConstant";
 import { positionToFrame, positionToSeconds, secondsToTimeStr } from "../helper/Calculator";
 import { Timing } from "@/model/Timing";
 import toPx from "../helper/toPx";
@@ -10,6 +10,7 @@ export class CurrentPositionService {
     private scoreData: ScoreData,
     private editorWidth: number,
     private isReverse: boolean,
+    private pageBlockNum: number,
     private stage: Konva.Stage,
     private currentPositionLayer: Konva.Layer,
     private changeCurrentPosition: (newPos: number) => void
@@ -52,11 +53,11 @@ export class CurrentPositionService {
 
     const blankFrame = this.scoreData.blankFrame;
     const currentFrame =
-      positionToFrame(timing, page, position, blankFrame) < 100000
-        ? Math.round(positionToFrame(timing, page, position, blankFrame) * 10) / 10
-        : Math.round(positionToFrame(timing, page, position, blankFrame));
+      positionToFrame(timing, page, position, this.pageBlockNum, blankFrame) < 100000
+        ? Math.round(positionToFrame(timing, page, position, this.pageBlockNum, blankFrame) * 10) / 10
+        : Math.round(positionToFrame(timing, page, position, this.pageBlockNum, blankFrame));
 
-    const currentSeconds = positionToSeconds(timing, page, position, blankFrame);
+    const currentSeconds = positionToSeconds(timing, page, position, this.pageBlockNum, blankFrame);
     const currentTimeStr = secondsToTimeStr(currentSeconds);
     const displayedText = `${currentFrame}\n[${currentTimeStr}]`;
     const textWidth = 40;
@@ -89,7 +90,8 @@ export class CurrentPositionService {
   }
 
   // 再生位置の移動アニメーション
-  musicAnimate(duration: number) {
+  // args: 音楽再生時間 (2 + ページのブロック数)拍
+  musicAnimate(playDuration: number) {
     const stage = this.stage;
     const currentPositionLayer = this.currentPositionLayer;
 
@@ -110,13 +112,13 @@ export class CurrentPositionService {
 
     const tween = new Konva.Tween({
       node: currentPositionLine,
-      duration: (duration * 4) / 5 / 1000, // 10拍中の8拍で上まで到達する
+      duration: (playDuration * this.pageBlockNum) / (2 + this.pageBlockNum) / 1000, // 上に到達するまでの時間
       x: 0,
-      y: toPx(editorHeight, this.isReverse),
+      y: toPx(verticalSizeNum(this.pageBlockNum), this.isReverse),
     });
 
     setTimeout(() => {
       tween.play();
-    }, duration / 5);
+    }, (playDuration * 2) / (2 + this.pageBlockNum)); // 2拍後にアニメーション開始
   }
 }

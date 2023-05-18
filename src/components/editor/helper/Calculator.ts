@@ -1,13 +1,18 @@
 import { Timing } from "@/model/Timing";
 import { fps, quarterInterval, verticalSizeNum } from "../EditorConstant";
 
-export function positionToFrame(timing: Timing, page: number, position: number, blankFrame = 0): number {
+export function positionToFrame(timing: Timing, page: number, position: number, pageBlockNum: number, blankFrame = 0): number {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
-  const startFrame = blankFrame + timing.startNum + (page - timing.label) * verticalSizeNum * framePerPosition;
+  const startFrame = blankFrame + timing.startNum + (page - timing.label) * verticalSizeNum(pageBlockNum) * framePerPosition;
   return startFrame + position * framePerPosition;
 }
 
-export function frameToPagePosition(timing: Timing, frame: number, blankFrame: number): { page: number; position: number } {
+export function frameToPagePosition(
+  timing: Timing,
+  frame: number,
+  pageBlockNum: number,
+  blankFrame: number
+): { page: number; position: number } {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
 
   const rawPosition = (frame - blankFrame - timing.startNum) / framePerPosition;
@@ -19,14 +24,14 @@ export function frameToPagePosition(timing: Timing, frame: number, blankFrame: n
   else if (adjustedPosition % 12 == 2) adjustedPosition -= 2;
   else if (adjustedPosition % 12 == 10) adjustedPosition += 2;
 
-  const page = Math.floor(adjustedPosition / verticalSizeNum) + timing.label;
-  const position = adjustedPosition % verticalSizeNum;
+  const page = Math.floor(adjustedPosition / verticalSizeNum(pageBlockNum)) + timing.label;
+  const position = adjustedPosition % verticalSizeNum(pageBlockNum);
 
   return { page, position };
 }
 
-export function positionToSeconds(timing: Timing, page: number, position: number, blankFrame = 0): number {
-  return positionToFrame(timing, page, position, blankFrame) / fps;
+export function positionToSeconds(timing: Timing, page: number, position: number, pageBlockNum: number, blankFrame = 0): number {
+  return positionToFrame(timing, page, position, pageBlockNum, blankFrame) / fps;
 }
 
 export function secondsToTimeStr(seconds: number): string {

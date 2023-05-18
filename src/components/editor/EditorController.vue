@@ -112,6 +112,7 @@ type DataType = {
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
   scoreNumber: number;
+  pageBlockNum: number;
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
@@ -139,8 +140,9 @@ export default defineComponent({
 
     const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
     const selectedKeyNum = keyConfig[selectedKeyKind].num;
+    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
 
-    const scoreRevivalService = new ScoreRevivalService(keyConfig);
+    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
     try {
       //TODO: 譜面データのチェッカーを作る
       if (!this.loadScoreDataStr) {
@@ -170,11 +172,12 @@ export default defineComponent({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       isSaving: false,
-      scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
+      scoreConvertService: new ScoreConvertService(keyKind, keyConfig, pageBlockNum),
     };
   },
   watch: {
@@ -318,7 +321,9 @@ export default defineComponent({
         const oldTiming = this.timing;
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newStartNum =
-          Math.round((oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum * framePerPosition) * 100) / 100;
+          Math.round(
+            (oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(this.pageBlockNum) * framePerPosition) * 100
+          ) / 100;
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,

@@ -13,6 +13,7 @@ export class NoteService {
     private keyConfig: CustomKeyConfig,
     private keyKind: CustomKeyKind,
     private isReverse: boolean,
+    private pageBlockNum: number,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer,
     private operationStack: Operation[]
@@ -131,14 +132,15 @@ export class NoteService {
       }, 0) % 2;
 
     if (startParity === 1) laneFreezes.unshift(0);
-    laneFreezes.push(verticalSizeNum);
+    laneFreezes.push(verticalSizeNum(this.pageBlockNum));
 
-    const fills = notesLayer.find(`.freeze-fill-${lane}`);
+    const freezeClass = `.freeze-fill-${lane}`;
+    const fills = notesLayer.find(freezeClass);
     fills.forEach((node) => node.destroy());
 
     while (laneFreezes.length > 0) {
       const freezeStart = laneFreezes.shift() as number;
-      const freezeEnd = laneFreezes.shift() ?? verticalSizeNum;
+      const freezeEnd = laneFreezes.shift() ?? verticalSizeNum(this.pageBlockNum);
       const height = freezeEnd - freezeStart;
       const opacity = 0.3;
 
@@ -197,11 +199,11 @@ export class NoteService {
       if (page === 1) return;
       else {
         newPage--;
-        newPosition += verticalSizeNum;
+        newPosition += verticalSizeNum(this.pageBlockNum);
       }
-    } else if (newPosition >= verticalSizeNum) {
+    } else if (newPosition >= verticalSizeNum(this.pageBlockNum)) {
       newPage++;
-      newPosition -= verticalSizeNum;
+      newPosition -= verticalSizeNum(this.pageBlockNum);
     }
 
     const movedLanes = this.removeLanes(page, currentPosition);

@@ -14,13 +14,14 @@ describe("noteService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;
   const isReverse = true;
+  const pageBlockNum = 8;
   const stage = "dummyStage" as unknown as Konva.Stage;
   const layer = "dummyLayer" as unknown as Konva.Layer;
   const operationStack: Operation[] = [];
 
   const scoreData: ScoreData = testScoreData;
   const createNoteService = (scoreData: ScoreData) =>
-    new NoteService(scoreData, keyConfig, keyKind, isReverse, stage, layer, operationStack);
+    new NoteService(scoreData, keyConfig, keyKind, isReverse, pageBlockNum, stage, layer, operationStack);
 
   it("ノーツの有無が判定できる", () => {
     const noteService = createNoteService(cloneDeep(scoreData));
