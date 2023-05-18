@@ -13,7 +13,12 @@ Google Chrome にて動作を確認しています。
 
 過去のバージョンは[こちら](https://github.com/superkuppabros/danoni-editor/wiki/%E6%9B%B4%E6%96%B0%E5%B1%A5%E6%AD%B4)
 
-### ver 3.1.8
+### ver 3.2.0
+
+#### 機能改善
+- 17keyを青が上になるように
+- ページごとの拍子数を変更出来るように
+- 四分譜面のパターンを設定できるように
 
 #### バグ修正
 - 音楽の再生速度を変更するたびに再生が始まってしまう問題の修正 ( thanks: @suzme )
