@@ -45,11 +45,14 @@ export class MusicService {
 
     const musicDuration = this.buffer.duration;
     if (musicDuration > startTime) {
-      if (startTime < 0) {
+      if (startTime >= 0) {
+        this.source.start(0, startTime, duration);
+        this.isPlaying = true;
+      } else if (duration + startTime > 0) {
         // 再生開始のみ倍速の補正が必要
         this.source.start(this.context.currentTime - startTime / musicRate, 0, duration + startTime);
-      } else this.source.start(0, startTime, duration);
-      this.isPlaying = true;
+        this.isPlaying = true;
+      }
     }
   }
 
