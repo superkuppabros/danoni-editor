@@ -101,18 +101,15 @@ export default defineComponent({
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
     const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
-    const orderGroups: number[][] =
-      keyConfig[keyKind]?.orderGroups !== undefined ? defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []) : defaultOrder;
+    const orderGroups: number[][] = defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []).filter((val) => val.length > 0);
 
     // 対応キーの全パターンを取得
-    const keysFull: string[][] =
-      keyConfig[keyKind]?.keysEtc !== undefined
-        ? [keyConfig[keyKind].keys].concat(keyConfig[keyKind]?.keysEtc ?? [])
-        : [keyConfig[keyKind].keys];
-    const alternativeKeysFull: string[][] =
-      keyConfig[keyKind]?.alternativeKeysEtc !== undefined
-        ? [keyConfig[keyKind].alternativeKeys].concat(keyConfig[keyKind]?.alternativeKeysEtc ?? [])
-        : [keyConfig[keyKind].alternativeKeys];
+    const keysFull: string[][] = [keyConfig[keyKind].keys]
+      .concat(keyConfig[keyKind]?.keysEtc ?? [])
+      .filter((val) => val.length > 0);
+    const alternativeKeysFull: string[][] = [keyConfig[keyKind].alternativeKeys]
+      .concat(keyConfig[keyKind]?.alternativeKeysEtc ?? [])
+      .filter((val) => val.length > 0);
 
     // 画面に表示するキーの全パターンを取得
     let charsFull: string[][] = [[]];
