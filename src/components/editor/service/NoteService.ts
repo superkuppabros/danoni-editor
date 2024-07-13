@@ -87,7 +87,7 @@ export class NoteService {
     if (page === displayPage) {
       this.draw(lane, position, isFreeze, orgLane);
     }
-    if (isFreeze) this.fillFreeze(displayPage, orgLane, lane);
+    if (isFreeze) this.fillFreeze(displayPage, lane, orgLane);
     this.stackPush({
       type: "ADD_NOTE",
       page,
@@ -105,7 +105,7 @@ export class NoteService {
     if (page === displayPage) {
       this.clear(orgLane, position);
     }
-    this.fillFreeze(displayPage, orgLane, lane);
+    this.fillFreeze(displayPage, lane, orgLane);
     this.stackPush({
       type: "REMOVE_NOTE",
       page,
@@ -116,25 +116,25 @@ export class NoteService {
   }
 
   // フリーズの塗りつぶし描画
-  fillFreeze(page: number, lane: number, viewLane: number = lane) {
+  fillFreeze(page: number, lane: number, orgLane: number = lane) {
     if (!this.isHighlightedFreeze) return false;
     const stage = this.stage;
     const notesLayer = this.notesLayer;
 
     const colorGroup = this.keyConfig[this.keyKind].colorGroup;
-    const color = freezeColors[colorGroup[viewLane]];
+    const color = freezeColors[colorGroup[lane]];
 
-    const laneFreezes: number[] = cloneDeep(this.scoreData.scores[page - 1].freezes[viewLane]).sort((a, b) => a - b);
+    const laneFreezes: number[] = cloneDeep(this.scoreData.scores[page - 1].freezes[lane]).sort((a, b) => a - b);
 
     const startParity =
       this.scoreData.scores.reduce((acc, score, index) => {
-        return index < page - 1 ? acc + score.freezes[viewLane].length : acc;
+        return index < page - 1 ? acc + score.freezes[lane].length : acc;
       }, 0) % 2;
 
     if (startParity === 1) laneFreezes.unshift(0);
     laneFreezes.push(verticalSizeNum(this.pageBlockNum));
 
-    const freezeClass = `.freeze-fill-${viewLane}`;
+    const freezeClass = `.freeze-fill-${lane}`;
     const fills = notesLayer.find(freezeClass);
     fills.forEach((node) => node.destroy());
 
@@ -145,14 +145,14 @@ export class NoteService {
       const opacity = 0.3;
 
       const fillFreeze = new Konva.Rect({
-        x: lane * noteWidth,
+        x: orgLane * noteWidth,
         y: Math.min(toPx(freezeStart, this.isReverse), toPx(freezeEnd, this.isReverse)),
         width: noteWidth,
         height,
         opacity,
         fill: color,
-        name: `freeze-fill-${viewLane}`,
-        id: `freeze-fill-${viewLane}-${freezeStart}`,
+        name: `freeze-fill-${lane}`,
+        id: `freeze-fill-${lane}-${freezeStart}`,
       });
       notesLayer.add(fillFreeze);
     }

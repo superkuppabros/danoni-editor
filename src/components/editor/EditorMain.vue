@@ -417,7 +417,7 @@ export default defineComponent({
         laneArr.forEach((position) => {
           noteService.draw(lane, position, true, orgLane);
         });
-        noteService.fillFreeze(this.page, orgLane, lane);
+        noteService.fillFreeze(this.page, lane, orgLane);
       });
       pageScore.speeds.forEach((speed) => {
         speedPieceService.draw(speed.position, speed.type);
