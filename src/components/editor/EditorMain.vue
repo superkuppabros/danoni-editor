@@ -98,7 +98,7 @@ export default defineComponent({
     const operationStack: Operation[] = [];
     const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
     const orderGroups: number[][] =
-      keyConfig[keyKind]?.orderGroup !== undefined ? defaultOrder.concat(keyConfig[keyKind]?.orderGroup ?? []) : defaultOrder;
+      keyConfig[keyKind]?.orderGroups !== undefined ? defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []) : defaultOrder;
 
     return {
       currentPosition: 0,
@@ -407,17 +407,17 @@ export default defineComponent({
       const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
 
       pageScore.notes.forEach((laneArr, lane) => {
-        const convLane = orderGroup.indexOf(lane);
+        const orgLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, false, convLane);
+          noteService.draw(lane, position, false, orgLane);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
-        const convLane = orderGroup.indexOf(lane);
+        const orgLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, true, convLane);
+          noteService.draw(lane, position, true, orgLane);
         });
-        noteService.fillFreeze(this.page, convLane);
+        noteService.fillFreeze(this.page, orgLane, lane);
       });
       pageScore.speeds.forEach((speed) => {
         speedPieceService.draw(speed.position, speed.type);
@@ -635,7 +635,7 @@ export default defineComponent({
             let isSimultaneous = false;
 
             const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
-            const convLane = orderGroup.indexOf(possiblyLane);
+            const orgLane = orderGroup.indexOf(possiblyLane);
             if (possiblyLane >= 0) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
@@ -651,9 +651,9 @@ export default defineComponent({
 
               // ノートの追加/削除
               if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, this.page, possiblyLane, position, convLane);
+                noteService.removeOne(page, this.page, possiblyLane, position, orgLane);
               } else {
-                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, convLane);
+                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
               }
 
               // 同時押しのときはカーソルを進めない
