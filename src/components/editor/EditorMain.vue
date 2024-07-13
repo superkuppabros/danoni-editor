@@ -70,6 +70,10 @@ type DataType = {
   previousDate: Date;
   orderGroups: number[][];
   orderGroupNo: number;
+  keysFull: string[][];
+  charsFull: string[][];
+  alternativeKeysFull: string[][];
+  orderKeyTypes: number[];
 };
 
 export default defineComponent({
@@ -100,6 +104,26 @@ export default defineComponent({
     const orderGroups: number[][] =
       keyConfig[keyKind]?.orderGroups !== undefined ? defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []) : defaultOrder;
 
+    // 対応キーの全パターンを取得
+    const keysFull: string[][] =
+      keyConfig[keyKind]?.keysEtc !== undefined
+        ? [keyConfig[keyKind].keys].concat(keyConfig[keyKind]?.keysEtc ?? [])
+        : [keyConfig[keyKind].keys];
+    const alternativeKeysFull: string[][] =
+      keyConfig[keyKind]?.alternativeKeysEtc !== undefined
+        ? [keyConfig[keyKind].alternativeKeys].concat(keyConfig[keyKind]?.alternativeKeysEtc ?? [])
+        : [keyConfig[keyKind].alternativeKeys];
+
+    // 画面に表示するキーの全パターンを取得
+    let charsFull: string[][] = [[]];
+    const chars = keyConfig[keyKind].chars ?? [];
+    const charsEtc = keyConfig[keyKind]?.charsEtc ?? [];
+    if (chars.length > 0) charsFull = [chars];
+    if (charsEtc.length > 0) charsFull.push(...charsEtc);
+
+    const orderKeyTypes: number[] =
+      keyConfig[keyKind]?.orderKeyTypes !== undefined ? [0].concat(keyConfig[keyKind]?.orderKeyTypes ?? []) : [0];
+
     return {
       currentPosition: 0,
       scoreData,
@@ -118,6 +142,10 @@ export default defineComponent({
       previousDate: new Date(0),
       orderGroups,
       orderGroupNo: 0,
+      keysFull,
+      charsFull,
+      alternativeKeysFull,
+      orderKeyTypes,
     };
   },
 
@@ -255,6 +283,7 @@ export default defineComponent({
 
       // 縦罫線の描画
       const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+      const orderKeyType: number = this.orderKeyTypes[this.orderGroupNo] ?? 0;
       for (let lane = 0; lane < keyNum; lane++) {
         const convLane = orderGroup[lane];
         const xPos = (lane + 1) * noteWidth;
@@ -329,7 +358,7 @@ export default defineComponent({
         const colorGroup = keyConfig.colorGroup;
         const color = noteColors[colorGroup[convLane]];
 
-        const chars = keyConfig.chars;
+        const chars = this.charsFull[orderKeyType];
 
         if (chars) {
           const charStr = chars[convLane];
@@ -624,9 +653,10 @@ export default defineComponent({
             break;
 
           default: {
+            const orderKeyType: number = this.orderKeyTypes[this.orderGroupNo] ?? 0;
             const possiblyLane = Math.max(
-              this.keyConfig[this.keyKind].keys.indexOf(e.code),
-              this.keyConfig[this.keyKind].alternativeKeys.indexOf(e.code)
+              this.keysFull[orderKeyType].indexOf(e.code),
+              this.alternativeKeysFull[orderKeyType].indexOf(e.code)
             );
             const isFreeze = e.shiftKey;
 
