@@ -68,6 +68,8 @@ type DataType = {
   previousPosition: number;
   previousPage: number;
   previousDate: Date;
+  orderGroups: number[][];
+  orderGroupNo: number;
 };
 
 export default defineComponent({
@@ -94,6 +96,9 @@ export default defineComponent({
     const isReverse: boolean = JSON.parse(isReverseStr);
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
+    const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
+    const orderGroups: number[][] =
+      keyConfig[keyKind]?.orderGroup !== undefined ? defaultOrder.concat(keyConfig[keyKind]?.orderGroup ?? []) : defaultOrder;
 
     return {
       currentPosition: 0,
@@ -111,6 +116,8 @@ export default defineComponent({
       previousPosition: 0,
       previousPage: 1,
       previousDate: new Date(0),
+      orderGroups,
+      orderGroupNo: 0,
     };
   },
 
@@ -247,11 +254,13 @@ export default defineComponent({
       baseLayer.destroyChildren();
 
       // 縦罫線の描画
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
       for (let lane = 0; lane < keyNum; lane++) {
+        const convLane = orderGroup[lane];
         const xPos = (lane + 1) * noteWidth;
 
         const colorGroup = this.keyConfig[this.keyKind].colorGroup;
-        const color = laneColors[colorGroup[lane]];
+        const color = laneColors[colorGroup[convLane]];
 
         const filler = new Konva.Rect({
           x: xPos - noteWidth,
@@ -313,16 +322,17 @@ export default defineComponent({
 
       // 入力キーの表示
       for (let lane = 0; lane < keyNum; lane++) {
+        const convLane = orderGroup[lane];
         const xPos = (lane + 1) * noteWidth;
 
         const keyConfig = this.keyConfig[this.keyKind];
         const colorGroup = keyConfig.colorGroup;
-        const color = noteColors[colorGroup[lane]];
+        const color = noteColors[colorGroup[convLane]];
 
         const chars = keyConfig.chars;
 
         if (chars) {
-          const charStr = chars[lane];
+          const charStr = chars[convLane];
 
           const keyText = new Konva.Text({
             x: xPos - noteWidth,
@@ -394,16 +404,20 @@ export default defineComponent({
       notesLayer.destroyChildren();
       stage.add(notesLayer);
 
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+
       pageScore.notes.forEach((laneArr, lane) => {
+        const convLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, false);
+          noteService.draw(lane, position, false, convLane);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
+        const convLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, true);
+          noteService.draw(lane, position, true, convLane);
         });
-        noteService.fillFreeze(this.page, lane);
+        noteService.fillFreeze(this.page, convLane);
       });
       pageScore.speeds.forEach((speed) => {
         speedPieceService.draw(speed.position, speed.type);
@@ -518,6 +532,13 @@ export default defineComponent({
             this.displayPageScore(this.page);
             break;
           }
+          case "KeyQ": {
+            this.orderGroupNo = (this.orderGroupNo + 1) % this.orderGroups.length;
+            this.baseLayerDraw();
+            this.pageMove(page);
+            this.displayPageScore(page);
+            break;
+          }
         }
       };
 
@@ -613,6 +634,8 @@ export default defineComponent({
             let position = this.currentPosition;
             let isSimultaneous = false;
 
+            const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+            const convLane = orderGroup.indexOf(possiblyLane);
             if (possiblyLane >= 0) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
@@ -628,9 +651,9 @@ export default defineComponent({
 
               // ノートの追加/削除
               if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, this.page, possiblyLane, position);
+                noteService.removeOne(page, this.page, possiblyLane, position, convLane);
               } else {
-                noteService.addOne(page, this.page, possiblyLane, position, isFreeze);
+                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, convLane);
               }
 
               // 同時押しのときはカーソルを進めない

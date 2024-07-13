@@ -17,7 +17,7 @@ export class NoteService {
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer,
     private operationStack: Operation[]
-  ) {}
+  ) { }
 
   private keyNum = this.keyConfig[this.keyKind].num;
   private isHighlightedFreeze: string = JSON.parse(localStorage.getItem("isHighlightedFreeze") ?? "true");
@@ -52,7 +52,7 @@ export class NoteService {
   }
 
   // ノーツの描画
-  draw(lane: number, position: number, isFreeze: boolean): void {
+  draw(lane: number, position: number, isFreeze: boolean, viewLane: number = lane): void {
     const stage = this.stage as Konva.Stage;
     const notesLayer = this.notesLayer as Konva.Layer;
 
@@ -60,12 +60,12 @@ export class NoteService {
     const color = isFreeze ? freezeColors[colorGroup[lane]] : noteColors[colorGroup[lane]];
 
     const note = new Konva.Rect({
-      x: lane * noteWidth,
+      x: viewLane * noteWidth,
       y: toPx(position, this.isReverse) - noteHeight / 2,
       width: noteWidth,
       height: noteHeight,
       fill: color,
-      id: `note-${lane}-${position}`,
+      id: `note-${viewLane}-${position}`,
     });
     notesLayer.add(note);
     stage.add(notesLayer);
@@ -82,10 +82,10 @@ export class NoteService {
   }
 
   // 1ノーツを追加して描画
-  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean) {
+  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, viewLane: number = lane) {
     this.add(page, lane, position, isFreeze);
     if (page === displayPage) {
-      this.draw(lane, position, isFreeze);
+      this.draw(lane, position, isFreeze, viewLane);
     }
     if (isFreeze) this.fillFreeze(displayPage, lane);
     this.stackPush({
@@ -98,14 +98,14 @@ export class NoteService {
   }
 
   // 1ノーツを削除してクリア
-  removeOne(page: number, displayPage: number, lane: number, position: number) {
+  removeOne(page: number, displayPage: number, lane: number, position: number, viewLane: number = lane) {
     const { isFreeze } = this.hasNote(page, lane, position);
 
     this.remove(page, lane, position);
     if (page === displayPage) {
-      this.clear(lane, position);
+      this.clear(viewLane, position);
     }
-    this.fillFreeze(displayPage, lane);
+    this.fillFreeze(displayPage, viewLane);
     this.stackPush({
       type: "REMOVE_NOTE",
       page,
