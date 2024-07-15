@@ -164,6 +164,21 @@ export default defineComponent({
       scoreData.scores.push(new DefaultPageScore(keyNum));
     }
 
+    // ordersを指定することで初期の位置を入れ替える
+    scoreData.scores.forEach((scoreList, j) => {
+      if (scoreData.orders !== undefined) {
+        const notes: number[][] = [...Array(keyNum)].map(() => []);
+        const freezes: number[][] = [...Array(keyNum)].map(() => []);
+        scoreData.orders.forEach((val, k) => {
+          notes[val] = scoreList.notes[k];
+          freezes[val] = scoreList.freezes[k];
+        });
+        scoreData.scores[j].notes = notes;
+        scoreData.scores[j].freezes = freezes;
+      }
+    });
+    scoreData.orders = undefined;
+
     return {
       pageNum: 1,
       labelNum: 1,
