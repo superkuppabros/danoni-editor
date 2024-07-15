@@ -77,7 +77,7 @@ export class NoteService {
     const notesLayer = this.notesLayer;
 
     const note = notesLayer.findOne(`#note-${lane}-${position}`);
-    note.destroy();
+    note?.destroy();
     stage.add(notesLayer);
   }
 

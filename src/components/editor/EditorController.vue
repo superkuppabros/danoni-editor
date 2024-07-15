@@ -68,9 +68,9 @@
       </div>
 
       <div id="menu-output" class="menu-item-container">
-        <a class="menu-output-btn btn-orange" href="#editor-option" uk-toggle>OPTION</a>
+        <a class="menu-output-btn btn-orange" uk-toggle="target: #editor-option">OPTION</a>
         <div class="menu-output-btn btn-gray" @click="convertWithQuarters">TEST</div>
-        <div class="menu-output-btn btn-blue" href="#editor-save" uk-toggle>SAVE</div>
+        <div class="menu-output-btn btn-blue" uk-toggle="target: #editor-save">SAVE</div>
         <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">CALC</div>
         <div class="menu-output-btn btn-red" @click="convert">GO!</div>
       </div>
@@ -81,7 +81,6 @@
       href="../"
       uk-close
       :to="{
-        name: 'start',
         path: '/',
       }"
     ></router-link>
