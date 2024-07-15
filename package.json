@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "^16.15.0",
-    "npm": "^8.5.5"
+    "node": "^22.4.1",
+    "npm": "^10.8.1"
   },
   "scripts": {
     "dev": "vite",
@@ -35,7 +35,6 @@
     "@types/uikit": "^3.3.2",
     "@vitejs/plugin-vue": "^2.3.2",
     "@vue/eslint-config-typescript": "^10.0.0",
-    "canvas": "^2.8.0",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-vue": "^8.7.1",
