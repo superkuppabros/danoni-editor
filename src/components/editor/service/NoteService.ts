@@ -134,7 +134,7 @@ export class NoteService {
     if (startParity === 1) laneFreezes.unshift(0);
     laneFreezes.push(verticalSizeNum(this.pageBlockNum));
 
-    const freezeClass = `.freeze-fill-${lane}`;
+    const freezeClass = `.freeze-fill-${orgLane}`;
     const fills = notesLayer.find(freezeClass);
     fills.forEach((node) => node.destroy());
 
@@ -151,8 +151,8 @@ export class NoteService {
         height,
         opacity,
         fill: color,
-        name: `freeze-fill-${lane}`,
-        id: `freeze-fill-${lane}-${freezeStart}`,
+        name: `freeze-fill-${orgLane}`,
+        id: `freeze-fill-${orgLane}-${freezeStart}`,
       });
       notesLayer.add(fillFreeze);
     }
