@@ -1,25 +1,23 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.0.2
+  node: circleci/node@5.2.0
 
 jobs:
   all:
     docker:
-      - image: cimg/node:16.15
+      - image: cimg/node:22.4
     steps:
       - checkout
       - restore_cache:
           keys:
-            - v1-npm-deps-{{ checksum "package-lock.json" }}
-            - v1-npm-deps-
-      - node/install-packages:
-          pkg-manager: npm
-          override-ci-command: npm install
+            - v2-npm-deps-{{ checksum "package-lock.json" }}
+            - v2-npm-deps-
+      - node/install-packages
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
       - run: npm run lint
       - run: npm run prettier
       - run: npm run build
