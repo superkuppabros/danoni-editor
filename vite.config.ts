@@ -18,6 +18,5 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    threads: false
   },
 })

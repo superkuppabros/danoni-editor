@@ -21,10 +21,12 @@ export type OutputData = {
 };
 
 export class ScoreConvertService {
-  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig, private pageBlockNum: number) {}
-
-  private keyNum = this.keyConfig[this.keyKind].num;
-  private defaultPageScore = new DefaultPageScore(this.keyNum);
+  private keyNum: number;
+  private defaultPageScore: PageScore;
+  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig, private pageBlockNum: number) {
+    this.keyNum = keyConfig[this.keyKind].num;
+    this.defaultPageScore = new DefaultPageScore(this.keyNum);
+  }
 
   toFrameData(scoreData: ScoreData): FrameData[] {
     const initialPageScore = new DefaultPageScore(this.keyNum);

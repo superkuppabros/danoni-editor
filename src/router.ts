@@ -24,11 +24,11 @@ export default createRouter({
       path: "/editor",
       name: "editor",
       component: Editor,
-      props(routes): PropsType {
+      props(): PropsType {
         return {
-          loadScoreDataStr: routes.params.scoreData as string,
-          loadMusicUrl: routes.params.musicUrl as string,
-          selectedKey: (routes.params.key || "7") as CustomKeyKind,
+          loadScoreDataStr: history.state.scoreData as string,
+          loadMusicUrl: history.state.musicUrl as string,
+          selectedKey: (history.state.key || "7") as CustomKeyKind,
         };
       },
     },

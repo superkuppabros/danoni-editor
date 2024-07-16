@@ -13,7 +13,6 @@
       <router-link
         :to="{
           name: 'start',
-          path: '/',
         }"
         class="start-btn btn-blue"
         >BACK</router-link

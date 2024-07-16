@@ -6,6 +6,8 @@ import { cloneDeep } from "lodash";
 import { DefaultPageScore } from "@/model/PageScore";
 import { test2DosData, test2ScoreData, testDosData, testScoreData } from "./testScoreData";
 
+import "mock-local-storage";
+
 describe("scoreConvertService", () => {
   const keyKind: KeyKind = "5";
   const keyConfig: KeyConfig = DefaultKeyConfig;

@@ -14,17 +14,15 @@
         <router-link
           :to="{
             name: 'configure',
-            path: 'configure',
           }"
           class="start-btn btn-orange"
           >CONFIG</router-link
         >
-        <div class="start-btn btn-blue" href="#start-load" uk-toggle>LOAD</div>
+        <div class="start-btn btn-blue" uk-toggle="target: #start-load">LOAD</div>
         <router-link
           :to="{
             name: 'editor',
-            path: 'editor',
-            params: {
+            state: {
               scoreData: scoreDataStr,
               musicUrl: musicUrl,
               key: selectedKey,
@@ -157,8 +155,7 @@ export default defineComponent({
     moveToEditor(scoreData: string, musicUrl: string, key: string) {
       this.$router.push({
         name: "editor",
-        path: "editor",
-        params: { scoreData, musicUrl, key },
+        state: { scoreData, musicUrl, key },
       });
     },
     async loadData(keyPhrase: string) {
