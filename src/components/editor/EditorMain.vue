@@ -411,7 +411,7 @@ export default defineComponent({
       const stage = this.stage as Konva.Stage;
       const currentPositionLayer = this.currentPositionLayer as Konva.Layer;
       const node = currentPositionLayer.findOne("#musicPosition");
-      node.destroy();
+      node?.destroy();
       stage.add(currentPositionLayer);
 
       if (this.musicService) this.musicService.pause(timer);

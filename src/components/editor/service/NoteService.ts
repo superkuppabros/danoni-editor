@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { ScoreData } from "@/model/ScoreData";
-import { CustomKeyConfig } from "@/model/KeyConfig";
+import { CustomKeyConfig, DefaultKeyConfig } from "@/model/KeyConfig";
 import { CustomKeyKind } from "@/model/KeyKind";
 import { freezeColors, noteColors, noteWidth, noteHeight, verticalSizeNum } from "../EditorConstant";
 import toPx from "../helper/toPx";
@@ -8,18 +8,21 @@ import { cloneDeep } from "lodash";
 import { Operation } from "@/model/OperationQueue";
 
 export class NoteService {
+  private keyNum: number;
+
   constructor(
     private scoreData: ScoreData,
-    private keyConfig: CustomKeyConfig,
-    private keyKind: CustomKeyKind,
+    private keyConfig: CustomKeyConfig = DefaultKeyConfig,
+    private keyKind: CustomKeyKind = "",
     private isReverse: boolean,
     private pageBlockNum: number,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer,
     private operationStack: Operation[]
-  ) { }
+  ) {
+    this.keyNum = this.keyConfig[this.keyKind].num;
+  }
 
-  private keyNum = this.keyConfig[this.keyKind].num;
   private isHighlightedFreeze: string = JSON.parse(localStorage.getItem("isHighlightedFreeze") ?? "true");
 
   private stackPush(operation: Operation): void {
@@ -77,7 +80,7 @@ export class NoteService {
     const notesLayer = this.notesLayer;
 
     const note = notesLayer.findOne(`#note-${lane}-${position}`);
-    note.destroy();
+    note?.destroy();
     stage.add(notesLayer);
   }
 

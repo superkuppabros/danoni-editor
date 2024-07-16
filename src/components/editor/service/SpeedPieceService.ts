@@ -60,7 +60,7 @@ export class SpeedPieceService {
     const notesLayer = this.notesLayer as Konva.Layer;
 
     const note = notesLayer.findOne(`#speed-${position}`);
-    note.destroy();
+    note?.destroy();
     stage.add(notesLayer);
   }
 }
