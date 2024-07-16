@@ -13,7 +13,8 @@ jobs:
           keys:
             - v2-npm-deps-{{ checksum "package-lock.json" }}
             - v2-npm-deps-
-      - node/install-packages
+      - node/install-packages:
+          override-ci-command: npm install
       - save_cache:
           paths:
             - node_modules
