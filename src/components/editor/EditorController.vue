@@ -133,29 +133,45 @@ export default defineComponent({
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
-
-    let scoreData: ScoreData;
-    const storedKeyKind = sessionStorage.getItem("keyKind");
-
-    const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
-    const selectedKeyNum = keyConfig[selectedKeyKind].num;
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
 
-    const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
-    try {
-      //TODO: 譜面データのチェッカーを作る
-      if (!this.loadScoreDataStr) {
+    const storedKeyKind = sessionStorage.getItem("keyKind");
+    const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
+    let scoreData: ScoreData;
+    let keyKind: CustomKeyKind;
+
+    if (selectedKeyKind in keyConfig) {
+      const selectedKeyNum = keyConfig[selectedKeyKind].num;
+      const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
+
+      try {
+        // TODO: 譜面チェッカー未実装につきtry節に入れている
+
+        if (!this.loadScoreDataStr) {
+          scoreData = new DefaultScoreData(selectedKeyNum);
+        } else if (scoreRevivalService.dosConvert(this.loadScoreDataStr) != null) {
+          scoreData = scoreRevivalService.dosConvert(this.loadScoreDataStr) as ScoreData;
+        } else scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
+      } catch {
+        alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
         scoreData = new DefaultScoreData(selectedKeyNum);
-      } else if (scoreRevivalService.dosConvert(this.loadScoreDataStr) != null) {
-        scoreData = scoreRevivalService.dosConvert(this.loadScoreDataStr) as ScoreData;
-      } else scoreData = JSON.parse(this.loadScoreDataStr) as unknown as ScoreData;
-    } catch {
-      alert("不正な譜面データが与えられたため、正しく読み込めませんでした。");
+      }
+      keyKind = (scoreData.keyKind || selectedKeyKind) as CustomKeyKind;
+      scoreData.keyKind = keyKind;
+    } else {
+      // /editorを直接開いた場合
+      keyKind = "7";
+      const selectedKeyNum = keyConfig[keyKind].num;
       scoreData = new DefaultScoreData(selectedKeyNum);
     }
 
-    const keyKind = (scoreData.keyKind || selectedKeyKind) as CustomKeyKind;
-    scoreData.keyKind = keyKind;
+    if (!(keyKind in keyConfig)) {
+      alert("key種が未定義です。");
+      keyKind = "7";
+      const selectedKeyNum = keyConfig[keyKind].num;
+      scoreData = new DefaultScoreData(selectedKeyNum);
+    }
+
     sessionStorage.setItem("keyKind", keyKind); // 更新してもkeyがデフォルトに戻らないようにするため
 
     const keyNum = keyConfig[keyKind].num;
