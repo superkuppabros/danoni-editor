@@ -8,7 +8,7 @@ export interface ScoreData {
   timings: Timing[];
   scoreNumber?: number;
   scores: PageScore[];
-  orders?: number[];
+  order?: number[];
 }
 
 export class DefaultScoreData implements ScoreData {
