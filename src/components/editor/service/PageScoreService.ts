@@ -84,7 +84,9 @@ export class PageScoreService {
 
   // ページ削除(操作のみ)
   remove(page: number) {
+    if (this.scoreData.scores.length == 1) return false;
     this.scoreData.scores.splice(page - 1, 1);
+    this.scoreData.scores.push(new DefaultPageScore(this.keyNum)); // 読み込みエラー対策
 
     const timings = this.scoreData.timings;
     this.scoreData.timings = timings.map((timing) => {

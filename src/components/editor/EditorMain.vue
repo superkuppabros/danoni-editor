@@ -2,7 +2,7 @@
   <div id="editor-main">
     <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
     <speed-piece
-      v-for="(speed, index) in scoreData.scores[page - 1].speeds"
+      v-for="(speed, index) in scoreData.scores[page - 1]?.speeds"
       :key="index"
       v-model:speedValue.number="speed.value"
       :position="speed.position"
