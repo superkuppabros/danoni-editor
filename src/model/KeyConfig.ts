@@ -46,7 +46,10 @@ export const DefaultKeyConfig: KeyConfig = {
     noteNames: ["left_data", "down_data", "up_data", "right_data", "space_data"],
     freezeNames: ["frzLeft_data", "frzDown_data", "frzUp_data", "frzRight_data", "frzSpace_data"],
     colorGroup: [0, 0, 0, 0, 2],
-    orderGroups: [[4, 0, 1, 2, 3], [0, 1, 4, 2, 3]],
+    orderGroups: [
+      [4, 0, 1, 2, 3],
+      [0, 1, 4, 2, 3],
+    ],
 
     keysEtc: [["KeyD", "KeyF", "KeyJ", "KeyK", "KeyG"]],
     charsEtc: [["D", "F", "J", "K", "G"]],

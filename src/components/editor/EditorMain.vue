@@ -570,12 +570,12 @@ export default defineComponent({
 
       const withCtrlAction = (e: KeyboardEvent) => {
         if (e.code == "Digit1" || e.code == "Numpad1") this.changeDivisor(quarterInterval);
-        else if(e.code == "Digit2" || e.code == "Numpad2") this.changeDivisor(quarterInterval / 2);
-        else if(e.code == "Digit3" || e.code == "Numpad3") this.changeDivisor(quarterInterval / 4);
-        else if(e.code == "Digit4" || e.code == "Numpad4") this.changeDivisor(quarterInterval / 3);
-        else if(e.code == "Digit5" || e.code == "Numpad5") this.changeDivisor(quarterInterval / 6);
-        else if(e.code == "Digit6" || e.code == "Numpad6") this.changeDivisor(quarterInterval / 12);
-        else if(e.code == "Digit7" || e.code == "Numpad7") this.changeDivisor(quarterInterval / 8);
+        else if (e.code == "Digit2" || e.code == "Numpad2") this.changeDivisor(quarterInterval / 2);
+        else if (e.code == "Digit3" || e.code == "Numpad3") this.changeDivisor(quarterInterval / 4);
+        else if (e.code == "Digit4" || e.code == "Numpad4") this.changeDivisor(quarterInterval / 3);
+        else if (e.code == "Digit5" || e.code == "Numpad5") this.changeDivisor(quarterInterval / 6);
+        else if (e.code == "Digit6" || e.code == "Numpad6") this.changeDivisor(quarterInterval / 12);
+        else if (e.code == "Digit7" || e.code == "Numpad7") this.changeDivisor(quarterInterval / 8);
       };
 
       if (e.ctrlKey) {
