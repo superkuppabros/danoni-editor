@@ -55,7 +55,7 @@ export class NoteService {
   }
 
   // ノーツの描画
-  draw(lane: number, position: number, isFreeze: boolean): void {
+  draw(lane: number, position: number, isFreeze: boolean, orgLane: number = lane): void {
     const stage = this.stage as Konva.Stage;
     const notesLayer = this.notesLayer as Konva.Layer;
 
@@ -63,12 +63,12 @@ export class NoteService {
     const color = isFreeze ? freezeColors[colorGroup[lane]] : noteColors[colorGroup[lane]];
 
     const note = new Konva.Rect({
-      x: lane * noteWidth,
+      x: orgLane * noteWidth,
       y: toPx(position, this.isReverse) - noteHeight / 2,
       width: noteWidth,
       height: noteHeight,
       fill: color,
-      id: `note-${lane}-${position}`,
+      id: `note-${orgLane}-${position}`,
     });
     notesLayer.add(note);
     stage.add(notesLayer);
@@ -85,12 +85,12 @@ export class NoteService {
   }
 
   // 1ノーツを追加して描画
-  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean) {
+  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
     this.add(page, lane, position, isFreeze);
     if (page === displayPage) {
-      this.draw(lane, position, isFreeze);
+      this.draw(lane, position, isFreeze, orgLane);
     }
-    if (isFreeze) this.fillFreeze(displayPage, lane);
+    if (isFreeze) this.fillFreeze(displayPage, lane, orgLane);
     this.stackPush({
       type: "ADD_NOTE",
       page,
@@ -101,14 +101,14 @@ export class NoteService {
   }
 
   // 1ノーツを削除してクリア
-  removeOne(page: number, displayPage: number, lane: number, position: number) {
+  removeOne(page: number, displayPage: number, lane: number, position: number, orgLane: number = lane) {
     const { isFreeze } = this.hasNote(page, lane, position);
 
     this.remove(page, lane, position);
     if (page === displayPage) {
-      this.clear(lane, position);
+      this.clear(orgLane, position);
     }
-    this.fillFreeze(displayPage, lane);
+    this.fillFreeze(displayPage, lane, orgLane);
     this.stackPush({
       type: "REMOVE_NOTE",
       page,
@@ -119,7 +119,7 @@ export class NoteService {
   }
 
   // フリーズの塗りつぶし描画
-  fillFreeze(page: number, lane: number) {
+  fillFreeze(page: number, lane: number, orgLane: number = lane) {
     if (!this.isHighlightedFreeze) return false;
     const stage = this.stage;
     const notesLayer = this.notesLayer;
@@ -137,7 +137,7 @@ export class NoteService {
     if (startParity === 1) laneFreezes.unshift(0);
     laneFreezes.push(verticalSizeNum(this.pageBlockNum));
 
-    const freezeClass = `.freeze-fill-${lane}`;
+    const freezeClass = `.freeze-fill-${orgLane}`;
     const fills = notesLayer.find(freezeClass);
     fills.forEach((node) => node.destroy());
 
@@ -148,14 +148,14 @@ export class NoteService {
       const opacity = 0.3;
 
       const fillFreeze = new Konva.Rect({
-        x: lane * noteWidth,
+        x: orgLane * noteWidth,
         y: Math.min(toPx(freezeStart, this.isReverse), toPx(freezeEnd, this.isReverse)),
         width: noteWidth,
         height,
         opacity,
         fill: color,
-        name: `freeze-fill-${lane}`,
-        id: `freeze-fill-${lane}-${freezeStart}`,
+        name: `freeze-fill-${orgLane}`,
+        id: `freeze-fill-${orgLane}-${freezeStart}`,
       });
       notesLayer.add(fillFreeze);
     }

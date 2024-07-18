@@ -7,9 +7,14 @@ export type KeyConfig = {
     keys: string[];
     chars?: string[];
     alternativeKeys: string[];
+    keysEtc?: string[][];
+    charsEtc?: string[][];
+    alternativeKeysEtc?: string[][];
     noteNames: string[];
     freezeNames: string[];
     colorGroup: number[];
+    orderGroups?: number[][];
+    orderKeyTypes?: number[];
   };
 };
 
@@ -20,9 +25,14 @@ export type CustomKeyConfig = {
     keys: string[];
     chars?: string[];
     alternativeKeys: string[];
+    keysEtc?: string[][];
+    charsEtc?: string[][];
+    alternativeKeysEtc?: string[][];
     noteNames: string[];
     freezeNames: string[];
     colorGroup: number[];
+    orderGroups?: number[][];
+    orderKeyTypes?: number[];
   };
 };
 
@@ -36,6 +46,12 @@ export const DefaultKeyConfig: KeyConfig = {
     noteNames: ["left_data", "down_data", "up_data", "right_data", "space_data"],
     freezeNames: ["frzLeft_data", "frzDown_data", "frzUp_data", "frzRight_data", "frzSpace_data"],
     colorGroup: [0, 0, 0, 0, 2],
+    orderGroups: [[4, 0, 1, 2, 3], [0, 1, 4, 2, 3]],
+
+    keysEtc: [["KeyD", "KeyF", "KeyJ", "KeyK", "KeyG"]],
+    charsEtc: [["D", "F", "J", "K", "G"]],
+    alternativeKeysEtc: [["", "", "", "", "KeyH"]],
+    orderKeyTypes: [0, 1],
   },
 
   "7": {
@@ -276,6 +292,7 @@ export const DefaultKeyConfig: KeyConfig = {
       "sfrzRight_data",
     ],
     colorGroup: [0, 1, 0, 2, 0, 1, 0, 2, 3, 3, 2],
+    orderGroups: [[7, 0, 1, 2, 8, 3, 9, 4, 5, 6, 10]],
   },
 
   "11i": {

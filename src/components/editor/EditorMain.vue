@@ -68,6 +68,12 @@ type DataType = {
   previousPosition: number;
   previousPage: number;
   previousDate: Date;
+  orderGroups: number[][];
+  orderGroupNo: number;
+  keysFull: string[][];
+  charsFull: string[][];
+  alternativeKeysFull: string[][];
+  orderKeyTypes: number[];
 };
 
 export default defineComponent({
@@ -94,6 +100,26 @@ export default defineComponent({
     const isReverse: boolean = JSON.parse(isReverseStr);
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
+    const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
+    const orderGroups: number[][] = defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []).filter((val) => val.length > 0);
+
+    // 対応キーの全パターンを取得
+    const keysFull: string[][] = [keyConfig[keyKind].keys]
+      .concat(keyConfig[keyKind]?.keysEtc ?? [])
+      .filter((val) => val.length > 0);
+    const alternativeKeysFull: string[][] = [keyConfig[keyKind].alternativeKeys]
+      .concat(keyConfig[keyKind]?.alternativeKeysEtc ?? [])
+      .filter((val) => val.length > 0);
+
+    // 画面に表示するキーの全パターンを取得
+    let charsFull: string[][] = [[]];
+    const chars = keyConfig[keyKind].chars ?? [];
+    const charsEtc = keyConfig[keyKind]?.charsEtc ?? [];
+    if (chars.length > 0) charsFull = [chars];
+    if (charsEtc.length > 0) charsFull.push(...charsEtc);
+
+    const orderKeyTypes: number[] =
+      keyConfig[keyKind]?.orderKeyTypes !== undefined ? [0].concat(keyConfig[keyKind]?.orderKeyTypes ?? []) : [0];
 
     return {
       currentPosition: 0,
@@ -111,6 +137,12 @@ export default defineComponent({
       previousPosition: 0,
       previousPage: 1,
       previousDate: new Date(0),
+      orderGroups,
+      orderGroupNo: 0,
+      keysFull,
+      charsFull,
+      alternativeKeysFull,
+      orderKeyTypes,
     };
   },
 
@@ -247,11 +279,14 @@ export default defineComponent({
       baseLayer.destroyChildren();
 
       // 縦罫線の描画
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+      const orderKeyType: number = this.orderKeyTypes[this.orderGroupNo] ?? 0;
       for (let lane = 0; lane < keyNum; lane++) {
+        const convLane = orderGroup[lane];
         const xPos = (lane + 1) * noteWidth;
 
         const colorGroup = this.keyConfig[this.keyKind].colorGroup;
-        const color = laneColors[colorGroup[lane]];
+        const color = laneColors[colorGroup[convLane]];
 
         const filler = new Konva.Rect({
           x: xPos - noteWidth,
@@ -313,16 +348,17 @@ export default defineComponent({
 
       // 入力キーの表示
       for (let lane = 0; lane < keyNum; lane++) {
+        const convLane = orderGroup[lane];
         const xPos = (lane + 1) * noteWidth;
 
         const keyConfig = this.keyConfig[this.keyKind];
         const colorGroup = keyConfig.colorGroup;
-        const color = noteColors[colorGroup[lane]];
+        const color = noteColors[colorGroup[convLane]];
 
-        const chars = keyConfig.chars;
+        const chars = this.charsFull[orderKeyType];
 
         if (chars) {
-          const charStr = chars[lane];
+          const charStr = chars[convLane];
 
           const keyText = new Konva.Text({
             x: xPos - noteWidth,
@@ -394,16 +430,20 @@ export default defineComponent({
       notesLayer.destroyChildren();
       stage.add(notesLayer);
 
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+
       pageScore.notes.forEach((laneArr, lane) => {
+        const orgLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, false);
+          noteService.draw(lane, position, false, orgLane);
         });
       });
       pageScore.freezes.forEach((laneArr, lane) => {
+        const orgLane = orderGroup.indexOf(lane);
         laneArr.forEach((position) => {
-          noteService.draw(lane, position, true);
+          noteService.draw(lane, position, true, orgLane);
         });
-        noteService.fillFreeze(this.page, lane);
+        noteService.fillFreeze(this.page, lane, orgLane);
       });
       pageScore.speeds.forEach((speed) => {
         speedPieceService.draw(speed.position, speed.type);
@@ -518,6 +558,13 @@ export default defineComponent({
             this.displayPageScore(this.page);
             break;
           }
+          case "KeyQ": {
+            this.orderGroupNo = (this.orderGroupNo + 1) % this.orderGroups.length;
+            this.baseLayerDraw();
+            this.pageMove(page);
+            this.displayPageScore(page);
+            break;
+          }
         }
       };
 
@@ -603,9 +650,10 @@ export default defineComponent({
             break;
 
           default: {
+            const orderKeyType: number = this.orderKeyTypes[this.orderGroupNo] ?? 0;
             const possiblyLane = Math.max(
-              this.keyConfig[this.keyKind].keys.indexOf(e.code),
-              this.keyConfig[this.keyKind].alternativeKeys.indexOf(e.code)
+              this.keysFull[orderKeyType].indexOf(e.code),
+              this.alternativeKeysFull[orderKeyType].indexOf(e.code)
             );
             const isFreeze = e.shiftKey;
 
@@ -613,6 +661,8 @@ export default defineComponent({
             let position = this.currentPosition;
             let isSimultaneous = false;
 
+            const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+            const orgLane = orderGroup.indexOf(possiblyLane);
             if (possiblyLane >= 0) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
@@ -628,9 +678,9 @@ export default defineComponent({
 
               // ノートの追加/削除
               if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, this.page, possiblyLane, position);
+                noteService.removeOne(page, this.page, possiblyLane, position, orgLane);
               } else {
-                noteService.addOne(page, this.page, possiblyLane, position, isFreeze);
+                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
               }
 
               // 同時押しのときはカーソルを進めない
