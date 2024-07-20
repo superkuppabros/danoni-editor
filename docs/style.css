@@ -117,7 +117,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .uk-form-small {
-  height: 24px!important;
+  height: 24px !important;
 }
 
 #menu-output {
@@ -182,7 +182,8 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   text-decoration-line: none;
 }
 
-#editor-option, #editor-save {
+#editor-option,
+#editor-save {
   position: absolute;
   width: 300px;
   height: 430px;
@@ -197,7 +198,13 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .option-item-container {
   margin: 4px auto 0 auto;
-  width: 106px;
+  width: 206px;
+}
+
+.option-sub-item-container {
+  margin: 2px auto 0 auto;
+  width: 100px;
+  float: left;
 }
 
 .save-item-container {
@@ -336,7 +343,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .configure-context-title {
   margin: 5px auto;
-  color: salmon
+  color: salmon;
 }
 
 #configure-uploader {
