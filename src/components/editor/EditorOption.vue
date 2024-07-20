@@ -116,7 +116,7 @@ export default defineComponent({
       },
       set(order: string) {
         this.$emit("update:order", order.split(`,`)
-          .filter(v => !Number.isNaN(Number(v)) && !v.includes(".") && Number(v) < 100).slice(0, this.keyNum));
+          .filter(v => !Number.isNaN(Number(v)) && !v.includes(".") && v.length <= 2).slice(0, this.keyNum));
       },
     },
   },
