@@ -185,7 +185,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 #editor-option,
 #editor-save {
   position: absolute;
-  width: 300px;
+  width: 310px;
   height: 430px;
   top: 100px;
   background-color: rgba(245, 228, 159, 0.9);
