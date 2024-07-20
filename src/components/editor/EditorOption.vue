@@ -21,7 +21,7 @@
       <div class="menu-txt">Music Speed</div>
       <input v-model.number="inputMusicRate" type="number" min="0.25" max="2" step="0.05" class="uk-input uk-form-small" />
     </div>
-    <div id="option-convert-key" class="option-item-container">
+    <div id="option-conv-key-kind" class="option-item-container">
       <div class="menu-txt">Conv.Keymode</div>
       <select id="option-key-selector" v-model="inputConvKeyKind" class="uk-select uk-form-width-medium uk-form-small">
         <option v-for="keyKind in keyKinds" :key="keyKind">
