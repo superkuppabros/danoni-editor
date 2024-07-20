@@ -187,7 +187,7 @@ export default defineComponent({
     },
 
     propOrder(order: number[]) {
-      this.scoreData.order = order.map(v => Number(v)).slice(0, this.keyNum);
+      this.scoreData.order = order.map(v => Number(v));
     },
 
     musicVolume(musicVolume: number) {

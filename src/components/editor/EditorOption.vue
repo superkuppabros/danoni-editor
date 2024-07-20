@@ -50,6 +50,7 @@ export default defineComponent({
     scorePrefix: { type: String, required: true },
     convKeyKind: { type: String, required: true },
     order: { type: Array<number>, required: true },
+    keyNum: { type: Number, required: true },
   },
   emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix", "update:convKeyKind", "update:order"],
   computed: {
@@ -114,7 +115,8 @@ export default defineComponent({
         return this.order.join(`,`);
       },
       set(order: string) {
-        this.$emit("update:order", order.split(`,`).filter(v => !Number.isNaN(Number(v))));
+        this.$emit("update:order", order.split(`,`)
+          .filter(v => !Number.isNaN(Number(v)) && !v.includes(".") && Number(v) < 100).slice(0, this.keyNum));
       },
     },
   },
