@@ -69,8 +69,9 @@
       </div>
 
       <div id="menu-output" class="menu-item-container">
-        <div class="menu-output-btn btn-purple btn-controller" id="ctrlPlay" @click="play">PLAY</div>
         <a class="menu-output-btn btn-orange btn-controller" uk-toggle="target: #editor-option">OPTION</a>
+        <div class="menu-output-btn btn-gray btn-controller" @click="changeDivisor()">>></div>
+        <div class="menu-output-btn btn-purple btn-controller" @click="play">PLAY</div>
         <div class="menu-output-btn btn-gray btn-controller" @click="convertWithQuarters">TEST</div>
         <div class="menu-output-btn btn-blue btn-controller" uk-toggle="target: #editor-save">SAVE</div>
         <div class="menu-output-btn btn-gray btn-controller" @click="displayScoreDataInfo">CALC</div>
@@ -99,7 +100,7 @@ import { ScoreConvertService } from "./service/ScoreConvertService";
 import { LevelCalcService } from "./service/LevelCalcService";
 import { CustomKeyKind } from "../../model/KeyKind";
 import { CustomKeyConfig } from "../../model/KeyConfig";
-import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
+import { divisors, fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 import { DefaultPageScore } from "@/model/PageScore";
 import { ScoreRevivalService } from "./service/ScoreRevivalService";
@@ -134,15 +135,22 @@ export default defineComponent({
     loadMusicUrl: { type: String, required: true },
   },
   setup() {
+    let divisorNum: number = 0;
     const editorMain = ref<typeof EditorMain>();
     const play = () => {
       if (editorMain.value) {
         editorMain.value.togglePlay();
       }
     };
+    const changeDivisor = () => {
+      if (editorMain.value) {
+        editorMain.value.changeDivisor(quarterInterval / divisors[++divisorNum % divisors.length]);
+      }
+    };
     return {
       editorMain,
       play,
+      changeDivisor,
     };
   },
   data(): DataType {

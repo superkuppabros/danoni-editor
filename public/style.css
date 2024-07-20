@@ -168,7 +168,6 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 .btn-purple {
   color: #9944ff;
   border: solid 2px #9944ff;
-  width: 100px;
 }
 
 .menu-output-btn:hover {
