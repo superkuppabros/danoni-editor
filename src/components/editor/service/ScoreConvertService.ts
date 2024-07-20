@@ -92,7 +92,7 @@ export class ScoreConvertService {
     const startNumbers: number[] = scoreData.timings.map((timing) => timing.startNum);
     const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
     const scoreNumber = scoreData.scoreNumber || 1;
-    const scorePrefix = scoreData.scorePrefix || ``;
+    const scorePrefix = scoreData.scorePrefix || "";
 
     const easySave =
       `|es_keyKind=${keyKind}` +
@@ -109,7 +109,7 @@ export class ScoreConvertService {
   convert(scoreData: ScoreData): string {
     const frameScores = this.toFrameData(scoreData);
     const data = this.framesToOutputData(frameScores);
-    const prefix = scoreData.scorePrefix || ``;
+    const prefix = scoreData.scorePrefix || "";
     const postfix = scoreData.scoreNumber !== 1 && scoreData.scoreNumber ? scoreData.scoreNumber.toString() : "";
 
     data.speeds.sort((a, b) => a.position - b.position);

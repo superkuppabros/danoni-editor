@@ -31,5 +31,5 @@ export class DefaultScoreData implements ScoreData {
   ];
 
   scoreNumber = 1;
-  scorePrefix = ``;
+  scorePrefix = "";
 }

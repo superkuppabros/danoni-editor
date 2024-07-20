@@ -211,7 +211,7 @@ export default defineComponent({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
-      scorePrefix: scoreData.scorePrefix || ``,
+      scorePrefix: scoreData.scorePrefix || "",
       pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
