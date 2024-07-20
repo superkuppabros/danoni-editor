@@ -1,6 +1,16 @@
 <template>
   <div id="editor-main">
-    <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
+    <div
+      id="canvas"
+      ref="canvas"
+      tabindex="-1"
+      @keydown.prevent="keydownAction"
+      @mouseup.prevent="clickAction"
+      @touchstart.prevent="touchStartAction"
+      @touchend.prevent="touchEndAction"
+      @focus="canvasFocusOrBlur(true)"
+      @blur="canvasFocusOrBlur(false)"
+    ></div>
     <speed-piece
       v-for="(speed, index) in scoreData.scores[page - 1]?.speeds"
       :key="index"
@@ -29,6 +39,7 @@ import {
   laneColors,
   canvasMarginHorizontal,
   canvasMarginVertical,
+  longTapThreshold,
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
@@ -74,6 +85,8 @@ type DataType = {
   charsFull: string[][];
   alternativeKeysFull: string[][];
   orderKeyTypes: number[];
+  hasCanvasFocus: boolean;
+  longTouchList: { [name: number]: { timer: NodeJS.Timer; touch: Touch } };
 };
 
 export default defineComponent({
@@ -143,6 +156,8 @@ export default defineComponent({
       charsFull,
       alternativeKeysFull,
       orderKeyTypes,
+      hasCanvasFocus: false,
+      longTouchList: {},
     };
   },
 
@@ -263,6 +278,7 @@ export default defineComponent({
   beforeUnmount(): void {
     // 画面終了時に音楽を止める
     if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
+    this.clearLongTouchList();
   },
   methods: {
     // ベースレイヤーの描画
@@ -341,7 +357,7 @@ export default defineComponent({
       const rect = new Konva.Rect({
         width: editorWidth,
         height: editorHeight,
-        stroke: "black",
+        stroke: this.hasCanvasFocus ? "#333333" : "#cccccc",
         strokeWidth: 1,
       });
       baseLayer.add(rect);
@@ -468,15 +484,17 @@ export default defineComponent({
         this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
       }
-
+      this.clearLongTouchList();
       this.currentPositionService.draw(this.currentPosition, page, this.timing);
     },
     pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
+      this.clearLongTouchList();
       this.currentPositionService.move(position, this.page, this.timing);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
+      this.clearLongTouchList();
       this.currentPositionService.move(0, this.page, this.timing);
     },
 
@@ -506,6 +524,38 @@ export default defineComponent({
         if (this.page === 1) this.currentPosition = 0;
         else this.pageMinus(1, this.currentPosition + verticalSizeNum(this.pageBlockNum));
       } else this.currentPositionService.move(this.currentPosition, this.page, this.timing);
+    },
+
+    // 音楽の再生/停止
+    togglePlay() {
+      if (!this.musicTimer) {
+        const timing = this.timing;
+        this.playMusicLoop(timing);
+      } else {
+        const timer = this.musicTimer;
+        this.stopMusicLoop(timer);
+      }
+    },
+
+    // ノートの追加/削除
+    addNote(noteService: NoteService, page: number, position: number, lane: number, isFreeze: boolean, orgLane: number = lane) {
+      if (noteService.hasNote(page, lane, position).exists) {
+        noteService.removeOne(page, page, lane, position, orgLane);
+      } else {
+        noteService.addOne(page, page, lane, position, isFreeze, orgLane);
+      }
+    },
+
+    // 速度変化の追加/削除
+    addSpeedPiece(speedPieceService: SpeedPieceService, page: number, position: number, isBoost: boolean) {
+      const speedType: SpeedType = isBoost ? "boost" : "speed";
+      if (speedPieceService.hasSpeedPiece(page, position)) {
+        speedPieceService.remove(page, position);
+        speedPieceService.clear(position);
+      } else {
+        speedPieceService.add(page, position, speedType);
+        speedPieceService.draw(position, speedType);
+      }
     },
 
     // キーを押したときの挙動
@@ -583,16 +633,9 @@ export default defineComponent({
         withCtrlAction(e);
       } else {
         switch (e.code) {
-          case "Enter": {
-            if (!this.musicTimer) {
-              const timing = this.timing;
-              this.playMusicLoop(timing);
-            } else {
-              const timer = this.musicTimer;
-              this.stopMusicLoop(timer);
-            }
+          case "Enter":
+            this.togglePlay();
             break;
-          }
           case "Backspace":
             noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
@@ -618,19 +661,7 @@ export default defineComponent({
             else this.pagePlus(1);
             break;
           case "Quote":
-            {
-              const speedType: SpeedType = e.shiftKey ? "boost" : "speed";
-              const page = this.page;
-              const position = this.currentPosition;
-
-              if (speedPieceService.hasSpeedPiece(page, position)) {
-                speedPieceService.remove(page, position);
-                speedPieceService.clear(position);
-              } else {
-                speedPieceService.add(page, position, speedType);
-                speedPieceService.draw(position, speedType);
-              }
-            }
+            this.addSpeedPiece(speedPieceService, this.page, this.currentPosition, e.shiftKey);
             break;
 
           default: {
@@ -661,11 +692,7 @@ export default defineComponent({
               }
 
               // ノートの追加/削除
-              if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, this.page, possiblyLane, position, orgLane);
-              } else {
-                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
-              }
+              this.addNote(noteService, this.page, position, possiblyLane, isFreeze, orgLane);
 
               // 同時押しのときはカーソルを進めない
               if (!isSimultaneous) {
@@ -679,6 +706,87 @@ export default defineComponent({
             break;
           }
         }
+      }
+    },
+
+    canvasFocusOrBlur(focusFlg: boolean = false) {
+      setTimeout(() => {
+        this.hasCanvasFocus = focusFlg;
+        this.baseLayerDraw();
+      }, 100);
+    },
+
+    // タッチ開始時
+    touchStartAction(e: TouchEvent) {
+      Array.from(e.changedTouches).forEach((touch) => {
+        // 一定時間後に長押しとして処理する
+        const timer = setTimeout(() => {
+          this.tapAction(touch, true);
+          delete this.longTouchList[touch.identifier];
+        }, longTapThreshold);
+        this.longTouchList[touch.identifier] = { touch: touch, timer: timer };
+      });
+    },
+
+    // タッチ終了時
+    touchEndAction(e: TouchEvent) {
+      Array.from(e.changedTouches).forEach((touch) => {
+        // リストに残っている(長押しとして処理されていない)ものは通常タップとして処理
+        const start = this.longTouchList[touch.identifier];
+        if (start) {
+          clearTimeout(start.timer);
+          this.tapAction(start.touch, false);
+          delete this.longTouchList[touch.identifier];
+        }
+      });
+    },
+
+    // 長押しリストとタイマーのクリア
+    clearLongTouchList() {
+      Object.values(this.longTouchList).forEach((value) => {
+        clearTimeout(value.timer);
+      });
+      this.longTouchList = {};
+    },
+
+    // タップ時の処理
+    // TouchEventはoffsetX,Yが無いためclientX,Yから計算
+    tapAction(touch: Touch, longTap: boolean) {
+      if (touch.target === null) return;
+      const target = touch.target as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const offsetX = touch.clientX - rect.x;
+      const offsetY = touch.clientY - rect.y;
+      this.clickTapAction(offsetX, offsetY, longTap);
+    },
+
+    // クリック時の処理
+    clickAction(e: MouseEvent) {
+      if (this.hasCanvasFocus) {
+        this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey);
+      }
+    },
+
+    // クリック/タップ時の処理
+    clickTapAction(offsetX: number, offsetY: number, shiftKey: boolean) {
+      const possiblyLane = (offsetX - canvasMarginHorizontal) / noteWidth;
+      const lane = Math.floor(possiblyLane);
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+      const convLane = orderGroup[lane];
+      const y = this.isReverse ? offsetY - canvasMarginVertical : editorHeight - (offsetY - canvasMarginVertical);
+      const position = Math.floor((y * verticalSizeNum()) / editorHeight / this.divisor + 0.5) * this.divisor;
+
+      if (position >= 0 && position < verticalSizeNum()) {
+        if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
+          // ノートの追加/削除
+          this.addNote(this.noteService as NoteService, this.page, position, convLane, shiftKey, lane);
+        } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.5) {
+          // 速度変化の追加/削除
+          this.addSpeedPiece(this.speedPieceService as SpeedPieceService, this.page, position, shiftKey);
+        }
+        // カーソルの移動
+        this.currentPosition = position;
+        this.currentPositionService.move(this.currentPosition, this.page, this.timing);
       }
     },
   },

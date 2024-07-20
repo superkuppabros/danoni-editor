@@ -139,6 +139,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   transition: 0.4s;
 }
 
+.btn-controller {
+  font-size: 14px;
+  height: 20px;
+}
+
 .btn-blue {
   color: #67c5ff;
   border: solid 2px #67c5ff;
@@ -157,6 +162,12 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 .btn-orange {
   color: #ff9c4a;
   border: solid 2px #ff9c4a;
+  width: 100px;
+}
+
+.btn-purple {
+  color: #9944ff;
+  border: solid 2px #9944ff;
   width: 100px;
 }
 
@@ -179,6 +190,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .btn-orange:hover {
   background: #ff9c4a;
+  text-decoration-line: none;
+}
+
+.btn-purple:hover {
+  background: #9944ff;
   text-decoration-line: none;
 }
 
