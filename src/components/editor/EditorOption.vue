@@ -2,7 +2,7 @@
   <div id="editor-option" class="uk-modal-dialog" uk-modal container="#editor-controller">
     <button class="uk-modal-close-default" type="button" uk-close></button>
 
-    <h2 class="uk-modal-title">Option Settings</h2>
+    <h2 class="uk-modal-title">Option</h2>
     <div id="option-score-group" class="option-item-container">
       <div id="option-score-number" class="option-sub-item-container">
         <div class="menu-txt">Score No.</div>
