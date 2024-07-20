@@ -780,7 +780,7 @@ export default defineComponent({
         if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
           // ノートの追加/削除
           this.addNote(this.noteService as NoteService, this.page, position, convLane, shiftKey, lane);
-        } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.5) {
+        } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.75) {
           // 速度変化の追加/削除
           this.addSpeedPiece(this.speedPieceService as SpeedPieceService, this.page, position, shiftKey);
         }
