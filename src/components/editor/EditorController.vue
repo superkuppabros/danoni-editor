@@ -9,6 +9,8 @@
       :timing="timing"
       :prop-score-number="scoreNumber"
       :prop-score-prefix="scorePrefix"
+      :prop-conv-key-kind="convKeyKind"
+      :prop-order="order"
       :music-volume="musicVolume"
       :music-rate="musicRate"
       @page-minus="pageMinus"
@@ -20,6 +22,8 @@
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
       v-model:scorePrefix="scorePrefix"
+      v-model:convKeyKind="convKeyKind"
+      v-model:order="order"
     ></editor-option>
     <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
@@ -120,6 +124,8 @@ type DataType = {
   musicRate: number;
   isSaving: boolean;
   scoreConvertService: ScoreConvertService;
+  convKeyKind: string;
+  order: Array<number>;
 };
 
 export default defineComponent({
@@ -212,6 +218,8 @@ export default defineComponent({
       musicRate: 1.0,
       isSaving: false,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig, pageBlockNum),
+      convKeyKind: keyKind,
+      order: [],
     };
   },
   watch: {
