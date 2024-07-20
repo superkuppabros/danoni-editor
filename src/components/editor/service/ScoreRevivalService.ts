@@ -8,7 +8,7 @@ import { Speed, SpeedType } from "@/model/Speed";
 import { PageScore } from "@/model/PageScore";
 
 export class ScoreRevivalService {
-  constructor(private keyConfig: CustomKeyConfig, private pageBlockNum: number) {}
+  constructor(private keyConfig: CustomKeyConfig, private pageBlockNum: number) { }
 
   private delimiter = "|";
 
@@ -30,6 +30,7 @@ export class ScoreRevivalService {
       const startNumbers: number[] = dict["startNumber"].split(",").map((x: string) => parseFloat(x));
       const bpms: number[] = dict["bpm"].split(",").map((x: string) => parseFloat(x));
       const scoreNumber: number = parseInt(dict["scoreNumber"]);
+      const scorePrefix: string = dict["scorePrefix"];
 
       const timings: Timing[] = labels.map((label, index) => ({
         label,
@@ -41,6 +42,7 @@ export class ScoreRevivalService {
         blankFrame,
         timings,
         scoreNumber,
+        scorePrefix,
         scores: [],
       };
       return this.calcScoreData(dict, timings, scoreData);
@@ -52,9 +54,10 @@ export class ScoreRevivalService {
   private calcScoreData = (dict: { [name: string]: string }, timings: Timing[], scoreData: ScoreData) => {
     const keyKind = scoreData.keyKind as KeyKind;
     const scoreNumber = scoreData.scoreNumber as number;
+    const scorePrefix = scoreData.scorePrefix as string;
 
-    const noteNames: string[] = this.keyConfig[keyKind].noteNames;
-    const freezeNames: string[] = this.keyConfig[keyKind].freezeNames;
+    const noteNames: string[] = this.keyConfig[keyKind].noteNames.map(v => `${scorePrefix}${v}`);
+    const freezeNames: string[] = this.keyConfig[keyKind].freezeNames.map(v => `${scorePrefix}${v}`);
     const speedChangeNames: string[] = "speed_data" in dict ? ["speed_data", "boost_data"] : ["speed_change", "boost_data"];
 
     const [noteFrames, freezeFrames, speedChangeFrames]: number[][][] = [noteNames, freezeNames, speedChangeNames].map((names) =>

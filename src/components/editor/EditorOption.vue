@@ -15,6 +15,10 @@
       <div class="menu-txt">Music Speed</div>
       <input v-model.number="inputMusicRate" type="number" min="0.25" max="2" step="0.05" class="uk-input uk-form-small" />
     </div>
+    <div id="option-score-prefix" class="option-item-container">
+      <div class="menu-txt">Score Prefix</div>
+      <input v-model="inputScorePrefix" type="string" class="uk-input uk-form-small" />
+    </div>
   </div>
 </template>
 
@@ -26,8 +30,9 @@ export default defineComponent({
     scoreNumber: { type: Number, required: true },
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
+    scorePrefix: { type: String, required: true },
   },
-  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate"],
+  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix"],
   computed: {
     inputScoreNumber: {
       get(): number {
@@ -57,6 +62,15 @@ export default defineComponent({
       set(musicRate: string) {
         const value = Number(musicRate);
         this.$emit("update:musicRate", value);
+      },
+    },
+
+    inputScorePrefix: {
+      get(): string {
+        return this.scorePrefix;
+      },
+      set(scorePrefix: string) {
+        this.$emit("update:scorePrefix", scorePrefix);
       },
     },
   },

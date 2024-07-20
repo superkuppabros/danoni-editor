@@ -9,6 +9,7 @@ export interface ScoreData {
   scoreNumber?: number;
   scores: PageScore[];
   order?: number[];
+  scorePrefix?: string;
 }
 
 export class DefaultScoreData implements ScoreData {
@@ -30,4 +31,5 @@ export class DefaultScoreData implements ScoreData {
   ];
 
   scoreNumber = 1;
+  scorePrefix = ``;
 }

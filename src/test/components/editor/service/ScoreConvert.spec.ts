@@ -46,7 +46,7 @@ describe("scoreConvertService", () => {
   });
 
   it("2譜面目でも正しく出力出来る", () => {
-    expect(scoreConverter.convert(test2ScoreData, "2")).toBe(test2DosData);
+    expect(scoreConverter.convert(test2ScoreData)).toBe(test2DosData);
   });
 
   it("譜面データの後ろの空白が削除されている", () => {
