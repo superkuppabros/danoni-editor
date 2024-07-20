@@ -70,7 +70,8 @@
 
       <div id="menu-output" class="menu-item-container">
         <a class="menu-output-btn btn-orange btn-controller" uk-toggle="target: #editor-option">OPTION</a>
-        <div class="menu-output-btn btn-gray btn-controller" @click="changeDivisor()">>></div>
+        <div class="menu-output-btn btn-gray btn-controller btn-mini" @click="changeDivisor(-1)">&lt;</div>
+        <div class="menu-output-btn btn-gray btn-controller btn-mini" @click="changeDivisor()">&gt;</div>
         <div class="menu-output-btn btn-purple btn-controller" @click="play">PLAY</div>
         <div class="menu-output-btn btn-gray btn-controller" @click="convertWithQuarters">TEST</div>
         <div class="menu-output-btn btn-blue btn-controller" uk-toggle="target: #editor-save">SAVE</div>
@@ -142,9 +143,13 @@ export default defineComponent({
         editorMain.value.togglePlay();
       }
     };
-    const changeDivisor = () => {
+    const changeDivisor = (multi: number = 1) => {
       if (editorMain.value) {
-        editorMain.value.changeDivisor(quarterInterval / divisors[++divisorNum % divisors.length]);
+        divisorNum = (divisorNum + divisors.length + multi) % divisors.length;
+        if (divisorNum === Math.max(0, -multi * divisors.length - 1)) {
+          editorMain.value.switchView(multi);
+        }
+        editorMain.value.changeDivisor(quarterInterval / divisors[divisorNum]);
       }
     };
     return {

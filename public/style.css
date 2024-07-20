@@ -144,6 +144,10 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   height: 20px;
 }
 
+.btn-mini {
+  width: 18px;
+}
+
 .btn-blue {
   color: #67c5ff;
   border: solid 2px #67c5ff;

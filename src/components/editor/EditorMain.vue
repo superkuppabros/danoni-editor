@@ -558,6 +558,14 @@ export default defineComponent({
       }
     },
 
+    // 表示切替
+    switchView(multi: number = 1) {
+      this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
+      this.baseLayerDraw();
+      this.pageMove(this.page);
+      this.displayPageScore(this.page);
+    },
+
     // キーを押したときの挙動
     keydownAction(e: KeyboardEvent): void {
       const noteService = this.noteService as NoteService;
@@ -609,10 +617,7 @@ export default defineComponent({
             break;
           }
           case "KeyQ": {
-            this.orderGroupNo = (this.orderGroupNo + 1) % this.orderGroups.length;
-            this.baseLayerDraw();
-            this.pageMove(page);
-            this.displayPageScore(page);
+            this.switchView();
             break;
           }
         }
