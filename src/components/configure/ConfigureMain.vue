@@ -26,6 +26,7 @@
 import { defineComponent } from "vue";
 import ConfigureUploader from "./ConfigureUploader.vue";
 import ConfigureDesign from "./ConfigureDesign.vue";
+import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 export default defineComponent({
   name: "ConfigureMain",
@@ -51,16 +52,21 @@ export default defineComponent({
             try {
               const customKeyConfigNew = JSON.parse(result);
               const customKeyConfigBase = JSON.parse(storage.getItem("customKeyConfig") || "{}");
-              const baseLength = Object.keys(customKeyConfigBase).length;
+              const importKeyList = Object.keys(customKeyConfigNew);
+              const dupliKeyStr = importKeyList.filter((key) => Object.keys(createCustomKeyConfig()).includes(key)).join(", ");
+              let importFlg: boolean = true;
+
               Object.assign(customKeyConfigBase, customKeyConfigNew);
-              if (baseLength + Object.keys(customKeyConfigNew).length > Object.keys(customKeyConfigBase).length) {
-                if (window.confirm("すでに定義済みのカスタムキー設定があります。上書きしてもよろしいですか？")) {
-                  storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
-                  alert("コンフィグファイルをインポートしました。");
+              if (dupliKeyStr !== ``) {
+                if (
+                  !window.confirm(`すでに定義済みのキー設定があります。上書きしてもよろしいですか？\r\n[対象キー:${dupliKeyStr}]`)
+                ) {
+                  importFlg = false;
                 }
-              } else {
+              }
+              if (importFlg) {
                 storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
-                alert("コンフィグファイルをインポートしました。");
+                alert(`コンフィグファイルをインポートしました。\r\n[対象キー:${importKeyList.join(", ")}]`);
               }
             } catch {
               alert("内容がJSON形式になっていません。");
