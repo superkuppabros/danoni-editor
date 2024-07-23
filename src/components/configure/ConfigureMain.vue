@@ -7,6 +7,7 @@
     <div id="configure-uploader">
       <configure-uploader :msg="confTitle" @file-recieve="onConfFileRecieve"></configure-uploader>
       <div class="start-btn btn-gray" @click="resetConf">RESET</div>
+      <div class="start-btn btn-gray" @click="download"><u>↓</u> DL</div>
     </div>
     <configure-design></configure-design>
     <div id="start-go-next">
@@ -48,8 +49,10 @@ export default defineComponent({
           const result = reader.result;
           if (typeof result == "string") {
             try {
-              JSON.parse(result);
-              storage.setItem("customKeyConfig", result);
+              const customKeyConfigNew = JSON.parse(result);
+              const customKeyConfigBase = JSON.parse(storage.getItem("customKeyConfig") || "");
+              Object.assign(customKeyConfigBase, customKeyConfigNew);
+              storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
               alert("コンフィグファイルをインポートしました。");
             } catch {
               alert("内容がJSON形式になっていません。");
@@ -58,6 +61,19 @@ export default defineComponent({
         };
         reader.readAsText(file);
       }
+    },
+
+    download() {
+      const storage = localStorage;
+      const configText = storage.getItem("customKeyConfig") || "";
+      const blob = new Blob([configText], { type: "text/plain" });
+      const obj = document.createElement("a");
+      obj.href = window.URL.createObjectURL(blob);
+      obj.download = `editorConfig_${new Date().toLocaleString()}.txt`;
+      obj.style.display = "none";
+      document.body.appendChild(obj);
+      obj.click();
+      obj.parentNode?.removeChild(obj);
     },
 
     resetConf() {
