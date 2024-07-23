@@ -50,10 +50,18 @@ export default defineComponent({
           if (typeof result == "string") {
             try {
               const customKeyConfigNew = JSON.parse(result);
-              const customKeyConfigBase = JSON.parse(storage.getItem("customKeyConfig") || "");
+              const customKeyConfigBase = JSON.parse(storage.getItem("customKeyConfig") || "{}");
+              const baseLength = Object.keys(customKeyConfigBase).length;
               Object.assign(customKeyConfigBase, customKeyConfigNew);
-              storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
-              alert("コンフィグファイルをインポートしました。");
+              if (baseLength + Object.keys(customKeyConfigNew).length > Object.keys(customKeyConfigBase).length) {
+                if (window.confirm("すでに定義済みのカスタムキー設定があります。上書きしてもよろしいですか？")) {
+                  storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
+                  alert("コンフィグファイルをインポートしました。");
+                }
+              } else {
+                storage.setItem("customKeyConfig", JSON.stringify(customKeyConfigBase, null, 2));
+                alert("コンフィグファイルをインポートしました。");
+              }
             } catch {
               alert("内容がJSON形式になっていません。");
             }
@@ -66,20 +74,26 @@ export default defineComponent({
     download() {
       const storage = localStorage;
       const configText = storage.getItem("customKeyConfig") || "";
-      const blob = new Blob([configText], { type: "text/plain" });
-      const obj = document.createElement("a");
-      obj.href = window.URL.createObjectURL(blob);
-      obj.download = `editorConfig_${new Date().toLocaleString()}.txt`;
-      obj.style.display = "none";
-      document.body.appendChild(obj);
-      obj.click();
-      obj.parentNode?.removeChild(obj);
+      if (configText === "") {
+        alert("カスタムキー定義がありません。");
+      } else {
+        const blob = new Blob([configText], { type: "text/plain" });
+        const obj = document.createElement("a");
+        obj.href = window.URL.createObjectURL(blob);
+        obj.download = `editorConfig_${new Date().toLocaleString()}.txt`;
+        obj.style.display = "none";
+        document.body.appendChild(obj);
+        obj.click();
+        obj.parentNode?.removeChild(obj);
+      }
     },
 
     resetConf() {
-      const storage = localStorage;
-      storage.removeItem("customKeyConfig");
-      alert("キー設定をリセットしました。");
+      if (window.confirm("カスタムキー設定をリセットします。よろしいですか？")) {
+        const storage = localStorage;
+        storage.removeItem("customKeyConfig");
+        alert("キー設定をリセットしました。");
+      }
     },
   },
 });
