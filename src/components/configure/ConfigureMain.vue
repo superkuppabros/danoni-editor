@@ -6,8 +6,8 @@
     <h3 class="configure-context-title">Key Config</h3>
     <div id="configure-uploader">
       <configure-uploader :msg="confTitle" @file-recieve="onConfFileRecieve"></configure-uploader>
-      <div class="start-btn btn-gray" @click="resetConf">RESET</div>
       <div class="start-btn btn-gray" @click="download"><u>↓</u> DL</div>
+      <div class="start-btn btn-gray" @click="resetConf">RESET</div>
     </div>
     <configure-design></configure-design>
     <div id="start-go-next">
