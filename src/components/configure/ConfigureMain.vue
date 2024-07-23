@@ -58,9 +58,7 @@ export default defineComponent({
 
               Object.assign(customKeyConfigBase, customKeyConfigNew);
               if (dupliKeyStr !== ``) {
-                if (
-                  !window.confirm(`すでに定義済みのキー設定があります。上書きしてもよろしいですか？\r\n[対象キー:${dupliKeyStr}]`)
-                ) {
+                if (!window.confirm(`定義済みのキー設定があります。上書きしてもよろしいですか？\r\n[対象キー:${dupliKeyStr}]`)) {
                   importFlg = false;
                 }
               }
