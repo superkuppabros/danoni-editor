@@ -790,8 +790,10 @@ export default defineComponent({
           this.addSpeedPiece(this.speedPieceService as SpeedPieceService, this.page, position, shiftKey);
         }
         // カーソルの移動
-        this.currentPosition = position;
-        this.currentPositionService.move(this.currentPosition, this.page, this.timing);
+        if (possiblyLane < this.keyNum + 0.75) {
+          this.currentPosition = position;
+          this.currentPositionService.move(this.currentPosition, this.page, this.timing);
+        }
       }
     },
   },
