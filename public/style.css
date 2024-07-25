@@ -340,7 +340,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 /* 設定画面 */
 #configure-container {
   width: 500px;
-  height: 475px;
+  height: 500px;
   margin: auto;
   background-color: rgb(255, 221, 127);
   font-family: "Segoe UI", "Yu Gothic", sans-serif;

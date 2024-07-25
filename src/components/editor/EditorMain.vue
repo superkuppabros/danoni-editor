@@ -63,6 +63,7 @@ type DataType = {
   page: number;
   editorWidth: number;
   isReverse: boolean;
+  isClick: boolean;
   pageBlockNum: number;
   musicTimer: number | null;
   musicService?: MusicService;
@@ -111,6 +112,7 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const isClick: boolean = JSON.parse(localStorage.getItem("isClick") ?? "false");
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
     const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
@@ -141,6 +143,7 @@ export default defineComponent({
       page: 1,
       keyNum,
       isReverse,
+      isClick,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       pageBlockNum,
       musicTimer: null,
@@ -723,6 +726,7 @@ export default defineComponent({
 
     // タッチ開始時
     touchStartAction(e: TouchEvent) {
+      if (!this.isClick) return;
       Array.from(e.changedTouches).forEach((touch) => {
         // 一定時間後に長押しとして処理する
         const timer = setTimeout(() => {
@@ -735,6 +739,7 @@ export default defineComponent({
 
     // タッチ終了時
     touchEndAction(e: TouchEvent) {
+      if (!this.isClick) return;
       Array.from(e.changedTouches).forEach((touch) => {
         // リストに残っている(長押しとして処理されていない)ものは通常タップとして処理
         const start = this.longTouchList[touch.identifier];
@@ -767,6 +772,7 @@ export default defineComponent({
 
     // クリック時の処理
     clickAction(e: MouseEvent) {
+      if (!this.isClick) return;
       if (this.hasCanvasFocus) {
         this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey);
       }
