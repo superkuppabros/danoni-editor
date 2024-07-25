@@ -2,13 +2,13 @@
   <div id="editor-option" class="uk-modal-dialog" uk-modal container="#editor-controller">
     <button class="uk-modal-close-default" type="button" uk-close></button>
 
-    <h2 class="uk-modal-title">Option</h2>
+    <h2 class="uk-modal-title">Options</h2>
     <div id="option-score-group" class="option-item-container">
-      <div id="option-score-number" class="option-sub-item-container">
+      <div id="option-score-number" class="option-sub-item-container-medium">
         <div class="menu-txt">Score No.</div>
         <input v-model.number="inputScoreNumber" type="number" min="1" class="uk-input uk-form-small" />
       </div>
-      <div id="option-score-prefix" class="option-sub-item-container">
+      <div id="option-score-prefix" class="option-sub-item-container-small">
         <div class="menu-txt">Prefix</div>
         <input v-model="inputScorePrefix" type="string" class="uk-input uk-form-small" />
       </div>
@@ -59,7 +59,14 @@ export default defineComponent({
     order: { type: Array<number>, required: true },
     keyNum: { type: Number, required: true },
   },
-  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix", "update:convKeyKind", "update:order"],
+  emits: [
+    "update:scoreNumber",
+    "update:musicVolume",
+    "update:musicRate",
+    "update:scorePrefix",
+    "update:convKeyKind",
+    "update:order",
+  ],
   computed: {
     keyKinds(): CustomKeyKind[] {
       const keyConfig = createCustomKeyConfig();
@@ -122,8 +129,13 @@ export default defineComponent({
         return this.order.join(`,`);
       },
       set(order: string) {
-        this.$emit("update:order", order.split(`,`)
-          .filter(v => !Number.isNaN(Number(v)) && !v.includes(".") && v.length <= 2).slice(0, this.keyNum));
+        this.$emit(
+          "update:order",
+          order
+            .split(`,`)
+            .filter((v) => !Number.isNaN(Number(v)) && !v.includes(".") && v.length <= 2)
+            .slice(0, this.keyNum)
+        );
       },
     },
   },
