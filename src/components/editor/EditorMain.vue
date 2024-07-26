@@ -541,11 +541,19 @@ export default defineComponent({
     },
 
     // ノートの追加/削除
-    addNote(noteService: NoteService, page: number, position: number, lane: number, isFreeze: boolean, orgLane: number = lane) {
-      if (noteService.hasNote(page, lane, position).exists) {
-        noteService.removeOne(page, page, lane, position, orgLane);
+    addNote(
+      noteService: NoteService,
+      prevPage: number,
+      page: number,
+      position: number,
+      lane: number,
+      isFreeze: boolean,
+      orgLane: number = lane
+    ) {
+      if (noteService.hasNote(prevPage, lane, position).exists) {
+        noteService.removeOne(prevPage, page, lane, position, orgLane);
       } else {
-        noteService.addOne(page, page, lane, position, isFreeze, orgLane);
+        noteService.addOne(prevPage, page, lane, position, isFreeze, orgLane);
       }
     },
 
@@ -700,7 +708,7 @@ export default defineComponent({
               }
 
               // ノートの追加/削除
-              this.addNote(noteService, this.page, position, possiblyLane, isFreeze, orgLane);
+              this.addNote(noteService, page, this.page, position, possiblyLane, isFreeze, orgLane);
 
               // 同時押しのときはカーソルを進めない
               if (!isSimultaneous) {
@@ -790,7 +798,7 @@ export default defineComponent({
       if (position >= 0 && position < verticalSizeNum()) {
         if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
           // ノートの追加/削除
-          this.addNote(this.noteService as NoteService, this.page, position, convLane, shiftKey, lane);
+          this.addNote(this.noteService as NoteService, this.page, this.page, position, convLane, shiftKey, lane);
         } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.75) {
           // 速度変化の追加/削除
           this.addSpeedPiece(this.speedPieceService as SpeedPieceService, this.page, position, shiftKey);
