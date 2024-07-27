@@ -84,7 +84,7 @@ export const testDos = {
   // 2譜面目: 復元確認データ（復元データ欠けあり）
   dos5_2Abb: `|left2_data=200|down2_data=360,380|up2_data=240,400|right2_data=|space2_data=440,500|frzLeft2_data=|frzDown2_data=|frzUp2_data=|frzRight2_data=280,360|frzSpace2_data=|
 |speed2_data=360,1.1,440,0.7|boost2_data=400,0.8|
-|es_keyKind=5|es_blankFrame=200|es_label=1,3|es_startNumber=0,240|es_bpm=180,120|es_scoreNumber=2|es_scorePrefix=|
+|es_keyKind=5|es_blankFrame=200|es_label=1,3|es_startNumber=0,240|es_bpm=180,120|es_scoreNumber=2|
 `,
 
   // 1譜面目: 出力確認（兼復元）データ、prefixあり
