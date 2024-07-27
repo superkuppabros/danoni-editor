@@ -42,7 +42,7 @@ export const testScoreData: ScoreData = {
 
 // 基礎となるセーブデータを元にパラメータを与えてアレンジ
 const changeScoreData =
-  (baseScoreData: ScoreData = testScoreData) =>
+  ({ keyNum = 5 as number, baseScoreData = new DefaultScoreData(keyNum) as ScoreData } = {}) =>
   ({ scoreNumber = 1 as number, scorePrefix = "" as string, keyKind = baseScoreData.keyKind as string } = {}) => {
     const scoreData = cloneDeep(baseScoreData);
     scoreData.scoreNumber = scoreNumber;
@@ -53,9 +53,10 @@ const changeScoreData =
 
 // 基礎となるセーブデータ群
 const scorePtn = {
-  key5: changeScoreData(),
-  default5: changeScoreData(new DefaultScoreData(5)),
-  //key11: changeScoreData(testScoreData11),
+  default5: changeScoreData(),
+  key5: changeScoreData({ baseScoreData: testScoreData }),
+  //default11: changeScoreData({ keyNum: 11 }),
+  //key11: changeScoreData({ baseScoreData: testScoreData11 }),
 };
 
 // セーブデータのテストパターン
