@@ -722,7 +722,7 @@ export default defineComponent({
         // リストに残っている(長押しとして処理されていない)ものは通常タップとして処理
         const start = this.longTouchList[touch.identifier];
         if (start) {
-          clearTimeout(start.timer);
+          clearTimeout(Number(start.timer));
           this.tapAction(start.touch, false);
           delete this.longTouchList[touch.identifier];
         }
@@ -732,7 +732,7 @@ export default defineComponent({
     // 長押しリストとタイマーのクリア
     clearLongTouchList() {
       Object.values(this.longTouchList).forEach((value) => {
-        clearTimeout(value.timer);
+        clearTimeout(Number(value.timer));
       });
       this.longTouchList = {};
     },
