@@ -711,7 +711,7 @@ export default defineComponent({
           this.tapAction(touch, true);
           delete this.longTouchList[touch.identifier];
         }, longTapThreshold);
-        this.longTouchList[touch.identifier] = { touch: touch, timer: timer };
+        this.longTouchList[touch.identifier] = { touch, timer };
       });
     },
 
