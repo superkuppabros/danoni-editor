@@ -117,7 +117,7 @@ export class CurrentPositionService {
       y: toPx(verticalSizeNum(this.pageBlockNum), this.isReverse),
     });
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       tween.play();
     }, (playDuration * 2) / (2 + this.pageBlockNum)); // 2拍後にアニメーション開始
   }

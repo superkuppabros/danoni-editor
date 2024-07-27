@@ -60,7 +60,7 @@ export class MusicService {
     if (this.isPlaying) {
       this.source.stop(0);
     }
-    clearTimeout(timer);
+    window.clearTimeout(timer);
     this.isPlaying = false;
   }
 
