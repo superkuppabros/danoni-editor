@@ -8,6 +8,9 @@
       :key-kind="keyKind"
       :timing="timing"
       :prop-score-number="scoreNumber"
+      :prop-score-prefix="scorePrefix"
+      :prop-conv-key-kind="convKeyKind"
+      :prop-order="order"
       :music-volume="musicVolume"
       :music-rate="musicRate"
       @page-minus="pageMinus"
@@ -18,6 +21,10 @@
       v-model:scoreNumber="scoreNumber"
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
+      v-model:scorePrefix="scorePrefix"
+      v-model:convKeyKind="convKeyKind"
+      v-model:order="order"
+      v-model:keyNum="keyNum"
     ></editor-option>
     <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
@@ -110,13 +117,17 @@ type DataType = {
   scoreData: ScoreData;
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
+  keyNum: number;
   scoreNumber: number;
+  scorePrefix: string;
   pageBlockNum: number;
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
   isSaving: boolean;
   scoreConvertService: ScoreConvertService;
+  convKeyKind: string;
+  order: Array<number>;
 };
 
 export default defineComponent({
@@ -201,13 +212,17 @@ export default defineComponent({
       scoreData,
       keyKind,
       keyConfig,
+      keyNum,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      scorePrefix: scoreData.scorePrefix || "",
       pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       isSaving: false,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig, pageBlockNum),
+      convKeyKind: keyKind,
+      order: [],
     };
   },
   watch: {
@@ -263,10 +278,8 @@ export default defineComponent({
     },
 
     convert(): void {
-      // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
-      const data: string = converter.convert(this.scoreData, postfix);
+      const data: string = converter.convert(this.scoreData);
       const message = "譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
 
@@ -314,10 +327,8 @@ export default defineComponent({
       return response.ok;
     },
     convertWithQuarters(): void {
-      // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
-      const data: string = converter.convertWithQuarters(this.scoreData, postfix);
+      const data: string = converter.convertWithQuarters(this.scoreData);
       const message = "四分譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },

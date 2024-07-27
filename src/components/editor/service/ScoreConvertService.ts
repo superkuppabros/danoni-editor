@@ -92,6 +92,7 @@ export class ScoreConvertService {
     const startNumbers: number[] = scoreData.timings.map((timing) => timing.startNum);
     const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
     const scoreNumber = scoreData.scoreNumber || 1;
+    const scorePrefix = scoreData.scorePrefix || "";
 
     const easySave =
       `|es_keyKind=${keyKind}` +
@@ -99,36 +100,39 @@ export class ScoreConvertService {
       `|es_label=${labels.join(",")}` +
       `|es_startNumber=${startNumbers.join(",")}` +
       `|es_bpm=${bpms.join(",")}` +
-      `|es_scoreNumber=${scoreNumber}|`;
+      `|es_scoreNumber=${scoreNumber}` +
+      `|es_scorePrefix=${scorePrefix}|`;
 
     return easySave;
   }
 
-  convert(scoreData: ScoreData, scorePostfix = ""): string {
+  convert(scoreData: ScoreData): string {
     const frameScores = this.toFrameData(scoreData);
     const data = this.framesToOutputData(frameScores);
+    const prefix = scoreData.scorePrefix || "";
+    const postfix = scoreData.scoreNumber !== 1 && scoreData.scoreNumber ? scoreData.scoreNumber.toString() : "";
 
     data.speeds.sort((a, b) => a.position - b.position);
     data.boosts.sort((a, b) => a.position - b.position);
 
     const noteStr = data.notes
-      .reduce((str, notesArr, laneNum) => `${str}${this.keyConfig[this.keyKind].noteNames[laneNum]}=${notesArr.join(",")}|`, "|")
-      .replace(/_/g, `${scorePostfix}_`);
+      .reduce((str, notesArr, laneNum) => `${str}${prefix}${this.keyConfig[this.keyKind].noteNames[laneNum]}=${notesArr.join(",")}|`, "|")
+      .replace(/_/g, `${postfix}_`);
 
     const freezeStr = data.freezes
       .reduce(
-        (str, freezesArr, laneNum) => `${str}${this.keyConfig[this.keyKind].freezeNames[laneNum]}=${freezesArr.join(",")}|`,
+        (str, freezesArr, laneNum) => `${str}${prefix}${this.keyConfig[this.keyKind].freezeNames[laneNum]}=${freezesArr.join(",")}|`,
         ""
       )
-      .replace(/_/g, `${scorePostfix}_`);
+      .replace(/_/g, `${postfix}_`);
 
     const speedStr = ("speed_data=" + data.speeds.map((speed) => `${speed.position},${speed.value}`).join(",") + "|").replace(
       /_/g,
-      `${scorePostfix}_`
+      `${postfix}_`
     );
     const boostStr = ("boost_data=" + data.boosts.map((speed) => `${speed.position},${speed.value}`).join(",") + "|").replace(
       /_/g,
-      `${scorePostfix}_`
+      `${postfix}_`
     );
 
     const easySave = this.makeEasySave(scoreData);
@@ -153,7 +157,7 @@ ${easySave}
   }
 
   // 四分譜面の作成・変換
-  convertWithQuarters(scoreData: ScoreData, scorePostfix = ""): string {
+  convertWithQuarters(scoreData: ScoreData): string {
     const quarterNotes: number[] = [];
 
     // Todo: 四分譜面を出力するページ数を変更できるようにする
@@ -189,7 +193,7 @@ ${easySave}
       }
     }
 
-    return this.convert(this.cutLastDefault(newScoreData), scorePostfix);
+    return this.convert(this.cutLastDefault(newScoreData));
   }
 
   save(scoreData: ScoreData): string {

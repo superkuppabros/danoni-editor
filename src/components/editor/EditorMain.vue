@@ -87,6 +87,9 @@ export default defineComponent({
     keyKind: { type: String as PropType<CustomKeyKind>, required: true },
     timing: { type: Object as PropType<Timing>, required: true },
     propScoreNumber: { type: Number, required: true },
+    propScorePrefix: { type: String, required: true },
+    propConvKeyKind: { type: String, required: true },
+    propOrder: { type: Array<number>, required: true },
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
   },
@@ -173,6 +176,18 @@ export default defineComponent({
 
     propScoreNumber(scoreNumber: number) {
       this.scoreData.scoreNumber = scoreNumber;
+    },
+
+    propScorePrefix(scorePrefix: string) {
+      this.scoreData.scorePrefix = scorePrefix;
+    },
+
+    propConvKeyKind(convKeyKind: string) {
+      this.scoreData.keyKind = convKeyKind;
+    },
+
+    propOrder(order: number[]) {
+      this.scoreData.order = order.map(v => Number(v));
     },
 
     musicVolume(musicVolume: number) {
