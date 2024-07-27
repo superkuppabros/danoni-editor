@@ -43,7 +43,6 @@ import {
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
-import { SpeedType } from "../../model/Speed";
 import { Operation } from "../../model/OperationQueue";
 import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
@@ -540,35 +539,6 @@ export default defineComponent({
       }
     },
 
-    // ノートの追加/削除
-    addNote(
-      noteService: NoteService,
-      prevPage: number,
-      page: number,
-      position: number,
-      lane: number,
-      isFreeze: boolean,
-      orgLane: number = lane
-    ) {
-      if (noteService.hasNote(prevPage, lane, position).exists) {
-        noteService.removeOne(prevPage, page, lane, position, orgLane);
-      } else {
-        noteService.addOne(prevPage, page, lane, position, isFreeze, orgLane);
-      }
-    },
-
-    // 速度変化の追加/削除
-    addSpeedPiece(speedPieceService: SpeedPieceService, page: number, position: number, isBoost: boolean) {
-      const speedType: SpeedType = isBoost ? "boost" : "speed";
-      if (speedPieceService.hasSpeedPiece(page, position)) {
-        speedPieceService.remove(page, position);
-        speedPieceService.clear(position);
-      } else {
-        speedPieceService.add(page, position, speedType);
-        speedPieceService.draw(position, speedType);
-      }
-    },
-
     // 表示切替
     switchView(multi: number = 1) {
       this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
@@ -677,7 +647,7 @@ export default defineComponent({
             else this.pagePlus(1);
             break;
           case "Quote":
-            this.addSpeedPiece(speedPieceService, this.page, this.currentPosition, e.shiftKey);
+            speedPieceService.switchOne(this.page, this.currentPosition, e.shiftKey);
             break;
 
           default: {
@@ -708,7 +678,7 @@ export default defineComponent({
               }
 
               // ノートの追加/削除
-              this.addNote(noteService, page, this.page, position, possiblyLane, isFreeze, orgLane);
+              noteService.switchOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
 
               // 同時押しのときはカーソルを進めない
               if (!isSimultaneous) {
@@ -798,10 +768,10 @@ export default defineComponent({
       if (position >= 0 && position < verticalSizeNum()) {
         if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
           // ノートの追加/削除
-          this.addNote(this.noteService as NoteService, this.page, this.page, position, convLane, shiftKey, lane);
+          this.noteService?.switchOne(this.page, this.page, convLane, position, shiftKey, lane);
         } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.75) {
           // 速度変化の追加/削除
-          this.addSpeedPiece(this.speedPieceService as SpeedPieceService, this.page, position, shiftKey);
+          this.speedPieceService?.switchOne(this.page, position, shiftKey);
         }
         // カーソルの移動
         if (possiblyLane < this.keyNum + 0.75) {
