@@ -86,7 +86,7 @@ type DataType = {
   alternativeKeysFull: string[][];
   orderKeyTypes: number[];
   hasCanvasFocus: boolean;
-  longTouchList: { [name: number]: { timer: NodeJS.Timer; touch: Touch } };
+  longTouchList: { [name: number]: { timer: number; touch: Touch } };
 };
 
 export default defineComponent({
@@ -513,7 +513,7 @@ export default defineComponent({
     currentPositionIncrease(withThreshold: boolean) {
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
       if (this.currentPosition + this.divisor >= verticalSizeNum(this.pageBlockNum)) {
-        if (withThreshold) setTimeout(() => this.pagePlus(1), threshold);
+        if (withThreshold) window.setTimeout(() => this.pagePlus(1), threshold);
         else this.pagePlus(1);
       } else {
         this.currentPositionService.move(this.currentPosition + this.divisor, this.page, this.timing);
@@ -529,7 +529,7 @@ export default defineComponent({
     },
 
     // 音楽の再生/停止
-    togglePlay() {
+    togglePlay(): void {
       if (!this.musicTimer) {
         const timing = this.timing;
         this.playMusicLoop(timing);
@@ -540,7 +540,7 @@ export default defineComponent({
     },
 
     // 表示切替
-    switchView(multi: number = 1) {
+    switchView(multi: number = 1): void {
       this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
       this.baseLayerDraw();
       this.pageMove(this.page);
@@ -663,7 +663,7 @@ export default defineComponent({
             let isSimultaneous = false;
 
             const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
-            const orgLane = orderGroup.indexOf(possiblyLane);
+            const orgLane: number = orderGroup.indexOf(possiblyLane);
             if (possiblyLane >= 0) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
@@ -695,19 +695,19 @@ export default defineComponent({
       }
     },
 
-    canvasFocusOrBlur(focusFlg: boolean = false) {
-      setTimeout(() => {
+    canvasFocusOrBlur(focusFlg: boolean = false): void {
+      window.setTimeout(() => {
         this.hasCanvasFocus = focusFlg;
         this.baseLayerDraw();
       }, 100);
     },
 
     // タッチ開始時
-    touchStartAction(e: TouchEvent) {
+    touchStartAction(e: TouchEvent): void {
       if (!this.isClick) return;
       Array.from(e.changedTouches).forEach((touch) => {
         // 一定時間後に長押しとして処理する
-        const timer = setTimeout(() => {
+        const timer: number = window.setTimeout(() => {
           this.tapAction(touch, true);
           delete this.longTouchList[touch.identifier];
         }, longTapThreshold);
@@ -716,13 +716,13 @@ export default defineComponent({
     },
 
     // タッチ終了時
-    touchEndAction(e: TouchEvent) {
+    touchEndAction(e: TouchEvent): void {
       if (!this.isClick) return;
       Array.from(e.changedTouches).forEach((touch) => {
         // リストに残っている(長押しとして処理されていない)ものは通常タップとして処理
         const start = this.longTouchList[touch.identifier];
         if (start) {
-          clearTimeout(Number(start.timer));
+          window.clearTimeout(start.timer);
           this.tapAction(start.touch, false);
           delete this.longTouchList[touch.identifier];
         }
@@ -730,26 +730,26 @@ export default defineComponent({
     },
 
     // 長押しリストとタイマーのクリア
-    clearLongTouchList() {
+    clearLongTouchList(): void {
       Object.values(this.longTouchList).forEach((value) => {
-        clearTimeout(Number(value.timer));
+        window.clearTimeout(value.timer);
       });
       this.longTouchList = {};
     },
 
     // タップ時の処理
     // TouchEventはoffsetX,Yが無いためclientX,Yから計算
-    tapAction(touch: Touch, longTap: boolean) {
+    tapAction(touch: Touch, longTap: boolean): void {
       if (touch.target === null) return;
       const target = touch.target as HTMLElement;
       const rect = target.getBoundingClientRect();
-      const offsetX = touch.clientX - rect.x;
-      const offsetY = touch.clientY - rect.y;
+      const offsetX: number = touch.clientX - rect.x;
+      const offsetY: number = touch.clientY - rect.y;
       this.clickTapAction(offsetX, offsetY, longTap);
     },
 
     // クリック時の処理
-    clickAction(e: MouseEvent) {
+    clickAction(e: MouseEvent): void {
       if (!this.isClick) return;
       if (this.hasCanvasFocus) {
         this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey);
@@ -757,13 +757,13 @@ export default defineComponent({
     },
 
     // クリック/タップ時の処理
-    clickTapAction(offsetX: number, offsetY: number, shiftKey: boolean) {
-      const possiblyLane = (offsetX - canvasMarginHorizontal) / noteWidth;
-      const lane = Math.floor(possiblyLane);
+    clickTapAction(offsetX: number, offsetY: number, shiftKey: boolean): void {
+      const possiblyLane: number = (offsetX - canvasMarginHorizontal) / noteWidth;
+      const lane: number = Math.floor(possiblyLane);
       const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
-      const convLane = orderGroup[lane];
-      const y = this.isReverse ? offsetY - canvasMarginVertical : editorHeight - (offsetY - canvasMarginVertical);
-      const position = Math.floor((y * verticalSizeNum()) / editorHeight / this.divisor + 0.5) * this.divisor;
+      const convLane: number = orderGroup[lane];
+      const y: number = this.isReverse ? offsetY - canvasMarginVertical : editorHeight - (offsetY - canvasMarginVertical);
+      const position: number = Math.floor((y * verticalSizeNum()) / editorHeight / this.divisor + 0.5) * this.divisor;
 
       if (position >= 0 && position < verticalSizeNum()) {
         if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
