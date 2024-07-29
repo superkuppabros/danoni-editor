@@ -7,6 +7,7 @@
       @keydown.prevent="keydownAction"
       @wheel.prevent="wheelAction"
       @mouseup.prevent="clickAction"
+      @mousedown.middle.prevent=""
       @touchstart.prevent="touchStartAction"
       @touchend.prevent="touchEndAction"
       @focus="canvasFocusOrBlur(true)"
