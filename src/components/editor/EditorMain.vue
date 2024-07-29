@@ -5,6 +5,7 @@
       ref="canvas"
       tabindex="-1"
       @keydown.prevent="keydownAction"
+      @wheel.prevent="wheelAction"
       @mouseup.prevent="clickAction"
       @touchstart.prevent="touchStartAction"
       @touchend.prevent="touchEndAction"
@@ -695,6 +696,7 @@ export default defineComponent({
       }
     },
 
+    // フォーカス時の処理（枠線変更）
     canvasFocusOrBlur(focusFlg: boolean = false): void {
       window.setTimeout(() => {
         this.hasCanvasFocus = focusFlg;
@@ -754,6 +756,16 @@ export default defineComponent({
       if (this.hasCanvasFocus) {
         this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey || e.button === 1);
       }
+    },
+
+    // マウスホイール移動時の処理
+    wheelAction(e: WheelEvent): void {
+      if (!this.isClick) return;
+      const positionLineMove = (isRaise: boolean) => {
+        return isRaise === this.isReverse ? this.currentPositionDecrease : () => this.currentPositionIncrease(false);
+      };
+      if (e.deltaY > 0) positionLineMove(false)();
+      else if (e.deltaY < 0) positionLineMove(true)();
     },
 
     // クリック/タップ時の処理
