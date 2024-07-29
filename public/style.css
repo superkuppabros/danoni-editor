@@ -24,6 +24,16 @@ container {
   top: 5px;
   left: 50px;
   font-size: 11px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#editor-mode-input {
+  position: absolute;
+  top: 5px;
+  left: calc(100%);
+  font-size: 11px;
+  text-align: left;
   white-space: nowrap;
 }
 
@@ -382,7 +392,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   justify-content: left;
   font-size: 16px;
   padding: 0 40px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .configure-options {

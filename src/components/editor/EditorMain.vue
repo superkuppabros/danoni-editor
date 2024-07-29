@@ -21,8 +21,9 @@
       :type="speed.type"
       :is-reverse="isReverse"
     ></speed-piece>
-    <div id="editor-mode-text">
-      入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F) {{ isClick && !isWheelLock ? "Wheel: ON" : "" }}
+    <div id="editor-mode-text">入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)</div>
+    <div id="editor-mode-input">
+      <b>{{ isKeyboard ? "[Key]" : "" }}{{ isClick ? "[Click]" : "" }}{{ isClick && !isWheelLock ? "[Wheel]" : "" }}</b>
     </div>
   </div>
 </template>
@@ -66,6 +67,7 @@ type DataType = {
   page: number;
   editorWidth: number;
   isReverse: boolean;
+  isKeyboard: boolean;
   isClick: boolean;
   isWheelLock: boolean;
   pageBlockNum: number;
@@ -116,6 +118,7 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const isKeyboard: boolean = JSON.parse(localStorage.getItem("isKeyboard") ?? "true");
     const isClick: boolean = JSON.parse(localStorage.getItem("isClick") ?? "false");
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
@@ -147,6 +150,7 @@ export default defineComponent({
       page: 1,
       keyNum,
       isReverse,
+      isKeyboard,
       isClick,
       isWheelLock: false,
       editorWidth: noteWidth * keyConfig[keyKind].num,
@@ -607,7 +611,17 @@ export default defineComponent({
             this.switchView();
             break;
           }
-          case "Digit0": {
+          case "Comma": {
+            this.isKeyboard = !this.isKeyboard;
+            localStorage.setItem("isKeyboard", JSON.stringify(this.isKeyboard));
+            break;
+          }
+          case "Period": {
+            this.isClick = !this.isClick;
+            localStorage.setItem("isClick", JSON.stringify(this.isClick));
+            break;
+          }
+          case "Slash": {
             this.isWheelLock = !this.isWheelLock;
             break;
           }
@@ -674,7 +688,7 @@ export default defineComponent({
 
             const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
             const orgLane: number = orderGroup.indexOf(possiblyLane);
-            if (possiblyLane >= 0) {
+            if (possiblyLane >= 0 && this.isKeyboard) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
               const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
