@@ -748,11 +748,11 @@ export default defineComponent({
       this.clickTapAction(offsetX, offsetY, longTap);
     },
 
-    // クリック時の処理（クリックモードかつ左クリック時のみ有効）
+    // クリック時の処理（左クリックでノート、ホイールボタンでフリーズノート）
     clickAction(e: MouseEvent): void {
-      if (!this.isClick || e.button !== 0) return;
+      if (!this.isClick || e.button >= 2) return;
       if (this.hasCanvasFocus) {
-        this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey);
+        this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey || e.button === 1);
       }
     },
 
