@@ -23,7 +23,7 @@
     ></speed-piece>
     <div id="editor-mode-text">入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)</div>
     <div id="editor-mode-input">
-      <b>{{ isKeyboard ? "[Key]" : "" }}{{ isClick ? "[Click]" : "" }}{{ isClick && !isWheelLock ? "[Wheel]" : "" }}</b>
+      {{ isKeyboard ? "[Key]" : "" }}{{ isClick ? "[Click]" : "" }}{{ isClick && !isWheelLock ? "[Wheel]" : "" }}
     </div>
   </div>
 </template>
