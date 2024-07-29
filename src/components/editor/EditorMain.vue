@@ -21,7 +21,9 @@
       :type="speed.type"
       :is-reverse="isReverse"
     ></speed-piece>
-    <div id="editor-mode-text">入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)</div>
+    <div id="editor-mode-text">
+      入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F) {{ isClick && !isWheelLock ? "Wheel: ON" : "" }}
+    </div>
   </div>
 </template>
 
@@ -65,6 +67,7 @@ type DataType = {
   editorWidth: number;
   isReverse: boolean;
   isClick: boolean;
+  isWheelLock: boolean;
   pageBlockNum: number;
   musicTimer: number | null;
   musicService?: MusicService;
@@ -145,6 +148,7 @@ export default defineComponent({
       keyNum,
       isReverse,
       isClick,
+      isWheelLock: false,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       pageBlockNum,
       musicTimer: null,
@@ -603,6 +607,10 @@ export default defineComponent({
             this.switchView();
             break;
           }
+          case "Digit0": {
+            this.isWheelLock = !this.isWheelLock;
+            break;
+          }
         }
       };
 
@@ -761,7 +769,7 @@ export default defineComponent({
 
     // マウスホイール移動時の処理
     wheelAction(e: WheelEvent): void {
-      if (!this.isClick) return;
+      if (!this.isClick || this.isWheelLock) return;
       const positionLineMove = (isRaise: boolean) => {
         return isRaise === this.isReverse ? this.currentPositionDecrease : () => this.currentPositionIncrease(false);
       };
