@@ -371,6 +371,7 @@ export default defineComponent({
         height: editorHeight,
         stroke: this.hasCanvasFocus ? "#333333" : "#cccccc",
         strokeWidth: 1,
+        fill: this.hasCanvasFocus ? "#00000000" : "#cccccc33",
       });
       baseLayer.add(rect);
 

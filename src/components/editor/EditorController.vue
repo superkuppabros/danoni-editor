@@ -149,7 +149,7 @@ export default defineComponent({
         if (divisorNum === Math.max(0, -multi * divisors.length - 1)) {
           editorMain.value.switchView(multi);
         }
-        editorMain.value.changeDivisor(quarterInterval / divisors[divisorNum]);
+        editorMain.value.changeDivisor(quarterInterval / (divisors[divisorNum] / 4));
       }
     };
     return {
