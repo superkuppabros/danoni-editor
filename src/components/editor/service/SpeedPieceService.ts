@@ -63,4 +63,16 @@ export class SpeedPieceService {
     note?.destroy();
     stage.add(notesLayer);
   }
+
+  // 速度変化コマの追加・削除
+  switchOne(page: number, position: number, isBoost: boolean) {
+    const speedType: SpeedType = isBoost ? "boost" : "speed";
+    if (this.hasSpeedPiece(page, position)) {
+      this.remove(page, position);
+      this.clear(position);
+    } else {
+      this.add(page, position, speedType);
+      this.draw(position, speedType);
+    }
+  }
 }

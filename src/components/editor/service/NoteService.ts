@@ -118,6 +118,15 @@ export class NoteService {
     });
   }
 
+  // ノーツの追加・削除
+  switchOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
+    if (this.hasNote(page, lane, position).exists) {
+      this.removeOne(page, displayPage, lane, position, orgLane);
+    } else {
+      this.addOne(page, displayPage, lane, position, isFreeze, orgLane);
+    }
+  }
+
   // フリーズの塗りつぶし描画
   fillFreeze(page: number, lane: number, orgLane: number = lane) {
     if (!this.isHighlightedFreeze) return false;

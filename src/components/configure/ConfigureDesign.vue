@@ -3,6 +3,28 @@
     <h3 class="configure-context-title">Options</h3>
 
     <div class="configure-design-item">
+      <div class="configure-design-text">Keyboard Input:</div>
+      <div class="configure-options">
+        <div class="configure-radio">
+          <label> <input v-model="isKeyboard" type="radio" class="uk-radio" name="editor-keyboard" :value="true" />On </label>
+        </div>
+        <div class="configure-radio">
+          <label> <input v-model="isKeyboard" type="radio" class="uk-radio" name="editor-keyboard" :value="false" />Off </label>
+        </div>
+      </div>
+    </div>
+    <div class="configure-design-item">
+      <div class="configure-design-text">Click/Tap Input:</div>
+      <div class="configure-options">
+        <div class="configure-radio">
+          <label> <input v-model="isClick" type="radio" class="uk-radio" name="editor-click" :value="true" />On </label>
+        </div>
+        <div class="configure-radio">
+          <label> <input v-model="isClick" type="radio" class="uk-radio" name="editor-click" :value="false" />Off </label>
+        </div>
+      </div>
+    </div>
+    <div class="configure-design-item">
       <div class="configure-design-text">Direction:</div>
       <div class="configure-options">
         <div class="configure-radio">
@@ -68,6 +90,29 @@ export default defineComponent({
     };
   },
   computed: {
+    isKeyboard: {
+      get(): boolean {
+        const isKeyboardStr: string = localStorage.getItem("isKeyboard") ?? "true";
+        return JSON.parse(isKeyboardStr);
+      },
+
+      set(newValue: boolean): boolean {
+        localStorage.setItem("isKeyboard", JSON.stringify(newValue));
+        return newValue;
+      },
+    },
+    isClick: {
+      get(): boolean {
+        const isClickStr: string = localStorage.getItem("isClick") ?? "false";
+        return JSON.parse(isClickStr);
+      },
+
+      set(newValue: boolean): boolean {
+        localStorage.setItem("isClick", JSON.stringify(newValue));
+        return newValue;
+      },
+    },
+
     isReverse: {
       get(): boolean {
         const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";

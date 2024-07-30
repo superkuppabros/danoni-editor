@@ -24,6 +24,16 @@ container {
   top: 5px;
   left: 50px;
   font-size: 11px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#editor-mode-input {
+  position: absolute;
+  top: 5px;
+  left: calc(100%);
+  font-size: 11px;
+  text-align: left;
   white-space: nowrap;
 }
 
@@ -139,6 +149,15 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   transition: 0.4s;
 }
 
+.btn-controller {
+  font-size: 14px;
+  height: 20px;
+}
+
+.btn-mini {
+  width: 18px;
+}
+
 .btn-blue {
   color: #67c5ff;
   border: solid 2px #67c5ff;
@@ -160,6 +179,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   width: 100px;
 }
 
+.btn-purple {
+  color: #9944ff;
+  border: solid 2px #9944ff;
+}
+
 .menu-output-btn:hover {
   color: white;
   cursor: pointer;
@@ -179,6 +203,11 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .btn-orange:hover {
   background: #ff9c4a;
+  text-decoration-line: none;
+}
+
+.btn-purple:hover {
+  background: #9944ff;
   text-decoration-line: none;
 }
 
@@ -321,7 +350,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 /* 設定画面 */
 #configure-container {
   width: 500px;
-  height: 475px;
+  height: 500px;
   margin: auto;
   background-color: rgb(255, 221, 127);
   font-family: "Segoe UI", "Yu Gothic", sans-serif;
@@ -363,7 +392,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
   justify-content: left;
   font-size: 16px;
   padding: 0 40px;
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .configure-options {
