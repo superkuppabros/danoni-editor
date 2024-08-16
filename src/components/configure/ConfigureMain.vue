@@ -3,7 +3,7 @@
     <div id="configure-title">
       <h2>Configure</h2>
     </div>
-    <h3 class="configure-context-title">Key Config</h3>
+    <h3 class="configure-context-title" @click="confirmCustomKeys">Key Config</h3>
     <div id="configure-uploader">
       <configure-uploader :msg="confTitle" @file-recieve="onConfFileRecieve"></configure-uploader>
       <div class="start-btn btn-gray" @click="download"><u>↓</u> DL</div>
@@ -89,6 +89,16 @@ export default defineComponent({
         document.body.appendChild(obj);
         obj.click();
         obj.parentNode?.removeChild(obj);
+      }
+    },
+
+    confirmCustomKeys() {
+      const storage = localStorage;
+      const configText = storage.getItem("customKeyConfig") || "";
+      if (configText === "") {
+        alert("インポート済みのカスタムキー定義はありません。");
+      } else {
+        alert(`インポート済みのキー: ${Object.keys(JSON.parse(configText)).join(", ")}`);
       }
     },
 
