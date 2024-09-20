@@ -1,6 +1,7 @@
 <template>
   <div id="editor-controller">
     <editor-main
+      ref="editorMain"
       :page-num="pageNum"
       :load-score-data="scoreData"
       :load-music-url="musicUrl"
@@ -68,11 +69,14 @@
       </div>
 
       <div id="menu-output" class="menu-item-container">
-        <a class="menu-output-btn btn-orange" uk-toggle="target: #editor-option">OPTION</a>
-        <div class="menu-output-btn btn-gray" @click="convertWithQuarters">TEST</div>
-        <div class="menu-output-btn btn-blue" uk-toggle="target: #editor-save">SAVE</div>
-        <div class="menu-output-btn btn-gray" @click="displayScoreDataInfo">CALC</div>
-        <div class="menu-output-btn btn-red" @click="convert">GO!</div>
+        <a class="menu-output-btn btn-orange btn-controller" uk-toggle="target: #editor-option">OPTION</a>
+        <div class="menu-output-btn btn-gray btn-controller btn-mini" @click="changeDivisor(-1)">&lt;</div>
+        <div class="menu-output-btn btn-gray btn-controller btn-mini" @click="changeDivisor()">&gt;</div>
+        <div class="menu-output-btn btn-purple btn-controller" @click="play">PLAY</div>
+        <div class="menu-output-btn btn-gray btn-controller" @click="convertWithQuarters">TEST</div>
+        <div class="menu-output-btn btn-blue btn-controller" uk-toggle="target: #editor-save">SAVE</div>
+        <div class="menu-output-btn btn-gray btn-controller" @click="displayScoreDataInfo">CALC</div>
+        <div class="menu-output-btn btn-red btn-controller" @click="convert">GO!</div>
       </div>
     </div>
     <router-link
@@ -88,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import EditorMain from "./EditorMain.vue";
 import EditorOption from "./EditorOption.vue";
 import { Timing } from "../../model/Timing";
@@ -97,7 +101,7 @@ import { ScoreConvertService } from "./service/ScoreConvertService";
 import { LevelCalcService } from "./service/LevelCalcService";
 import { CustomKeyKind } from "../../model/KeyKind";
 import { CustomKeyConfig } from "../../model/KeyConfig";
-import { fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
+import { divisors, fps, quarterInterval, verticalSizeNum } from "./EditorConstant";
 import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 import { DefaultPageScore } from "@/model/PageScore";
 import { ScoreRevivalService } from "./service/ScoreRevivalService";
@@ -130,6 +134,29 @@ export default defineComponent({
     selectedKey: { type: String, required: true },
     loadScoreDataStr: { type: String, required: true },
     loadMusicUrl: { type: String, required: true },
+  },
+  setup() {
+    let divisorNum: number = 0;
+    const editorMain = ref<typeof EditorMain>();
+    const play = () => {
+      if (editorMain.value) {
+        editorMain.value.togglePlay();
+      }
+    };
+    const changeDivisor = (multi: number = 1) => {
+      if (editorMain.value) {
+        divisorNum = (divisorNum + divisors.length + multi) % divisors.length;
+        if (divisorNum === Math.max(0, -multi * divisors.length - 1)) {
+          editorMain.value.switchView(multi);
+        }
+        editorMain.value.changeDivisor(quarterInterval / (divisors[divisorNum] / 4));
+      }
+    };
+    return {
+      editorMain,
+      play,
+      changeDivisor,
+    };
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();

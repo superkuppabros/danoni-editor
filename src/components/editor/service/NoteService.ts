@@ -86,11 +86,17 @@ export class NoteService {
 
   // 1ノーツを追加して描画
   addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
-    this.add(page, lane, position, isFreeze);
+    const frzList = [];
+    this.scoreData.scores.forEach((score) => frzList.push(...score.freezes[lane]));
+
+    // フリーズノートが奇数の場合はシフトキーが無くてもフリーズノート扱いにする
+    const isFreezeFlg = isFreeze || frzList.length % 2 !== 0;
+
+    this.add(page, lane, position, isFreezeFlg);
     if (page === displayPage) {
-      this.draw(lane, position, isFreeze, orgLane);
+      this.draw(lane, position, isFreezeFlg, orgLane);
     }
-    if (isFreeze) this.fillFreeze(displayPage, lane, orgLane);
+    if (isFreezeFlg) this.fillFreeze(displayPage, lane, orgLane);
     this.stackPush({
       type: "ADD_NOTE",
       page,
@@ -116,6 +122,15 @@ export class NoteService {
       lane,
       isFreeze,
     });
+  }
+
+  // ノーツの追加・削除
+  switchOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
+    if (this.hasNote(page, lane, position).exists) {
+      this.removeOne(page, displayPage, lane, position, orgLane);
+    } else {
+      this.addOne(page, displayPage, lane, position, isFreeze, orgLane);
+    }
   }
 
   // フリーズの塗りつぶし描画

@@ -1,6 +1,18 @@
 <template>
   <div id="editor-main">
-    <div id="canvas" ref="canvas" tabindex="-1" @keydown.prevent="keydownAction"></div>
+    <div
+      id="canvas"
+      ref="canvas"
+      tabindex="-1"
+      @keydown.prevent="keydownAction"
+      @wheel.prevent="wheelAction"
+      @mouseup.prevent="clickAction"
+      @mousedown.middle.prevent=""
+      @touchstart.prevent="touchStartAction"
+      @touchend.prevent="touchEndAction"
+      @focus="canvasFocusOrBlur(true)"
+      @blur="canvasFocusOrBlur(false)"
+    ></div>
     <speed-piece
       v-for="(speed, index) in scoreData.scores[page - 1]?.speeds"
       :key="index"
@@ -10,6 +22,9 @@
       :is-reverse="isReverse"
     ></speed-piece>
     <div id="editor-mode-text">入力間隔: {{ mode }}分 ({{ moveIntervalFrame }}F)</div>
+    <div id="editor-mode-input">
+      {{ isKeyboard ? "[Key]" : "" }}{{ isClick ? "[Click]" : "" }}{{ isClick && !isWheelLock ? "[Wheel]" : "" }}
+    </div>
   </div>
 </template>
 
@@ -29,10 +44,10 @@ import {
   laneColors,
   canvasMarginHorizontal,
   canvasMarginVertical,
+  longTapThreshold,
 } from "./EditorConstant";
 import { Timing } from "../../model/Timing";
 import { MusicService } from "./service/MusicService";
-import { SpeedType } from "../../model/Speed";
 import { Operation } from "../../model/OperationQueue";
 import { NoteService } from "./service/NoteService";
 import { SpeedPieceService } from "./service/SpeedPieceService";
@@ -52,6 +67,9 @@ type DataType = {
   page: number;
   editorWidth: number;
   isReverse: boolean;
+  isKeyboard: boolean;
+  isClick: boolean;
+  isWheelLock: boolean;
   pageBlockNum: number;
   musicTimer: number | null;
   musicService?: MusicService;
@@ -74,6 +92,8 @@ type DataType = {
   charsFull: string[][];
   alternativeKeysFull: string[][];
   orderKeyTypes: number[];
+  hasCanvasFocus: boolean;
+  longTouchList: { [name: number]: { timer: number; touch: Touch } };
 };
 
 export default defineComponent({
@@ -98,6 +118,8 @@ export default defineComponent({
     const keyNum = keyConfig[keyKind].num;
     const isReverseStr: string = localStorage.getItem("isReverse") ?? "false";
     const isReverse: boolean = JSON.parse(isReverseStr);
+    const isKeyboard: boolean = JSON.parse(localStorage.getItem("isKeyboard") ?? "true");
+    const isClick: boolean = JSON.parse(localStorage.getItem("isClick") ?? "false");
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
     const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
@@ -128,6 +150,9 @@ export default defineComponent({
       page: 1,
       keyNum,
       isReverse,
+      isKeyboard,
+      isClick,
+      isWheelLock: false,
       editorWidth: noteWidth * keyConfig[keyKind].num,
       pageBlockNum,
       musicTimer: null,
@@ -143,6 +168,8 @@ export default defineComponent({
       charsFull,
       alternativeKeysFull,
       orderKeyTypes,
+      hasCanvasFocus: false,
+      longTouchList: {},
     };
   },
 
@@ -263,6 +290,7 @@ export default defineComponent({
   beforeUnmount(): void {
     // 画面終了時に音楽を止める
     if (this.musicTimer) this.stopMusicLoop(this.musicTimer);
+    this.clearLongTouchList();
   },
   methods: {
     // ベースレイヤーの描画
@@ -341,8 +369,9 @@ export default defineComponent({
       const rect = new Konva.Rect({
         width: editorWidth,
         height: editorHeight,
-        stroke: "black",
+        stroke: this.hasCanvasFocus ? "#333333" : "#cccccc",
         strokeWidth: 1,
+        fill: this.hasCanvasFocus ? "#00000000" : "#cccccc33",
       });
       baseLayer.add(rect);
 
@@ -468,15 +497,17 @@ export default defineComponent({
         this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
       }
-
+      this.clearLongTouchList();
       this.currentPositionService.draw(this.currentPosition, page, this.timing);
     },
     pageMinus(n: number, position = 0): void {
       this.$emit("page-minus", n);
+      this.clearLongTouchList();
       this.currentPositionService.move(position, this.page, this.timing);
     },
     pagePlus(n: number): void {
       this.$emit("page-plus", n);
+      this.clearLongTouchList();
       this.currentPositionService.move(0, this.page, this.timing);
     },
 
@@ -493,7 +524,7 @@ export default defineComponent({
     currentPositionIncrease(withThreshold: boolean) {
       const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
       if (this.currentPosition + this.divisor >= verticalSizeNum(this.pageBlockNum)) {
-        if (withThreshold) setTimeout(() => this.pagePlus(1), threshold);
+        if (withThreshold) window.setTimeout(() => this.pagePlus(1), threshold);
         else this.pagePlus(1);
       } else {
         this.currentPositionService.move(this.currentPosition + this.divisor, this.page, this.timing);
@@ -506,6 +537,25 @@ export default defineComponent({
         if (this.page === 1) this.currentPosition = 0;
         else this.pageMinus(1, this.currentPosition + verticalSizeNum(this.pageBlockNum));
       } else this.currentPositionService.move(this.currentPosition, this.page, this.timing);
+    },
+
+    // 音楽の再生/停止
+    togglePlay(): void {
+      if (!this.musicTimer) {
+        const timing = this.timing;
+        this.playMusicLoop(timing);
+      } else {
+        const timer = this.musicTimer;
+        this.stopMusicLoop(timer);
+      }
+    },
+
+    // 表示切替
+    switchView(multi: number = 1): void {
+      this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
+      this.baseLayerDraw();
+      this.pageMove(this.page);
+      this.displayPageScore(this.page);
     },
 
     // キーを押したときの挙動
@@ -559,10 +609,21 @@ export default defineComponent({
             break;
           }
           case "KeyQ": {
-            this.orderGroupNo = (this.orderGroupNo + 1) % this.orderGroups.length;
-            this.baseLayerDraw();
-            this.pageMove(page);
-            this.displayPageScore(page);
+            this.switchView();
+            break;
+          }
+          case "Comma": {
+            this.isKeyboard = !this.isKeyboard;
+            localStorage.setItem("isKeyboard", JSON.stringify(this.isKeyboard));
+            break;
+          }
+          case "Period": {
+            this.isClick = !this.isClick;
+            localStorage.setItem("isClick", JSON.stringify(this.isClick));
+            break;
+          }
+          case "Slash": {
+            this.isWheelLock = !this.isWheelLock;
             break;
           }
         }
@@ -583,16 +644,9 @@ export default defineComponent({
         withCtrlAction(e);
       } else {
         switch (e.code) {
-          case "Enter": {
-            if (!this.musicTimer) {
-              const timing = this.timing;
-              this.playMusicLoop(timing);
-            } else {
-              const timer = this.musicTimer;
-              this.stopMusicLoop(timer);
-            }
+          case "Enter":
+            this.togglePlay();
             break;
-          }
           case "Backspace":
             noteService.removeOnPosition(this.page, this.currentPosition);
             this.displayPageScore(this.page);
@@ -618,19 +672,7 @@ export default defineComponent({
             else this.pagePlus(1);
             break;
           case "Quote":
-            {
-              const speedType: SpeedType = e.shiftKey ? "boost" : "speed";
-              const page = this.page;
-              const position = this.currentPosition;
-
-              if (speedPieceService.hasSpeedPiece(page, position)) {
-                speedPieceService.remove(page, position);
-                speedPieceService.clear(position);
-              } else {
-                speedPieceService.add(page, position, speedType);
-                speedPieceService.draw(position, speedType);
-              }
-            }
+            speedPieceService.switchOne(this.page, this.currentPosition, e.shiftKey);
             break;
 
           default: {
@@ -646,8 +688,8 @@ export default defineComponent({
             let isSimultaneous = false;
 
             const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
-            const orgLane = orderGroup.indexOf(possiblyLane);
-            if (possiblyLane >= 0) {
+            const orgLane: number = orderGroup.indexOf(possiblyLane);
+            if (possiblyLane >= 0 && this.isKeyboard) {
               // 一定時間内に押されたときは直前の位置にノートを追加/削除する
               const now = new Date();
               const threshold: number = JSON.parse(localStorage.getItem("simultaneousThreshold") ?? "30");
@@ -661,11 +703,7 @@ export default defineComponent({
               }
 
               // ノートの追加/削除
-              if (noteService.hasNote(page, possiblyLane, position).exists) {
-                noteService.removeOne(page, this.page, possiblyLane, position, orgLane);
-              } else {
-                noteService.addOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
-              }
+              noteService.switchOne(page, this.page, possiblyLane, position, isFreeze, orgLane);
 
               // 同時押しのときはカーソルを進めない
               if (!isSimultaneous) {
@@ -678,6 +716,103 @@ export default defineComponent({
             }
             break;
           }
+        }
+      }
+    },
+
+    // フォーカス時の処理（枠線変更）
+    canvasFocusOrBlur(focusFlg: boolean = false): void {
+      window.setTimeout(() => {
+        this.hasCanvasFocus = focusFlg;
+        this.baseLayerDraw();
+      }, 100);
+    },
+
+    // タッチ開始時
+    touchStartAction(e: TouchEvent): void {
+      if (!this.isClick) return;
+      Array.from(e.changedTouches).forEach((touch) => {
+        // 一定時間後に長押しとして処理する
+        const timer: number = window.setTimeout(() => {
+          this.tapAction(touch, true);
+          delete this.longTouchList[touch.identifier];
+        }, longTapThreshold);
+        this.longTouchList[touch.identifier] = { touch, timer };
+      });
+    },
+
+    // タッチ終了時
+    touchEndAction(e: TouchEvent): void {
+      if (!this.isClick) return;
+      Array.from(e.changedTouches).forEach((touch) => {
+        // リストに残っている(長押しとして処理されていない)ものは通常タップとして処理
+        const start = this.longTouchList[touch.identifier];
+        if (start) {
+          window.clearTimeout(start.timer);
+          this.tapAction(start.touch, false);
+          delete this.longTouchList[touch.identifier];
+        }
+      });
+    },
+
+    // 長押しリストとタイマーのクリア
+    clearLongTouchList(): void {
+      Object.values(this.longTouchList).forEach((value) => {
+        window.clearTimeout(value.timer);
+      });
+      this.longTouchList = {};
+    },
+
+    // タップ時の処理
+    // TouchEventはoffsetX,Yが無いためclientX,Yから計算
+    tapAction(touch: Touch, longTap: boolean): void {
+      if (touch.target === null) return;
+      const target = touch.target as HTMLElement;
+      const rect = target.getBoundingClientRect();
+      const offsetX: number = touch.clientX - rect.x;
+      const offsetY: number = touch.clientY - rect.y;
+      this.clickTapAction(offsetX, offsetY, longTap);
+    },
+
+    // クリック時の処理（左クリックでノート、ホイールボタンでフリーズノート）
+    clickAction(e: MouseEvent): void {
+      if (!this.isClick || e.button >= 2) return;
+      if (this.hasCanvasFocus) {
+        this.clickTapAction(e.offsetX, e.offsetY, e.shiftKey || e.button === 1);
+      }
+    },
+
+    // マウスホイール移動時の処理
+    wheelAction(e: WheelEvent): void {
+      if (!this.isClick || this.isWheelLock) return;
+      const positionLineMove = (isRaise: boolean) => {
+        return isRaise === this.isReverse ? this.currentPositionDecrease : () => this.currentPositionIncrease(false);
+      };
+      if (e.deltaY > 0) positionLineMove(false)();
+      else if (e.deltaY < 0) positionLineMove(true)();
+    },
+
+    // クリック/タップ時の処理
+    clickTapAction(offsetX: number, offsetY: number, shiftKey: boolean): void {
+      const possiblyLane: number = (offsetX - canvasMarginHorizontal) / noteWidth;
+      const lane: number = Math.floor(possiblyLane);
+      const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
+      const convLane: number = orderGroup[lane];
+      const y: number = this.isReverse ? offsetY - canvasMarginVertical : editorHeight - (offsetY - canvasMarginVertical);
+      const position: number = Math.floor((y * verticalSizeNum()) / editorHeight / this.divisor + 0.5) * this.divisor;
+
+      if (position >= 0 && position < verticalSizeNum()) {
+        if (possiblyLane >= 0 && possiblyLane < this.keyNum) {
+          // ノートの追加/削除
+          this.noteService?.switchOne(this.page, this.page, convLane, position, shiftKey, lane);
+        } else if (possiblyLane >= this.keyNum && possiblyLane < this.keyNum + 0.75) {
+          // 速度変化の追加/削除
+          this.speedPieceService?.switchOne(this.page, position, shiftKey);
+        }
+        // カーソルの移動
+        if (possiblyLane < this.keyNum + 0.75) {
+          this.currentPosition = position;
+          this.currentPositionService.move(this.currentPosition, this.page, this.timing);
         }
       }
     },
