@@ -124,8 +124,9 @@ export default defineComponent({
     const operationStack: Operation[] = [];
     const defaultOrder: number[][] = [[...Array(keyNum)].map((_, idx: number) => idx)]; // [[0], [1], ...[keyNum - 1]]
     const orderGroups: number[][] = defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []).filter((val) => val.length > 0);
-    const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}")
-    const orderGroupNo: number = parseInt(orderGroupMap[keyKind] ?? 0) >= orderGroups.length ? 0 : parseInt(orderGroupMap[keyKind] ?? 0)
+    const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}");
+    const orderGroupNo: number =
+      parseInt(orderGroupMap[keyKind] ?? 0) >= orderGroups.length ? 0 : parseInt(orderGroupMap[keyKind] ?? 0);
 
     // 対応キーの全パターンを取得
     const keysFull: string[][] = [keyConfig[keyKind].keys]
@@ -555,9 +556,9 @@ export default defineComponent({
     // 表示切替
     switchView(multi: number = 1): void {
       this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
-      const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}")
-      orderGroupMap[this.keyKind] = this.orderGroupNo.toString()
-      localStorage.setItem("orderGroupMap", JSON.stringify(orderGroupMap))
+      const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}");
+      orderGroupMap[this.keyKind] = this.orderGroupNo.toString();
+      localStorage.setItem("orderGroupMap", JSON.stringify(orderGroupMap));
       this.baseLayerDraw();
       this.pageMove(this.page);
       this.displayPageScore(this.page);
