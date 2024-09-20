@@ -28,6 +28,7 @@
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.17.9",
     "@babel/preset-env": "^7.17.10",
+    "@napi-rs/canvas": "^0.1.56",
     "@types/lodash": "^4.14.182",
     "@types/node": "^20.14.10",
     "@types/path-browserify": "^1.0.0",
@@ -35,7 +36,7 @@
     "@types/uikit": "^3.3.2",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-typescript": "^13.0.0",
-    "canvas": "^3.0.0-rc2",
+    "canvas": "npm:@napi-rs/canvas@^0.1.56",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-vue": "^9.27.0",
