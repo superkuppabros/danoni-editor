@@ -122,8 +122,10 @@ export default defineComponent({
     const isClick: boolean = JSON.parse(localStorage.getItem("isClick") ?? "false");
     const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
     const operationStack: Operation[] = [];
-    const defaultOrder: number[][] = [[...Array(keyConfig[keyKind].num)].map((_: undefined, idx: number) => idx)];
+    const defaultOrder: number[][] = [[...Array(keyNum)].map((_, idx: number) => idx)]; // [[0], [1], ...[keyNum - 1]]
     const orderGroups: number[][] = defaultOrder.concat(keyConfig[keyKind]?.orderGroups ?? []).filter((val) => val.length > 0);
+    const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}")
+    const orderGroupNo: number = parseInt(orderGroupMap[keyKind] ?? 0) >= orderGroups.length ? 0 : parseInt(orderGroupMap[keyKind] ?? 0)
 
     // 対応キーの全パターンを取得
     const keysFull: string[][] = [keyConfig[keyKind].keys]
@@ -163,7 +165,7 @@ export default defineComponent({
       previousPage: 1,
       previousDate: new Date(0),
       orderGroups,
-      orderGroupNo: 0,
+      orderGroupNo,
       keysFull,
       charsFull,
       alternativeKeysFull,
@@ -553,6 +555,9 @@ export default defineComponent({
     // 表示切替
     switchView(multi: number = 1): void {
       this.orderGroupNo = (this.orderGroupNo + this.orderGroups.length + multi) % this.orderGroups.length;
+      const orderGroupMap = JSON.parse(localStorage.getItem("orderGroupMap") ?? "{}")
+      orderGroupMap[this.keyKind] = this.orderGroupNo.toString()
+      localStorage.setItem("orderGroupMap", JSON.stringify(orderGroupMap))
       this.baseLayerDraw();
       this.pageMove(this.page);
       this.displayPageScore(this.page);
