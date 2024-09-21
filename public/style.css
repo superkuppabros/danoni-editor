@@ -127,7 +127,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 }
 
 .uk-form-small {
-  height: 24px!important;
+  height: 24px !important;
 }
 
 #menu-output {
@@ -213,7 +213,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 #editor-option, #editor-save {
   position: absolute;
-  width: 300px;
+  width: 320px;
   height: 430px;
   top: 100px;
   background-color: rgba(245, 228, 159, 0.9);
@@ -226,7 +226,19 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .option-item-container {
   margin: 4px auto 0 auto;
-  width: 106px;
+  width: 220px;
+}
+
+.option-sub-item-container-medium {
+  margin: 2px 5px 0 5px;
+  width: 130px;
+  float: left;
+}
+
+.option-sub-item-container-small {
+  margin: 2px 5px 0 5px;
+  width: 70px;
+  float: left;
 }
 
 .save-item-container {
@@ -365,7 +377,7 @@ input[type="number"].editor-speed-piece::-webkit-inner-spin-button {
 
 .configure-context-title {
   margin: 5px auto;
-  color: salmon
+  color: salmon;
 }
 
 #configure-uploader {

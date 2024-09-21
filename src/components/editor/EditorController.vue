@@ -9,6 +9,7 @@
       :key-kind="keyKind"
       :timing="timing"
       :prop-score-number="scoreNumber"
+      :prop-score-prefix="scorePrefix"
       :music-volume="musicVolume"
       :music-rate="musicRate"
       @page-minus="pageMinus"
@@ -19,6 +20,7 @@
       v-model:scoreNumber="scoreNumber"
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
+      v-model:scorePrefix="scorePrefix"
     ></editor-option>
     <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
@@ -115,6 +117,7 @@ type DataType = {
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
   scoreNumber: number;
+  scorePrefix: string;
   pageBlockNum: number;
   musicUrl: string;
   musicVolume: number;
@@ -229,6 +232,7 @@ export default defineComponent({
       keyKind,
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
+      scorePrefix: scoreData.scorePrefix || "",
       pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
@@ -290,10 +294,8 @@ export default defineComponent({
     },
 
     convert(): void {
-      // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
-      const data: string = converter.convert(this.scoreData, postfix);
+      const data: string = converter.convert(this.scoreData);
       const message = "譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
 
@@ -341,10 +343,8 @@ export default defineComponent({
       return response.ok;
     },
     convertWithQuarters(): void {
-      // NOTE: scoreNoを増やしたことによる暫定処置
-      const postfix = this.scoreData.scoreNumber !== 1 && this.scoreData.scoreNumber ? this.scoreData.scoreNumber.toString() : "";
       const converter = this.scoreConvertService;
-      const data: string = converter.convertWithQuarters(this.scoreData, postfix);
+      const data: string = converter.convertWithQuarters(this.scoreData);
       const message = "四分譜面データをクリップボードにコピーしました！";
       this.writeClipBoard(data, message);
     },

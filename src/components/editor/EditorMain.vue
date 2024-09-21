@@ -107,6 +107,7 @@ export default defineComponent({
     keyKind: { type: String as PropType<CustomKeyKind>, required: true },
     timing: { type: Object as PropType<Timing>, required: true },
     propScoreNumber: { type: Number, required: true },
+    propScorePrefix: { type: String, required: true },
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
   },
@@ -203,6 +204,10 @@ export default defineComponent({
 
     propScoreNumber(scoreNumber: number) {
       this.scoreData.scoreNumber = scoreNumber;
+    },
+
+    propScorePrefix(scorePrefix: string) {
+      this.scoreData.scorePrefix = scorePrefix;
     },
 
     musicVolume(musicVolume: number) {
