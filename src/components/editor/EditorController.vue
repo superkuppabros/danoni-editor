@@ -20,7 +20,6 @@
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
       v-model:scorePrefix="scorePrefix"
-      v-model:keyNum="keyNum"
     ></editor-option>
     <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
@@ -113,7 +112,6 @@ type DataType = {
   scoreData: ScoreData;
   keyKind: CustomKeyKind;
   keyConfig: CustomKeyConfig;
-  keyNum: number;
   scoreNumber: number;
   scorePrefix: string;
   pageBlockNum: number;
@@ -206,7 +204,6 @@ export default defineComponent({
       scoreData,
       keyKind,
       keyConfig,
-      keyNum,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
       scorePrefix: scoreData.scorePrefix || "",
       pageBlockNum,
