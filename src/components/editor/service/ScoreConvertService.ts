@@ -116,12 +116,16 @@ export class ScoreConvertService {
     data.boosts.sort((a, b) => a.position - b.position);
 
     const noteStr = data.notes
-      .reduce((str, notesArr, laneNum) => `${str}${prefix}${this.keyConfig[this.keyKind].noteNames[laneNum]}=${notesArr.join(",")}|`, "|")
+      .reduce(
+        (str, notesArr, laneNum) => `${str}${prefix}${this.keyConfig[this.keyKind].noteNames[laneNum]}=${notesArr.join(",")}|`,
+        "|"
+      )
       .replace(/_/g, `${postfix}_`);
 
     const freezeStr = data.freezes
       .reduce(
-        (str, freezesArr, laneNum) => `${str}${prefix}${this.keyConfig[this.keyKind].freezeNames[laneNum]}=${freezesArr.join(",")}|`,
+        (str, freezesArr, laneNum) =>
+          `${str}${prefix}${this.keyConfig[this.keyKind].freezeNames[laneNum]}=${freezesArr.join(",")}|`,
         ""
       )
       .replace(/_/g, `${postfix}_`);
