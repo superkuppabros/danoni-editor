@@ -28,25 +28,11 @@
         class="uk-input uk-form-width-small uk-form-small"
       />
     </div>
-    <div id="option-conv-key-kind" class="option-item-container">
-      <div class="menu-txt">Conv.Keymode</div>
-      <select id="option-key-selector" v-model="inputConvKeyKind" class="uk-select uk-form-width-small uk-form-small">
-        <option v-for="keyKind in keyKinds" :key="keyKind">
-          {{ keyKind }}
-        </option>
-      </select>
-    </div>
-    <div id="option-order" class="option-item-container">
-      <div class="menu-txt">Conv.Order</div>
-      <input v-model="inputOrder" type="string" class="uk-input uk-form-small" />
-    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { CustomKeyKind } from "@/model/KeyKind";
 import { defineComponent } from "vue";
-import { createCustomKeyConfig } from "../common/createCustomKeyConfig";
 
 export default defineComponent({
   name: "EditorOption",
@@ -55,26 +41,9 @@ export default defineComponent({
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
     scorePrefix: { type: String, required: true },
-    convKeyKind: { type: String, required: true },
-    order: { type: Array<number>, required: true },
-    keyNum: { type: Number, required: true },
   },
-  emits: [
-    "update:scoreNumber",
-    "update:musicVolume",
-    "update:musicRate",
-    "update:scorePrefix",
-    "update:convKeyKind",
-    "update:order",
-  ],
+  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix"],
   computed: {
-    keyKinds(): CustomKeyKind[] {
-      const keyConfig = createCustomKeyConfig();
-      const keys = Object.keys(keyConfig) as CustomKeyKind[];
-      keys.sort((a, b) => keyConfig[a].id - keyConfig[b].id);
-      return keys;
-    },
-
     inputScoreNumber: {
       get(): number {
         return this.scoreNumber;
@@ -112,30 +81,6 @@ export default defineComponent({
       },
       set(scorePrefix: string) {
         this.$emit("update:scorePrefix", scorePrefix);
-      },
-    },
-
-    inputConvKeyKind: {
-      get(): string {
-        return this.convKeyKind;
-      },
-      set(convKeyKind: string) {
-        this.$emit("update:convKeyKind", convKeyKind);
-      },
-    },
-
-    inputOrder: {
-      get(): string {
-        return this.order.join(`,`);
-      },
-      set(order: string) {
-        this.$emit(
-          "update:order",
-          order
-            .split(`,`)
-            .filter((v) => !Number.isNaN(Number(v)) && !v.includes(".") && v.length <= 2)
-            .slice(0, this.keyNum)
-        );
       },
     },
   },
