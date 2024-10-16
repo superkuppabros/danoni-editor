@@ -685,6 +685,8 @@ export default defineComponent({
           case "Quote":
             speedPieceService.switchOne(this.page, this.currentPosition, e.shiftKey);
             break;
+          case "":
+            break; // 右シフトキーでcodeが""となり、ノーツが入力される問題の対策
 
           default: {
             const orderKeyType: number = this.orderKeyTypes[this.orderGroupNo] ?? 0;
