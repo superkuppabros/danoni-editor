@@ -21,6 +21,7 @@
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
       v-model:scorePrefix="scorePrefix"
+      v-model:blankFrame="scoreData.blankFrame"
     ></editor-option>
     <editor-save :is-saving="isSaving" @save="save"></editor-save>
     <div id="editor-menu">
@@ -57,10 +58,7 @@
           <div class="menu-move-btn" @click="labelPlus(5)">▷</div>
         </div>
       </div>
-      <div id="menu-adj" class="menu-item-container">
-        <div class="menu-txt">Blank Frame</div>
-        <input v-model.number="scoreData.blankFrame" type="number" step="0.01" class="uk-input uk-form-small" />
-      </div>
+
       <div id="menu-sn" class="menu-item-container">
         <div class="menu-txt">Start Number</div>
         <input v-model.number="timing.startNum" type="number" step="0.01" class="uk-input uk-form-small" />
