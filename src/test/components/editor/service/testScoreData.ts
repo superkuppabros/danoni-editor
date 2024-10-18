@@ -1,3 +1,4 @@
+import { PageScore } from "@/model/PageScore";
 import { DefaultScoreData, ScoreData } from "@/model/ScoreData";
 import { cloneDeep } from "lodash";
 
@@ -9,11 +10,13 @@ export const testScoreData: ScoreData = {
       label: 1,
       startNum: 0,
       bpm: 180,
+      pageBlockNum: 8,
     },
     {
       label: 3,
       startNum: 240,
       bpm: 120,
+      pageBlockNum: 8,
     },
   ],
   scoreNumber: 1,
@@ -40,6 +43,19 @@ export const testScoreData: ScoreData = {
   ],
 };
 
+// 1ページ目のpageBlockNumを7にした場合のセーブデータ
+const changePageBlockNumScore: PageScore = {
+  notes: [[], [48, 96], [144], [], []],
+  freezes: [[], [], [], [48], []],
+  speeds: [
+    { position: 48, value: 1.1, type: "speed" },
+    { position: 144, value: 0.8, type: "boost" },
+  ],
+};
+const pbn5 = cloneDeep(testScoreData);
+pbn5.scores[1] = changePageBlockNumScore;
+pbn5.timings[0].pageBlockNum = 7;
+
 // 基礎となるセーブデータを元にパラメータを与えてアレンジ
 const changeScoreData =
   ({ keyNum = 5 as number, baseScoreData = new DefaultScoreData(keyNum) as ScoreData } = {}) =>
@@ -55,8 +71,6 @@ const changeScoreData =
 const scorePtn = {
   default5: changeScoreData(),
   key5: changeScoreData({ baseScoreData: testScoreData }),
-  //default11: changeScoreData({ keyNum: 11 }),
-  //key11: changeScoreData({ baseScoreData: testScoreData11 }),
 };
 
 // セーブデータのテストパターン
@@ -65,7 +79,7 @@ export const testScore = {
   score5_1Initial: scorePtn.default5({ keyKind: "5" }),
   score5_2: scorePtn.key5({ scoreNumber: 2 }),
   score5_1Prefix: scorePtn.key5({ scorePrefix: "a" }),
-  //score11_1: scorePtn.key11(),
+  score5_pbn: pbn5,
 };
 
 // 譜面データのテストパターン群
@@ -105,4 +119,10 @@ export const testDos = {
 |speed_data=|boost_data=|
 |es_keyKind=5|es_blankFrame=200|es_label=1|es_startNumber=0|es_bpm=140|es_scoreNumber=1|es_scorePrefix=|
 `,
+
+  // 1ページ目のpageBlockNumを7にした場合の復元用データ
+  dos5_pbn: `|left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
+|speed_data=360,1.1,440,0.7|boost_data=400,0.8|
+|es_keyKind=5|es_blankFrame=200|es_label=1,3|es_startNumber=0,240|es_bpm=180,120|es_pageBlockNumber=7,8|es_scoreNumber=1|es_scorePrefix=|
+`
 };

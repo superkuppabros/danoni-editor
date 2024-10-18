@@ -28,7 +28,8 @@ export class ScoreRevivalService {
       const blankFrame: number = parseInt(dict["blankFrame"]) || 200;
       const labels: number[] = dict["label"]?.split(",").map((x: string) => parseInt(x)) ?? [1];
       const startNumbers: number[] = dict["startNumber"]?.split(",").map((x: string) => parseFloat(x)) ?? [0];
-      const pageBlockNumbers: number[] = dict["pageBlockNumber"]?.split(",").map((x: string) => parseFloat(x)) ?? [8];
+      const pageBlockNumbers: number[] = dict["pageBlockNumber"]?.split(",").map((x: string) => parseFloat(x)) ??
+        Array(labels.length).fill(8);
       const bpms: number[] = dict["bpm"]?.split(",").map((x: string) => parseFloat(x)) ?? [140];
       const scoreNumber: number = parseInt(dict["scoreNumber"]) || 1;
       const scorePrefix: string = dict["scorePrefix"] ?? "";
