@@ -462,7 +462,7 @@ export default defineComponent({
       notesLayer.destroyChildren();
       stage.add(notesLayer);
 
-      this.baseLayerDraw()
+      this.baseLayerDraw();
 
       const orderGroup: number[] = this.orderGroups[this.orderGroupNo];
 

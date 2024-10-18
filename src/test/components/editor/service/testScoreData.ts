@@ -124,5 +124,5 @@ export const testDos = {
   dos5_pbn: `|left_data=200|down_data=360,380|up_data=240,400|right_data=|space_data=440,500|frzLeft_data=|frzDown_data=|frzUp_data=|frzRight_data=280,360|frzSpace_data=|
 |speed_data=360,1.1,440,0.7|boost_data=400,0.8|
 |es_keyKind=5|es_blankFrame=200|es_label=1,3|es_startNumber=0,240|es_bpm=180,120|es_pageBlockNumber=7,8|es_scoreNumber=1|es_scorePrefix=|
-`
+`,
 };

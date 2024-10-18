@@ -383,7 +383,7 @@ export default defineComponent({
           label: pageNum,
           startNum: newStartNum,
           bpm: oldTiming.bpm,
-          pageBlockNum: oldTiming.pageBlockNum
+          pageBlockNum: oldTiming.pageBlockNum,
         };
         this.scoreData.timings.splice(this.labelNum, 0, newTiming);
         this.timing = newTiming;
