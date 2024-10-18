@@ -90,6 +90,7 @@ export class ScoreConvertService {
     const labels: number[] = scoreData.timings.map((timing) => timing.label);
     const startNumbers: number[] = scoreData.timings.map((timing) => timing.startNum);
     const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
+    const pageBlockNums: number[] = scoreData.timings.map((timing) => timing.pageBlockNum || 8);
     const scoreNumber = scoreData.scoreNumber || 1;
     const scorePrefix = scoreData.scorePrefix || "";
 
@@ -99,6 +100,7 @@ export class ScoreConvertService {
       `|es_label=${labels.join(",")}` +
       `|es_startNumber=${startNumbers.join(",")}` +
       `|es_bpm=${bpms.join(",")}` +
+      `|es_pageBlockNumber=${pageBlockNums.join(",")}` +
       `|es_scoreNumber=${scoreNumber}` +
       `|es_scorePrefix=${scorePrefix}|`;
 
