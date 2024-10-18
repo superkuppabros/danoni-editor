@@ -3,6 +3,10 @@
     <button class="uk-modal-close-default" type="button" uk-close></button>
 
     <h2 class="uk-modal-title">Options</h2>
+    <div id="option-blank-frame" class="option-item-container">
+      <div class="menu-txt">Blank Frame</div>
+      <input v-model.number="inputBlankFrame" type="number" step="0.01" class="uk-input uk-form-width-small uk-form-small" />
+    </div>
     <div id="option-score-group" class="option-item-container">
       <div id="option-score-number" class="option-sub-item-container-medium">
         <div class="menu-txt">Score No.</div>
@@ -15,7 +19,14 @@
     </div>
     <div id="option-music-volume" class="option-item-container">
       <div class="menu-txt">Music Volume</div>
-      <input v-model.number="inputMusicVolume" type="range" min="0" max="1" step="0.05" class="uk-range uk-form-small" />
+      <input
+        v-model.number="inputMusicVolume"
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        class="uk-range uk-form-width-small uk-form-small"
+      />
     </div>
     <div id="option-music-rate" class="option-item-container">
       <div class="menu-txt">Music Speed</div>
@@ -41,8 +52,9 @@ export default defineComponent({
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
     scorePrefix: { type: String, required: true },
+    blankFrame: { type: Number, required: true },
   },
-  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix"],
+  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix", "update:blankFrame"],
   computed: {
     inputScoreNumber: {
       get(): number {
@@ -81,6 +93,16 @@ export default defineComponent({
       },
       set(scorePrefix: string) {
         this.$emit("update:scorePrefix", scorePrefix);
+      },
+    },
+
+    inputBlankFrame: {
+      get(): number {
+        return this.blankFrame;
+      },
+      set(blankFrame: string) {
+        const value = Number(blankFrame);
+        this.$emit("update:blankFrame", value);
       },
     },
   },

@@ -1,19 +1,16 @@
 import { Timing } from "@/model/Timing";
 import { fps, quarterInterval, verticalSizeNum } from "../EditorConstant";
 
-export function positionToFrame(timing: Timing, page: number, position: number, pageBlockNum: number, blankFrame = 0): number {
+export function positionToFrame(timing: Timing, page: number, position: number, blankFrame = 0): number {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
+  const pageBlockNum = timing.pageBlockNum || 8;
   const startFrame = blankFrame + timing.startNum + (page - timing.label) * verticalSizeNum(pageBlockNum) * framePerPosition;
   return startFrame + position * framePerPosition;
 }
 
-export function frameToPagePosition(
-  timing: Timing,
-  frame: number,
-  pageBlockNum: number,
-  blankFrame: number
-): { page: number; position: number } {
+export function frameToPagePosition(timing: Timing, frame: number, blankFrame: number): { page: number; position: number } {
   const framePerPosition = (60 * fps) / quarterInterval / timing.bpm;
+  const pageBlockNum = timing.pageBlockNum || 8;
 
   const rawPosition = (frame - blankFrame - timing.startNum) / framePerPosition;
   // 小数の誤差補正 4=>48分で補正するため、32分はうまく補正されない確率が高い
@@ -30,8 +27,8 @@ export function frameToPagePosition(
   return { page, position };
 }
 
-export function positionToSeconds(timing: Timing, page: number, position: number, pageBlockNum: number, blankFrame = 0): number {
-  return positionToFrame(timing, page, position, pageBlockNum, blankFrame) / fps;
+export function positionToSeconds(timing: Timing, page: number, position: number, blankFrame = 0): number {
+  return positionToFrame(timing, page, position, blankFrame) / fps;
 }
 
 export function secondsToTimeStr(seconds: number): string {

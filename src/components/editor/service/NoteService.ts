@@ -15,7 +15,6 @@ export class NoteService {
     private keyConfig: CustomKeyConfig = DefaultKeyConfig,
     private keyKind: CustomKeyKind = "",
     private isReverse: boolean,
-    private pageBlockNum: number,
     private stage: Konva.Stage,
     private notesLayer: Konva.Layer,
     private operationStack: Operation[]
@@ -85,7 +84,15 @@ export class NoteService {
   }
 
   // 1ノーツを追加して描画
-  addOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
+  addOne(
+    page: number,
+    displayPage: number,
+    lane: number,
+    position: number,
+    isFreeze: boolean,
+    orgLane: number = lane,
+    pageBlockNum: number
+  ) {
     const frzList = [];
     this.scoreData.scores.forEach((score) => frzList.push(...score.freezes[lane]));
 
@@ -96,7 +103,7 @@ export class NoteService {
     if (page === displayPage) {
       this.draw(lane, position, isFreezeFlg, orgLane);
     }
-    if (isFreezeFlg) this.fillFreeze(displayPage, lane, orgLane);
+    if (isFreezeFlg) this.fillFreeze(displayPage, lane, orgLane, pageBlockNum);
     this.stackPush({
       type: "ADD_NOTE",
       page,
@@ -107,14 +114,14 @@ export class NoteService {
   }
 
   // 1ノーツを削除してクリア
-  removeOne(page: number, displayPage: number, lane: number, position: number, orgLane: number = lane) {
+  removeOne(page: number, displayPage: number, lane: number, position: number, orgLane: number = lane, pageBlockNum: number) {
     const { isFreeze } = this.hasNote(page, lane, position);
 
     this.remove(page, lane, position);
     if (page === displayPage) {
       this.clear(orgLane, position);
     }
-    this.fillFreeze(displayPage, lane, orgLane);
+    this.fillFreeze(displayPage, lane, orgLane, pageBlockNum);
     this.stackPush({
       type: "REMOVE_NOTE",
       page,
@@ -125,16 +132,24 @@ export class NoteService {
   }
 
   // ノーツの追加・削除
-  switchOne(page: number, displayPage: number, lane: number, position: number, isFreeze: boolean, orgLane: number = lane) {
+  switchOne(
+    page: number,
+    displayPage: number,
+    lane: number,
+    position: number,
+    isFreeze: boolean,
+    orgLane: number = lane,
+    pageBlockNum: number
+  ) {
     if (this.hasNote(page, lane, position).exists) {
-      this.removeOne(page, displayPage, lane, position, orgLane);
+      this.removeOne(page, displayPage, lane, position, orgLane, pageBlockNum);
     } else {
-      this.addOne(page, displayPage, lane, position, isFreeze, orgLane);
+      this.addOne(page, displayPage, lane, position, isFreeze, orgLane, pageBlockNum);
     }
   }
 
   // フリーズの塗りつぶし描画
-  fillFreeze(page: number, lane: number, orgLane: number = lane) {
+  fillFreeze(page: number, lane: number, orgLane: number = lane, pageBlockNum: number) {
     if (!this.isHighlightedFreeze) return false;
     const stage = this.stage;
     const notesLayer = this.notesLayer;
@@ -150,7 +165,7 @@ export class NoteService {
       }, 0) % 2;
 
     if (startParity === 1) laneFreezes.unshift(0);
-    laneFreezes.push(verticalSizeNum(this.pageBlockNum));
+    laneFreezes.push(verticalSizeNum(pageBlockNum));
 
     const freezeClass = `.freeze-fill-${orgLane}`;
     const fills = notesLayer.find(freezeClass);
@@ -158,7 +173,7 @@ export class NoteService {
 
     while (laneFreezes.length > 0) {
       const freezeStart = laneFreezes.shift() as number;
-      const freezeEnd = laneFreezes.shift() ?? verticalSizeNum(this.pageBlockNum);
+      const freezeEnd = laneFreezes.shift() ?? verticalSizeNum(pageBlockNum);
       const height = freezeEnd - freezeStart;
       const opacity = 0.3;
 
@@ -210,18 +225,18 @@ export class NoteService {
   }
 
   // 行をずらす
-  shift(page: number, currentPosition: number, delta: number): void {
+  shift(page: number, currentPosition: number, delta: number, pageBlockNum: number): void {
     let newPosition = currentPosition + delta;
     let newPage = page;
     if (newPosition < 0) {
       if (page === 1) return;
       else {
         newPage--;
-        newPosition += verticalSizeNum(this.pageBlockNum);
+        newPosition += verticalSizeNum(pageBlockNum);
       }
-    } else if (newPosition >= verticalSizeNum(this.pageBlockNum)) {
+    } else if (newPosition >= verticalSizeNum(pageBlockNum)) {
       newPage++;
-      newPosition -= verticalSizeNum(this.pageBlockNum);
+      newPosition -= verticalSizeNum(pageBlockNum);
     }
 
     const movedLanes = this.removeLanes(page, currentPosition);

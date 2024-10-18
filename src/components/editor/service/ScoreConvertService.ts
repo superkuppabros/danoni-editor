@@ -23,7 +23,7 @@ export type OutputData = {
 export class ScoreConvertService {
   private keyNum: number;
   private defaultPageScore: PageScore;
-  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig, private pageBlockNum: number) {
+  constructor(private keyKind: CustomKeyKind, private keyConfig: CustomKeyConfig) {
     this.keyNum = keyConfig[this.keyKind].num;
     this.defaultPageScore = new DefaultPageScore(this.keyNum);
   }
@@ -44,8 +44,7 @@ export class ScoreConvertService {
       else {
         if (timings[labelCounter] && pageNum === timings[labelCounter].label) labelCounter++;
         const timing = timings[labelCounter - 1];
-        const calculateFrame = (position: number) =>
-          Math.round(positionToFrame(timing, pageNum, position, this.pageBlockNum, blankFrame));
+        const calculateFrame = (position: number) => Math.round(positionToFrame(timing, pageNum, position, blankFrame));
 
         const pageNoteFrames = pageScore.notes.map((notesArr) => notesArr.sort((a, b) => a - b).map(calculateFrame));
         const freezeNoteFrames = pageScore.freezes.map((freezesArr) => freezesArr.sort((a, b) => a - b).map(calculateFrame));
@@ -91,6 +90,7 @@ export class ScoreConvertService {
     const labels: number[] = scoreData.timings.map((timing) => timing.label);
     const startNumbers: number[] = scoreData.timings.map((timing) => timing.startNum);
     const bpms: number[] = scoreData.timings.map((timing) => timing.bpm);
+    const pageBlockNums: number[] = scoreData.timings.map((timing) => timing.pageBlockNum || 8);
     const scoreNumber = scoreData.scoreNumber || 1;
     const scorePrefix = scoreData.scorePrefix || "";
 
@@ -100,6 +100,7 @@ export class ScoreConvertService {
       `|es_label=${labels.join(",")}` +
       `|es_startNumber=${startNumbers.join(",")}` +
       `|es_bpm=${bpms.join(",")}` +
+      `|es_pageBlockNumber=${pageBlockNums.join(",")}` +
       `|es_scoreNumber=${scoreNumber}` +
       `|es_scorePrefix=${scorePrefix}|`;
 
@@ -171,6 +172,7 @@ ${easySave}
     testPatternStr = typeof testPatternStr == "string" ? testPatternStr : "1";
 
     const newScoreData = this.cutLastDefault(cloneDeep(scoreData));
+    const pageBlockNum = scoreData.timings.at(-1)?.pageBlockNum || 8;
 
     try {
       for (let i = 0; i < pushQuartersPageNum; i++) {
@@ -179,7 +181,7 @@ ${easySave}
         const testPattern = testPatternStr.split(",");
         const testPatternLength = testPattern.length;
 
-        for (let j = 0; j < this.pageBlockNum; j++) {
+        for (let j = 0; j < pageBlockNum; j++) {
           const lane = parseInt(testPattern[j % testPatternLength]) - 1;
           quartersPageScore.notes[lane].push(j * quarterInterval);
         }
