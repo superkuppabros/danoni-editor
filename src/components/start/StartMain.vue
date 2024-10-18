@@ -33,7 +33,7 @@
         >
       </div>
 
-      <div id="start-version">ver 3.3.0 created by SKB</div>
+      <div id="start-version">ver 4.0.0 created by SKB</div>
     </div>
   </div>
 </template>
