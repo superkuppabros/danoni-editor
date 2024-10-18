@@ -8,7 +8,7 @@ import { Speed, SpeedType } from "@/model/Speed";
 import { PageScore } from "@/model/PageScore";
 
 export class ScoreRevivalService {
-  constructor(private keyConfig: CustomKeyConfig, private pageBlockNum: number) {}
+  constructor(private keyConfig: CustomKeyConfig) {}
 
   private delimiter = "|";
 
@@ -28,6 +28,7 @@ export class ScoreRevivalService {
       const blankFrame: number = parseInt(dict["blankFrame"]) || 200;
       const labels: number[] = dict["label"]?.split(",").map((x: string) => parseInt(x)) ?? [1];
       const startNumbers: number[] = dict["startNumber"]?.split(",").map((x: string) => parseFloat(x)) ?? [0];
+      const pageBlockNumbers: number[] = dict["pageBlockNumber"]?.split(",").map((x: string) => parseFloat(x)) ?? [8];
       const bpms: number[] = dict["bpm"]?.split(",").map((x: string) => parseFloat(x)) ?? [140];
       const scoreNumber: number = parseInt(dict["scoreNumber"]) || 1;
       const scorePrefix: string = dict["scorePrefix"] ?? "";
@@ -36,6 +37,7 @@ export class ScoreRevivalService {
         label,
         startNum: startNumbers[index],
         bpm: bpms[index],
+        pageBlockNum: pageBlockNumbers[index],
       }));
       const scoreData: ScoreData = {
         keyKind,
@@ -72,7 +74,7 @@ export class ScoreRevivalService {
     );
 
     const maxFrame = Math.max(this.findMaxNumber(noteFrames), this.findMaxNumber(freezeFrames));
-    const maxPage = frameToPagePosition(timings.slice(-1)[0], maxFrame, this.pageBlockNum, scoreData.blankFrame).page;
+    const maxPage = frameToPagePosition(timings.slice(-1)[0], maxFrame, scoreData.blankFrame).page;
     const noteScores = this.makeScores(noteFrames, timings, scoreData, maxPage);
     const freezeScores = this.makeScores(freezeFrames, timings, scoreData, maxPage);
 
@@ -106,7 +108,7 @@ export class ScoreRevivalService {
       while (labelCounter + 1 < timings.length && frame >= timings[labelCounter + 1].startNum + blankFrame) {
         labelCounter++;
       }
-      const pagePosition = frameToPagePosition(timings[labelCounter], frame, this.pageBlockNum, blankFrame);
+      const pagePosition = frameToPagePosition(timings[labelCounter], frame, blankFrame);
       const page = pagePosition.page;
       const position = pagePosition.position;
       if (page >= 1 && position >= 0) speedsArr[page - 1].push({ position, value, type });
@@ -141,7 +143,7 @@ export class ScoreRevivalService {
         while (labelCounter + 1 < timings.length && frame >= timings[labelCounter + 1].startNum + blankFrame) {
           labelCounter++;
         }
-        const pagePosition = frameToPagePosition(timings[labelCounter], frame, this.pageBlockNum, blankFrame);
+        const pagePosition = frameToPagePosition(timings[labelCounter], frame, blankFrame);
         const page = pagePosition.page;
         const position = pagePosition.position;
         if (page >= 1 && position >= 0) arr[page - 1][lane].push(position);

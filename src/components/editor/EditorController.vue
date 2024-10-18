@@ -67,7 +67,10 @@
         <div class="menu-txt">BPM</div>
         <input v-model.number="timing.bpm" type="number" step="0.01" class="uk-input uk-form-small" />
       </div>
-
+      <div id="menu-adj" class="menu-item-container">
+        <div class="menu-txt">Page Block</div>
+        <input v-model.number="timing.pageBlockNum" type="number" step="1" min="1" max="8" class="uk-input uk-form-small" />
+      </div>
       <div id="menu-output" class="menu-item-container">
         <a class="menu-output-btn btn-orange btn-controller" uk-toggle="target: #editor-option">OPTION</a>
         <div class="menu-output-btn btn-gray btn-controller btn-mini" @click="changeDivisor(-1)">&lt;</div>
@@ -116,7 +119,6 @@ type DataType = {
   keyConfig: CustomKeyConfig;
   scoreNumber: number;
   scorePrefix: string;
-  pageBlockNum: number;
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
@@ -161,7 +163,6 @@ export default defineComponent({
   },
   data(): DataType {
     const keyConfig = createCustomKeyConfig();
-    const pageBlockNum = parseInt(JSON.parse(localStorage.getItem("pageBlockNum") ?? "8"));
 
     const storedKeyKind = sessionStorage.getItem("keyKind");
     const selectedKeyKind = (storedKeyKind || this.selectedKey) as CustomKeyKind;
@@ -170,7 +171,7 @@ export default defineComponent({
 
     if (selectedKeyKind in keyConfig) {
       const selectedKeyNum = keyConfig[selectedKeyKind].num;
-      const scoreRevivalService = new ScoreRevivalService(keyConfig, pageBlockNum);
+      const scoreRevivalService = new ScoreRevivalService(keyConfig);
 
       try {
         // TODO: 譜面チェッカー未実装につきtry節に入れている
@@ -231,12 +232,11 @@ export default defineComponent({
       keyConfig,
       scoreNumber: scoreData.scoreNumber ? scoreData.scoreNumber : 1,
       scorePrefix: scoreData.scorePrefix || "",
-      pageBlockNum,
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
       isSaving: false,
-      scoreConvertService: new ScoreConvertService(keyKind, keyConfig, pageBlockNum),
+      scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
     };
   },
   watch: {
@@ -377,12 +377,13 @@ export default defineComponent({
         const framePerPosition = (60 * fps) / quarterInterval / oldTiming.bpm;
         const newStartNum =
           Math.round(
-            (oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(this.pageBlockNum) * framePerPosition) * 100
+            (oldTiming.startNum + (pageNum - oldTiming.label) * verticalSizeNum(oldTiming.pageBlockNum) * framePerPosition) * 100
           ) / 100;
         const newTiming: Timing = {
           label: pageNum,
           startNum: newStartNum,
           bpm: oldTiming.bpm,
+          pageBlockNum: oldTiming.pageBlockNum
         };
         this.scoreData.timings.splice(this.labelNum, 0, newTiming);
         this.timing = newTiming;

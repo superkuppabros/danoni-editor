@@ -19,7 +19,14 @@
     </div>
     <div id="option-music-volume" class="option-item-container">
       <div class="menu-txt">Music Volume</div>
-      <input v-model.number="inputMusicVolume" type="range" min="0" max="1" step="0.05" class="uk-range uk-form-width-small uk-form-small" />
+      <input
+        v-model.number="inputMusicVolume"
+        type="range"
+        min="0"
+        max="1"
+        step="0.05"
+        class="uk-range uk-form-width-small uk-form-small"
+      />
     </div>
     <div id="option-music-rate" class="option-item-container">
       <div class="menu-txt">Music Speed</div>
@@ -45,7 +52,7 @@ export default defineComponent({
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
     scorePrefix: { type: String, required: true },
-    blankFrame: { type: Number, required: true }
+    blankFrame: { type: Number, required: true },
   },
   emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix", "update:blankFrame"],
   computed: {
@@ -94,7 +101,7 @@ export default defineComponent({
         return this.blankFrame;
       },
       set(blankFrame: string) {
-        const value = Number(blankFrame)
+        const value = Number(blankFrame);
         this.$emit("update:blankFrame", value);
       },
     },
