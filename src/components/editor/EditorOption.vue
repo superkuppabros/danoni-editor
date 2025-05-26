@@ -39,6 +39,17 @@
         class="uk-input uk-form-width-small uk-form-small"
       />
     </div>
+    <div id="option-music-rate" class="option-item-container">
+      <div class="menu-txt">Music Adjustment</div>
+      <input
+        v-model.number="inputMusicAdjustment"
+        type="number"
+        min="0"
+        max="60"
+        step="1"
+        class="uk-input uk-form-width-small uk-form-small"
+      />
+    </div>
   </div>
 </template>
 
@@ -51,10 +62,18 @@ export default defineComponent({
     scoreNumber: { type: Number, required: true },
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
+    musicAdjustment: { type: Number, required: true },
     scorePrefix: { type: String, required: true },
     blankFrame: { type: Number, required: true },
   },
-  emits: ["update:scoreNumber", "update:musicVolume", "update:musicRate", "update:scorePrefix", "update:blankFrame"],
+  emits: [
+    "update:scoreNumber",
+    "update:musicVolume",
+    "update:musicRate",
+    "update:musicAdjustment",
+    "update:scorePrefix",
+    "update:blankFrame",
+  ],
   computed: {
     inputScoreNumber: {
       get(): number {
@@ -84,6 +103,17 @@ export default defineComponent({
       set(musicRate: string) {
         const value = Number(musicRate);
         this.$emit("update:musicRate", value);
+      },
+    },
+
+    inputMusicAdjustment: {
+      get(): number {
+        return this.musicAdjustment;
+      },
+      set(musicAdjustment: string) {
+        localStorage.setItem("musicAdjustment", musicAdjustment);
+        const value = Number(musicAdjustment);
+        this.$emit("update:musicAdjustment", value);
       },
     },
 

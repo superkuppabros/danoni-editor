@@ -109,6 +109,7 @@ export default defineComponent({
     propScorePrefix: { type: String, required: true },
     musicVolume: { type: Number, required: true },
     musicRate: { type: Number, required: true },
+    musicAdjustment: { type: Number, required: true },
   },
   emits: ["changeScoreData", "page-jump", "page-minus", "page-plus"],
   data(): DataType {
@@ -211,6 +212,13 @@ export default defineComponent({
     },
 
     musicRate() {
+      if (this.musicService && this.musicTimer) {
+        this.stopMusicLoop(this.musicTimer);
+        this.playMusicLoop(this.timing);
+      }
+    },
+
+    musicAdjustment() {
       if (this.musicService && this.musicTimer) {
         this.stopMusicLoop(this.musicTimer);
         this.playMusicLoop(this.timing);
@@ -424,7 +432,7 @@ export default defineComponent({
         const playDuration = ((endTime - startTime) * 1000) / this.musicRate;
         if (!this.musicService) return;
         this.musicService.play(startTime, endTime - startTime, this.musicVolume, this.musicRate);
-        this.currentPositionService.musicAnimate(playDuration, pageBlockNum);
+        this.currentPositionService.musicAnimate(playDuration, pageBlockNum, this.musicAdjustment);
         if (this.musicTimer) {
           const timer: number = window.setTimeout(() => {
             if (this.musicService) this.musicService.pause();

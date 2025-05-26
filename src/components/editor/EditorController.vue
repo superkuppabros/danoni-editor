@@ -12,6 +12,7 @@
       :prop-score-prefix="scorePrefix"
       :music-volume="musicVolume"
       :music-rate="musicRate"
+      :music-adjustment="musicAdjustment"
       @page-minus="pageMinus"
       @page-plus="pagePlus"
       @page-jump="pageJump"
@@ -20,6 +21,7 @@
       v-model:scoreNumber="scoreNumber"
       v-model:musicVolume="musicVolume"
       v-model:musicRate="musicRate"
+      v-model:musicAdjustment="musicAdjustment"
       v-model:scorePrefix="scorePrefix"
       v-model:blankFrame="scoreData.blankFrame"
     ></editor-option>
@@ -122,6 +124,7 @@ type DataType = {
   musicUrl: string;
   musicVolume: number;
   musicRate: number;
+  musicAdjustment: number;
   isSaving: boolean;
   scoreConvertService: ScoreConvertService;
 };
@@ -235,6 +238,7 @@ export default defineComponent({
       musicUrl: this.loadMusicUrl || "",
       musicVolume: Number(localStorage.getItem("musicVolume")) || 1.0,
       musicRate: 1.0,
+      musicAdjustment: Number(localStorage.getItem("musicAdjustment")) || 0,
       isSaving: false,
       scoreConvertService: new ScoreConvertService(keyKind, keyConfig),
     };
