@@ -10,7 +10,7 @@
       </div>
     </div>
     <div id="save-key-phrase" class="save-item-container">
-      <input v-model.trim="inputKeyPhrase" type="text" max="50" class="uk-input uk-form-small" list="phrase-history" />
+      <input v-model.trim="inputKeyPhrase" type="text" max="50" class="uk-input uk-form-small" list="phrase-history" @keydown="keydownAction"/>
       <datalist id="phrase-history">
         <option v-for="p in phraseHistory" :key="p">{{ p }}</option>
       </datalist>
@@ -58,6 +58,9 @@ export default defineComponent({
     resetForm() {
       this.keyPhrase = "";
     },
+    keydownAction(e: Event) {
+      e.stopPropagation()
+    }
   },
 });
 </script>
