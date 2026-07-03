@@ -751,6 +751,7 @@ export default defineComponent({
 
     // タッチ開始時
     touchStartAction(e: TouchEvent): void {
+      if (this.$refs.canvas instanceof HTMLElement) this.$refs.canvas.focus();
       if (!this.isClick) return;
       Array.from(e.changedTouches).forEach((touch) => {
         // 一定時間後に長押しとして処理する
